@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha --require @babel/register ./tests/*.js  --timeout 25000 --exit",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "start": "nodemon ./src/index.js --exec babel-node --presets @babel/preset-env",
+    "db:connect": "babel-node ./src/database/models/ connect"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
@@ -23,25 +25,25 @@
     "ejs": "^2.6.1",
     "errorhandler": "^1.5.0",
     "express": "^4.16.3",
+    "@babel/cli": "^7.8.4",
     "express-jwt": "^5.3.1",
-    "express-session": "^1.15.6",
-    "jsonwebtoken": "^8.3.0",
+    "express-session": "^1.17.0",
+    "jsonwebtoken": "^8.5.1",
+    "make-runnable": "^1.3.6",
     "method-override": "^2.3.10",
     "methods": "^1.1.2",
+    "pg": "^7.18.2"
+  },
+  "devDependencies": {
     "mocha-lcov-reporter": "^1.3.0",
     "nyc": "^15.0.0",
     "mocha": "^7.1.0",
-    "mongoose": "^5.2.2",
-    "mongoose-unique-validator": "^2.0.1",
-    "morgan": "^1.9.1",
-    "passport": "^0.4.0",
-    "passport-local": "^1.0.0",
-    "request": "^2.87.0",
-    "underscore": "^1.9.1"
-  },
-  "devDependencies": {
     "eslint": "^6.1.0",
     "eslint-config-airbnb": "^18.0.1",
-    "eslint-plugin-import": "^2.18.2"
+    "eslint-plugin-import": "^2.18.2",
+    "morgan": "^1.9.1",
+    "nodemon": "^2.0.2",
+    "request": "^2.88.2",
+    "underscore": "^1.9.2"
   }
 }
