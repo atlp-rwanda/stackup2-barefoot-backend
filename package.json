@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha --require @babel/register ./tests/*.js  --timeout 25000 --exit",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "start": "babel-node ./src/index.js"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",

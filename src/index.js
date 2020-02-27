@@ -1,19 +1,12 @@
-const fs = require("fs"),
-    http = require("http"),
-    path = require("path"),
-    methods = require("methods"),
-    express = require("express"),
-    bodyParser = require("body-parser"),
-    session = require("express-session"),
-    cors = require("cors"),
-    passport = require("passport"),
-    errorhandler = require("errorhandler"),
-    mongoose = require("mongoose");
+import express from 'express';
+import { serve, setup } from 'swagger-ui-express';
+import SwaggerSpecs from '../public/api-docs/swagger.json';
 
 const isProduction = process.env.NODE_ENV === "production";
 
 
 const app = express();
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 
