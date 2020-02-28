@@ -9,8 +9,6 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
-
-
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(express.static(`${__dirname}/public`));
@@ -18,7 +16,7 @@ app.use(express.static(`${__dirname}/public`));
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'welcome' });
 });
-// finally, let's start our server...
+
 const server = app.listen(process.env.PORT || 3000, () => {
   console.log(`Listening on port ${server.address().port}`);
 });
