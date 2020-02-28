@@ -1,0 +1,14 @@
+{
+  "name": "stackup2-barefoot-backend",
+  "description": "Make company global travel and accommodation easy and convenient for the strong workforce of savvy members of staff, by leveraging the modern web.",
+  "keywords": [
+    "express",
+    "postgreSQL",
+    "API"
+  ],
+  "website": "https://stackup2-barefoot-backend.herokuapp.com/",
+  "repository": "https://github.com/Stackup-Rwanda/stackup2-barefoot-backend",
+  "success_url": "/",
+  "env": {
+  }
+}

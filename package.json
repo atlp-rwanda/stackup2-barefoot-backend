@@ -4,10 +4,10 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
+    "start": "babel-node ./src/index.js",
+    "dev": "nodemon --exec babel-node ./src/index.js",
     "test": "nyc mocha --require @babel/register ./tests/*.js  --timeout 25000 --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "dev": "nodemon ./src/index.js --exec babel-node --presets @babel/preset-env",
-    "start": "babel-node ./src/index.js",
     "db:connect": "babel-node ./src/database/models/ connect"
   },
   "author": "Andela Simulations Programme",
