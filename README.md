@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/Stackup-Rwanda/stackup2-barefoot-backend/badge.svg?branch=develop)](https://coveralls.io/github/Stackup-Rwanda/stackup2-barefoot-backend?branch=develop)
+
 Barefoot Nomad - Making company travel and accomodation easy and convinient.
 =======
 
