@@ -6,7 +6,8 @@
   "scripts": {
     "test": "nyc mocha --require @babel/register ./tests/*.js  --timeout 25000 --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "start": "nodemon ./src/index.js --exec babel-node --presets @babel/preset-env",
+    "dev": "nodemon ./src/index.js --exec babel-node --presets @babel/preset-env",
+    "start": "babel-node ./src/index.js",
     "db:connect": "babel-node ./src/database/models/ connect"
   },
   "author": "Andela Simulations Programme",
@@ -31,6 +32,7 @@
     "jsonwebtoken": "^8.5.1",
     "make-runnable": "^1.3.6",
     "method-override": "^2.3.10",
+    "morgan": "^1.9.1",
     "methods": "^1.1.2",
     "pg": "^7.18.2"
   },
@@ -41,7 +43,6 @@
     "eslint": "^6.1.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-plugin-import": "^2.18.2",
-    "morgan": "^1.9.1",
     "nodemon": "^2.0.2",
     "request": "^2.88.2",
     "underscore": "^1.9.2"
