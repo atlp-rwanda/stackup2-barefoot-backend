@@ -7,6 +7,7 @@ import { serve, setup } from 'swagger-ui-express';
 import '@babel/polyfill';
 import swaggerSpecs from '../public/api-docs/swagger.json';
 import allRoutes from './routes/index';
+import passport from './config/passport';
 
 dotenv.config();
 
@@ -23,6 +24,8 @@ app.use(morgan('development'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(`${__dirname}/public`));
+app.use(passport.initialize());
+
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'welcome' });
 });

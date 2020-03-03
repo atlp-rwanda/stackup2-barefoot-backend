@@ -1,4 +1,3 @@
-
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('users', {
     id: {
@@ -20,6 +19,12 @@ module.exports = {
       type: Sequelize.STRING
     },
     password: {
+      type: Sequelize.STRING
+    },
+    socialMediaId: {
+      type: Sequelize.STRING
+    },
+    provider: {
       type: Sequelize.STRING
     },
     gender: {

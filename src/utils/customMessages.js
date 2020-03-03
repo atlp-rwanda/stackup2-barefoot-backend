@@ -20,7 +20,8 @@ const messages = {
   invalidGender: 'Gender should be male or female',
   invalidPassword: 'Password should consists of alphabets, numbers and at least 8 characters minimum',
   invalidAddress: 'Address should consists of alphabets and at least 3 minimum characters, without whitespace or special characters',
-  verifyMessage: 'You have now verified your account successfully'
+  verifyMessage: 'You have now verified your account successfully',
+  socialMediaAuthSucess: 'User authenticated successfully',
 };
 
 export default messages;
