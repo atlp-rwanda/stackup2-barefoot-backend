@@ -1,30 +1,39 @@
-import pg from 'pg';
-import dotenv from 'dotenv';
+import { readdirSync } from 'fs';
+import { basename as _basename, join } from 'path';
+import { Sequelize } from 'sequelize';
 
-dotenv.config();
-const DATABASE_URI = `postgres://${process.env.DEV_DB_USERNAME}:${process.env.DEV_DB_PASSWORD}@${process.env.DEV_DB_HOSTNAME}:${process.env.DEV_DB_PORT}/${process.env.DEV_DB_NAME}`;
-const pool = new pg.Pool({
-  connectionString: DATABASE_URI,
-});
+require('dotenv').config();
 
-pool.on('connect', () => {
-});
+const basename = _basename(__filename);
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config.js')[env];
 
-const connect = () => {
-  pool
-    .query('SELECT now();')
-    .then((res) => {
-      pool.end();
-    })
-    .catch((err) => {
-      pool.end();
-    });
-  pool.on('remove', () => {
-    process.exit(0);
+const db = {};
+
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
+
+readdirSync(__dirname)
+  .filter((file) => {
+    const isTrue = (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+    return isTrue;
+  })
+  .forEach((file) => {
+    const model = sequelize.import(join(__dirname, file));
+    db[model.name] = model;
   });
-};
 
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
-export { connect, pool };
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-require('make-runnable');
+export default db;
