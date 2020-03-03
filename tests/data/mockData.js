@@ -2,20 +2,82 @@ export default {
   signupData: {
     firstName: 'John',
     lastName: 'Doe',
+    username: 'Jdoe',
     email: 'john@doe.com',
-    address: 'Kigali, Rwanda',
-    password: 'helloworld',
+    address: 'Kigali',
+    password: 'helloworld3',
     gender: 'Male',
   },
-  incompleteData: {
+  invalidFirstname: {
+    firstName: 'Jo 3hn',
+    lastName: 'Doe',
+    username: 'Jdoe',
+    email: 'john@doe.com',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'Male',
+  },
+  invalidLastname: {
+    firstName: 'John',
+    lastName: 'Do 3e',
+    username: 'Jdoe',
+    email: 'john@doe.com',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'Male',
+  },
+  invalidUsername: {
     firstName: 'John',
     lastName: 'Doe',
-    email: 'johnny@doe.com',
+    username: 'Jdo,e',
+    email: 'john@doe.com',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'Male',
+  },
+  invalidEmail: {
+    firstName: 'John',
+    lastName: 'Doe',
+    username: 'Jdoe',
+    email: 'john@doe',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'Male',
+  },
+  invalidGender: {
+    firstName: 'John',
+    lastName: 'Doe',
+    username: 'Jdoe',
+    email: 'john@doe.com',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'none',
+  },
+  invalidPassword: {
+    firstName: 'John',
+    lastName: 'Doe',
+    username: 'Jdoe',
+    email: 'john@doe.com',
+    address: 'Kigali',
+    password: 'hellowo',
+    gender: 'Male',
+  },
+  invalidAddress: {
+    firstName: 'John',
+    lastName: 'Doe',
+    username: 'Jdoe',
+    email: 'john@doe.com',
+    address: 'Kiga 3li',
+    password: 'helloworld3',
     gender: 'Male',
   },
   realLoginDataFromTheDb: {
     email: 'john@doe.com',
-    password: 'helloworld'
+    password: 'helloworld3'
+  },
+  realLoginDataFromTheDb1: {
+    username: 'Jdoe',
+    password: 'helloworld3'
   },
   WrongLoginPasswordData: {
     email: 'john@doe.com',
@@ -23,7 +85,7 @@ export default {
   },
   WrongLoginEmailData: {
     email: 'emmamugi@gmail.com',
-    password: 'helloworld'
+    password: 'helloworld3'
   },
   emptyLoginPassword: {
     email: 'john@doe.com',

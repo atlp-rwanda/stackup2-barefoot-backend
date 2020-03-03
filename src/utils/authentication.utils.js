@@ -11,6 +11,7 @@ const getFormData = async (payload) => {
   const {
     firstName,
     lastName,
+    username,
     email,
     password,
     gender,
@@ -19,6 +20,7 @@ const getFormData = async (payload) => {
   const data = {
     firstName,
     lastName,
+    username,
     email,
     password,
     gender,

@@ -15,11 +15,11 @@ const { isPasswordTrue } = utils;
  * @returns{object} allows next() if email and password exist else it prompts user to enter them
  */
 export const bothEmailAndPasswordExist = (req, res, next) => {
-  const { email, password } = req.body;
-  if (email || password) {
+  const { email, password, username } = req.body;
+  if (email || password || username) {
     next();
   } else {
-    errorResponse(res, statusCodes.badRequest, customMessages.loginPasswordAndEmailEmpty);
+    errorResponse(res, statusCodes.badRequest, customMessages.loginPasswordAndEmailOrUsernameEmpty);
   }
 };
 
@@ -31,16 +31,15 @@ export const bothEmailAndPasswordExist = (req, res, next) => {
  * @returns{object} return object of data
  */
 export const loginDataExistOnByOne = (req, res, next) => {
-  const { email, password } = req.body;
-  if (email) {
+  const { email, password, username } = req.body;
+  if (email || username) {
     if (password) {
-      next();
-    } else {
-      errorResponse(res, statusCodes.badRequest, customMessages.loginPasswordEmpty);
+      return next();
     }
-  } else {
-    errorResponse(res, statusCodes.badRequest, customMessages.loginEmailEmpty);
-  }
+     return errorResponse(res, statusCodes.badRequest, customMessages.loginPasswordEmpty);
+  } 
+  return errorResponse(res, statusCodes.badRequest, customMessages.loginEmailOrUsernameEmpty);
+  
 };
 
 
@@ -53,9 +52,10 @@ export const loginDataExistOnByOne = (req, res, next) => {
    *  if the provided credentials are valid from the database
    */
 export const verifyCredentials = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, username } = req.body;
   try {
-    const gottenUser = await UserService.findUserByEmail(email);
+    const login = username === undefined ? email : username;
+    const gottenUser = await UserService.findUserByEmailOrUsername(login);
     const { dataValues } = gottenUser;
     const passwordFromDb = dataValues.password;
     req.foundUser = dataValues;

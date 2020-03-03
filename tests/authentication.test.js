@@ -5,13 +5,114 @@ import customMessages from '../src/utils/customMessages';
 import statusCodes from '../src/utils/statusCodes';
 import mockData from './data/mockData';
 
-const { signupData, incompleteData } = mockData;
 let generatedToken;
+const { 
+signupData,
+invalidFirstname, 
+invalidLastname,
+invalidUsername, 
+invalidEmail, 
+invalidGender,
+invalidPassword, 
+invalidAddress 
+} = mockData;
+
 chai.use(chaiHttp);
 chai.should();
 
-// Signup
+
 describe('User sign up', () => {
+  it('Should return 400 if firstname is invalid', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(invalidFirstname)
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.invalidFirstname);
+        done();
+      });
+  });
+  it('Should return 400 if lastname is invalid', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(invalidLastname)
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.invalidLastname);
+        done();
+      });
+  });
+  it('Should return 400 if username is invalid', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(invalidUsername)
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.invalidUsername);
+        done();
+      });
+  });
+  it('Should return 400 if email is invalid', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(invalidEmail)
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.invalidEmail);
+        done();
+      });
+  });
+  it('Should return 400 if gender is invalid', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(invalidGender)
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.invalidGender);
+        done();
+      });
+  });
+  it('Should return 400 if password is invalid', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(invalidPassword)
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.invalidPassword);
+        done();
+      });
+  });
+  it('Should return 400 if address is invalid', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(invalidAddress)
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.invalidAddress);
+        done();
+      });
+  });
   it('Should return 201', (done) => {
     chai
       .request(server)
@@ -27,25 +128,21 @@ describe('User sign up', () => {
         done();
       });
   });
-  it('Should return 400', (done) => {
+  it('Should return 409 if provided email or username exist', (done) => {
     chai
       .request(server)
       .post('/api/auth/signup')
-      .send(incompleteData)
+      .send(signupData)
       .end((err, res) => {
         const { error } = res.body;
-        expect(res.status).to.equal(statusCodes.badRequest);
-        expect(error);
-        expect(error).to.equal(customMessages.userSignupFailed);
+        expect(res.status).to.equal(statusCodes.conflict);
+        expect(error).to.equal(customMessages.alreadyExistEmailOrUsername);
         done();
       });
   });
 });
-
-// Login
 describe('Login', () => {
-  // login with real data from db
-  it(`Login with real data which are in the db, should return an
+  it(`Login with real data especially email which are in the db, should return an
    object with a property of message and token`, (done) => {
     chai
       .request(server)
@@ -61,7 +158,22 @@ describe('Login', () => {
         done();
       });
   });
-  // login with empty credentials
+  it(`Login with real data especially username which are in the db, should return an
+   object with a property of message and token`, (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/login')
+      .set('Accept', 'Application/json')
+      .send(mockData.realLoginDataFromTheDb1)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('message').to.equal('Successfully logged in');
+        expect(res.body).to.have.property('token');
+        done();
+      });
+  });
   it('Login with empty credentials should return an object with property error', (done) => {
     chai
       .request(server)
@@ -72,11 +184,10 @@ describe('Login', () => {
         if (err) done(err);
         expect(res).to.have.status(400);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('error').to.equal('Please enter your email and your password');
+        expect(res.body).to.have.property('error').to.equal('Please enter your email or username and your password');
         done();
       });
   });
-  // login with empty credentials
   it('Login with empty password', (done) => {
     chai
       .request(server)
@@ -91,7 +202,6 @@ describe('Login', () => {
         done();
       });
   });
-  // login with empty credentials
   it('Login with empty password', (done) => {
     chai
       .request(server)
@@ -102,11 +212,10 @@ describe('Login', () => {
         if (err) done(err);
         expect(res).to.have.status(400);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('error').to.equal('Please enter your email');
+        expect(res.body).to.have.property('error').to.equal('Please enter your email or username');
         done();
       });
   });
-  // login with wrong password
   it('Login with wrong password', (done) => {
     chai
       .request(server)
@@ -121,7 +230,6 @@ describe('Login', () => {
         done();
       });
   });
-  // login with wrong email
   it('Login with wrong email', (done) => {
     chai
       .request(server)
@@ -141,7 +249,7 @@ describe('Reset Email', () => {
   // reset email password sent
   it('reset correct password email', (done) => {
     const user = {
-      email: 'ugizwenayodiny@gmail.com'
+      email: 'john@doe.com'
     };
     chai
       .request(server)
@@ -157,7 +265,7 @@ describe('Reset Email', () => {
   // reset email password not sent
   it('reset wrong password email', (done) => {
     const user = {
-      email: 'ugizwenayodiny1@gmail.com'
+      email: 'joe1@gmail.com'
     };
     chai
       .request(server)
@@ -172,7 +280,7 @@ describe('Reset Email', () => {
   // success update password
   it('update the password', (done) => {
     const pass = {
-      password: 'ugizwe'
+      password: 'markjoe45'
     };
     chai
       .request(server)

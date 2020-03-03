@@ -14,7 +14,13 @@ const {
   decodeToken
 } = utils;
 const { successResponse, errorResponse, updatedResponse } = responseHandlers;
-const { handleSignUp, findUserByEmail, updateUserPassword } = UserService;
+const { 
+  handleSignUp, 
+  findUserByEmail, 
+  findUserByEmailOrUsername, 
+  findUserEmailIfExist, 
+  updateUserPassword 
+} = UserService;
 
 /**
    * @description User authentication class
@@ -27,18 +33,20 @@ export default class AuthenticationController {
    * @description User sign up controller
    */
   static async signUp(req, res) {
-    try {
       const payload = await getFormData(req.body);
+      const { email, username } = payload;
+      const checkEmail = await findUserEmailIfExist(email.toLowerCase());
+      const checkUsername = await findUserByEmailOrUsername(username);
+      if (checkEmail || checkUsername) {
+        return errorResponse(res, statusCodes.conflict, customMessages.alreadyExistEmailOrUsername);
+      }
       const password = await passwordHasher(payload.password);
       const dataWithoutPassword = _.omit(payload, 'password');
       const userData = { ...dataWithoutPassword, password };
       const saveUser = await handleSignUp(userData);
       const savedUserObject = _.omit(saveUser, 'password');
       const token = await generateToken(savedUserObject);
-      return successResponse(res, statusCodes.created, customMessages.userSignupSuccess, token);
-    } catch (error) {
-      return errorResponse(res, statusCodes.badRequest, customMessages.userSignupFailed);
-    }
+      return successResponse(res, statusCodes.created, customMessages.userSignupSuccess, token);    
   }
 
   /**

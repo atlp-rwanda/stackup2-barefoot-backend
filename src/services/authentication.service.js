@@ -1,5 +1,7 @@
-import models from '../database/models';
+import { user } from '../database/models';
+import { Sequelize } from 'sequelize';
 
+const sequelize = Sequelize;
 /**
  * @description Class to handle users
  */
@@ -10,7 +12,6 @@ export default class UserService {
    * @returns {object} dataValues User object that was saved to the database
     */
   static handleSignUp = async (data) => {
-    const { user } = models;
     const role = 'requester';
     const isVerified = false;
     const newData = {
@@ -24,6 +25,7 @@ export default class UserService {
         fields: [
           'firstName',
           'lastName',
+          'username',
           'email',
           'password',
           'gender',
@@ -42,10 +44,40 @@ export default class UserService {
    * @returns {object} returns a user with the email in params
    */
   static findUserByEmail = async (email) => {
-    const { user } = models;
     const currUser = await user.findOne({
       where: { email }
     });
+    return currUser;
+  };
+
+  /**
+   * function findOne() returns all users in db
+   * @param {string} value
+   * @returns {object} returns a user with the value of email or username in params
+   */
+  static findUserByEmailOrUsername = async value => {
+    let currUser = await user.findOne({
+      where: { username: value },
+    });
+    if (!currUser) {
+      currUser = await user.findOne({
+        where: { email: value },
+      });
+    }
+    return currUser;
+  };
+
+  /**
+   * function findOne() returns all users in db
+   * @param {string} email
+   * @returns {object} returns a user with the email in params in lowercase
+   */
+  static findUserEmailIfExist = async (email) => {
+    const currUser = await user.findOne({
+      where: {
+        email: sequelize.where(sequelize.fn('LOWER', sequelize.col('email')), 'LIKE', `%${email}%`)
+    }
+  });
     return currUser;
   };
 
@@ -56,7 +88,6 @@ export default class UserService {
    * @returns {object} returns an updated user
    */
   static updateUserPassword = async (password, id) => {
-    const { user } = models;
     const updatedUser = await user.update(
       {
         password
