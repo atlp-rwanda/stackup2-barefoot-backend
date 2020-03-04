@@ -66,9 +66,20 @@ const generateToken = async (data) => {
   return token;
 };
 
+/**
+   * @param {object} token encoded details for the owner of the account
+   * @returns {object} details for the owner of the account
+   * @description decode the token to get account owner details
+   */
+const decodeToken = async (token) => {
+  const data = jwt.verify(token, process.env.JWT_KEY);
+  return data;
+};
+
 export default {
   getFormData,
   passwordHasher,
   isPasswordTrue,
   generateToken,
+  decodeToken
 };

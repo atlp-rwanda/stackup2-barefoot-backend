@@ -4,6 +4,7 @@ const codes = {
   badRequest: 400,
   unAuthorized: 401,
   conflict: 409,
+  forbidden: 403,
 };
 
 export default codes;

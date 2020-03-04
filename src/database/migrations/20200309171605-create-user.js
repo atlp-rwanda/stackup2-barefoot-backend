@@ -1,3 +1,4 @@
+
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('users', {
     id: {
@@ -13,8 +14,7 @@ module.exports = {
       type: Sequelize.STRING
     },
     email: {
-      type: Sequelize.STRING,
-      unique: true
+      type: Sequelize.STRING
     },
     password: {
       type: Sequelize.STRING

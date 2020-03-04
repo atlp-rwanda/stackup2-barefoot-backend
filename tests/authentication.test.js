@@ -6,7 +6,7 @@ import statusCodes from '../src/utils/statusCodes';
 import mockData from './data/mockData';
 
 const { signupData, incompleteData } = mockData;
-
+let generatedToken;
 chai.use(chaiHttp);
 chai.should();
 
@@ -133,6 +133,95 @@ describe('Login', () => {
         expect(res).to.have.status(400);
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('error').to.equal('Unknown credentials');
+        done();
+      });
+  });
+});
+describe('Reset Email', () => {
+  // reset email password sent
+  it('reset correct password email', (done) => {
+    const user = {
+      email: 'ugizwenayodiny@gmail.com'
+    };
+    chai
+      .request(server)
+      .post('/api/auth/resetpassword')
+      .send(user)
+      .end((err, res) => {
+        generatedToken = res.body.token;
+        res.should.have.status(statusCodes.ok);
+        res.body.message.should.be.equal(customMessages.resetEmail);
+        done();
+      });
+  });
+  // reset email password not sent
+  it('reset wrong password email', (done) => {
+    const user = {
+      email: 'ugizwenayodiny1@gmail.com'
+    };
+    chai
+      .request(server)
+      .post('/api/auth/resetpassword')
+      .send(user)
+      .end((err, res) => {
+        res.should.have.status(statusCodes.forbidden);
+        res.body.error.should.be.equal(customMessages.notExistUser);
+        done();
+      });
+  });
+  // success update password
+  it('update the password', (done) => {
+    const pass = {
+      password: 'ugizwe'
+    };
+    chai
+      .request(server)
+      .post(`/api/auth/resetpassword/${generatedToken}`)
+      .send(pass)
+      .end((err, res) => {
+        res.should.have.status(statusCodes.ok);
+        res.body.message.should.be.equal(customMessages.changed);
+        done();
+      });
+  });
+  // welcome test
+  it('welcome test', (done) => {
+    chai
+      .request(server)
+      .get('/')
+      .end((err, res) => {
+        res.should.have.status(statusCodes.ok);
+        done();
+      });
+  });
+  // occured an error while sending email
+  it('occured reset email', (done) => {
+    const user = {
+      email: {}
+    };
+    chai
+      .request(server)
+      .post('/api/auth/resetpassword')
+      .send(user)
+      .end((err, res) => {
+        res.should.have.status(statusCodes.badRequest);
+        res.body.error.should.be.equal(customMessages.errorMessage);
+        done();
+      });
+  });
+  // occured an error while updating
+  it('errored update of the password ', (done) => {
+    const pass = {
+      password: 'sesese'
+    };
+    const wrongToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVnaXp3ZW5heW9kaW55QGdtYWlsLmNvbSIsInVzZXJJZCI6MSwiZmlyc3ROYW1lIjoiRGl2aW5lIiwiaWF0IjoxNTgzNDkyMzcxfQ.NHfHvcHcjVhaTYfrywu0-voW_VdVgH2Qcj4CTMOFhdU';
+    chai
+      .request(server)
+      .post(`/api/auth/resetpassword/${wrongToken}`)
+      .send(pass)
+      .end((err, res) => {
+        res.should.have.status(statusCodes.badRequest);
+        res.body.error.should.be.equal(customMessages.errorMessage);
         done();
       });
   });
