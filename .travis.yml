@@ -6,6 +6,12 @@ node_js:
 install:
   - npm install
 
+services:
+  - postgresql
+
+before_script:
+  - psql -c 'create database barefootnomad_db_test;' -U postgres
+
 script:
   - npm test
  

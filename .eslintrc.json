@@ -51,7 +51,9 @@
         "require": {
           "FunctionDeclaration": true,
           "MethodDefinition": true,
-          "ClassDeclaration": true
+          "ClassDeclaration": true,
+          "ArrowFunctionExpression": true,
+          "FunctionExpression": true
         }
       }
     ]
@@ -59,5 +61,6 @@
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module"
-  }
+  },
+  "parser": "babel-eslint"
 }
