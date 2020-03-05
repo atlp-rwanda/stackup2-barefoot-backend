@@ -13,4 +13,24 @@ export default {
     email: 'johnny@doe.com',
     gender: 'Male',
   },
+  realLoginDataFromTheDb: {
+    email: 'john@doe.com',
+    password: 'helloworld'
+  },
+  WrongLoginPasswordData: {
+    email: 'john@doe.com',
+    password: '12334ewe'
+  },
+  WrongLoginEmailData: {
+    email: 'emmamugi@gmail.com',
+    password: 'helloworld'
+  },
+  emptyLoginPassword: {
+    email: 'john@doe.com',
+    password: ''
+  },
+  emptyLoginEmail: {
+    email: '',
+    password: 'hheerr'
+  }
 };

@@ -35,4 +35,17 @@ export default class UserService {
     );
     return dataValues;
   };
+
+  /**
+   * function findAll() returns all users in db
+   * @param {string} email
+   * @returns {object} returns a user with the email in params
+   */
+  static findUserByEmail = async (email) => {
+    const { user } = models;
+    const currUser = await user.findOne({
+      where: { email }
+    });
+    return currUser;
+  }
 }
