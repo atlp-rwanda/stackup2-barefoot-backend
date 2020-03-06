@@ -4,7 +4,7 @@ import { bothEmailAndPasswordExist, loginDataExistOnByOne, verifyCredentials } f
 import { signupValidation } from '../../middlewares/authValidation';
 
 const {
-  signUp, userLogin, sendResetEmail, updatePassword
+  signUp, userLogin, sendResetEmail, updatePassword, verify
 } = AuthenticationController;
 
 const authenticationRouter = express.Router();
@@ -13,5 +13,6 @@ authenticationRouter.post('/signup', signupValidation, signUp);
 authenticationRouter.post('/login', bothEmailAndPasswordExist, loginDataExistOnByOne, verifyCredentials, userLogin);
 authenticationRouter.post('/resetpassword', sendResetEmail);
 authenticationRouter.post('/resetpassword/:token', updatePassword);
+authenticationRouter.get('/verify', verify);
 
 export default authenticationRouter;

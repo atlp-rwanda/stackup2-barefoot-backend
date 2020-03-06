@@ -12,4 +12,11 @@ const changedMessage = {
   outro: 'if you have any problem, reach out'
 };
 
-export { resetMessage, changedMessage };
+const verifyMessage = {
+  intro: 'Congratulations, you successfully created the account!',
+  instructions: 'Confirm your account by clicking on below button',
+  text: 'Confirm',
+  outro: 'Barefoot Nomad'
+};
+
+export { resetMessage, changedMessage, verifyMessage };
