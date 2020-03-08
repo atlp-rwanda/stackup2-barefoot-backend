@@ -9,9 +9,10 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "localhost:3000",
+  "host": "stackup2-barefoot-backend-stag.herokuapp.com",
+  "basePath": "/api",
   "schemes": [
-    "http"
+    "https"
   ],
   "consumes": [
     "application/json"
@@ -20,17 +21,38 @@
     "application/json"
   ],
   "paths": {
-    "/": {
-      "get": {
-        "summary": "Welcome",
+    "/auth/signup": {
+      "post": {
+        "summary": "create an account",
+        "tags": [
+          "Sign up"
+        ],
+        "description": "User sign up endpoint",
         "produces": [
           "application/json"
         ],
-        "responses": {
-          "200": {
-            "description": "API endpoint for testing docs",
+        "parameters": [
+          {
+            "name": "User information",
+            "in": "body",
+            "description": "User information required for sign up",
+            "required": true,
             "schema": {
-              "$ref": "#/definitions/response"
+              "$ref": "#/definitions/signup"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/responses/signupSuccess"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/responses/signupFail"
             }
           }
         }
@@ -38,11 +60,83 @@
     }
   },
   "definitions": {
-    "response": {
+    "signup": {
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "required": true,
+          "example": "John"
+        },
+        "lastName": {
+          "type": "string",
+          "required": true,
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "required": true,
+          "example": "john@doe.com"
+        },
+        "address": {
+          "type": "string",
+          "required": true,
+          "example": "Kigali, Rwanda"
+        },
+        "password": {
+          "type": "string",
+          "required": true,
+          "example": "hellothere"
+        },
+        "gender": {
+          "type": "string",
+          "required": true,
+          "example": "Male"
+        }
+      }
+    },
+    "incompleteSignup": {
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "required": true,
+          "example": "John"
+        },
+        "lastName": {
+          "type": "string",
+          "required": true,
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "required": true,
+          "example": "john@doe.com"
+        },
+        "address": {
+          "type": "string",
+          "required": true,
+          "example": "Kigali, Rwanda"
+        }
+      }
+    }
+  },
+  "responses": {
+    "signupSuccess": {
       "properties": {
         "message": {
           "type": "string",
-          "example": "welcome"
+          "example": "Account created successfully"
+        },
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR....."
+        }
+      }
+    },
+    "signupFail": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "Sign up failed! Please try again later"
         }
       }
     }
