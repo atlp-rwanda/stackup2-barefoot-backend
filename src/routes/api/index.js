@@ -1,8 +1,8 @@
 import express from 'express';
-import authenticationRoutes from './authentication.routes';
+import authenticationRouter from './authentication.routes';
 
-const router = express.Router();
+const apiRouter = express.Router();
 
-router.use('/auth', authenticationRoutes);
+apiRouter.use('/auth', authenticationRouter);
 
-export default router;
+export default apiRouter;

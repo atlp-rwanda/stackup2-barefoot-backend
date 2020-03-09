@@ -8,7 +8,7 @@ import UserService from '../services/authentication.service';
 const {
   passwordHasher,
   generateToken,
-  getFormData
+  getFormData,
 } = utils;
 const { successResponse, errorResponse } = responseHandlers;
 const { handleSignUp } = UserService;
@@ -16,7 +16,7 @@ const { handleSignUp } = UserService;
 /**
    * @description User authentication class
    */
-export default class AuthenticationControler {
+export default class AuthenticationController {
   /**
    * @param {object} req request object
    * @param {object} res response object
@@ -37,4 +37,16 @@ export default class AuthenticationControler {
       return errorResponse(res, statusCodes.badRequest, customMessages.userSignupFailed);
     }
   }
+
+  /**
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} sends response to the user
+   * @description function userLogin() sends the response of successful login
+   */
+  static userLogin = async (req, res) => {
+    const { foundUser } = req;
+    const token = await generateToken(foundUser);
+    successResponse(res, statusCodes.ok, customMessages.loginSuccess, token);
+  };
 }

@@ -1,10 +1,14 @@
 import express from 'express';
-import AuthenticationControler from '../../controllers/authentication.controller';
+import AuthenticationController from '../../controllers/authentication.controller';
+import { bothEmailAndPasswordExist, loginDataExistOnByOne, verifyCredentials } from '../../middlewares/credentialChecker';
 
-const { signUp } = AuthenticationControler;
+const {
+  signUp, userLogin
+} = AuthenticationController;
 
-const router = express.Router();
+const authenticationRouter = express.Router();
 
-router.post('/signup', signUp);
+authenticationRouter.post('/signup', signUp);
+authenticationRouter.post('/login', bothEmailAndPasswordExist, loginDataExistOnByOne, verifyCredentials, userLogin);
 
-export default router;
+export default authenticationRouter;
