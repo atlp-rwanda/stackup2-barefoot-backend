@@ -39,6 +39,17 @@ const passwordHasher = async (password) => {
 };
 
 /**
+   * function findAll() returns all users in db
+   * @param {string} currPassword
+   * @param {string} hashedPassword
+   * @returns {bool} it returns a boolean about the password matching status
+   */
+const isPasswordTrue = async (currPassword, hashedPassword) => {
+  const isPasswordChecked = await bcrypt.compare(currPassword, hashedPassword);
+  return isPasswordChecked;
+};
+
+/**
 * @param {object} data
 * @returns {string} token
 * @description Generate a jwt token
@@ -58,5 +69,6 @@ const generateToken = async (data) => {
 export default {
   getFormData,
   passwordHasher,
+  isPasswordTrue,
   generateToken,
 };

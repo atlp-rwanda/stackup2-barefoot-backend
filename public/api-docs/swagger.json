@@ -57,6 +57,55 @@
           }
         }
       }
+    },
+  "/auth/login":{
+      "post": {
+        "summary": "User Login",
+        "produces": [
+          "application/json"
+        ],
+        "consumes":[
+          "application/x-www-form-urlencoded"
+        ],
+          "parameters": [
+            {
+              "name": "email",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "format": "email",
+              "description": "Email for securing user's account"
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "format": "password",
+              "description": "Password for authentication"
+            }
+          ],
+        "responses": {
+         "200":{
+           "description":"This is how the response looks like when login is successful",
+            "schema":{
+            "$ref": "#/login-definition/login-response-real-data"
+          }
+         },
+         "400":{
+           "description":"This is how the response looks like when a user sends empty email, or empty password or both empty",
+           "schema":{
+             "$ref":"#/login-definition/login-response-empty-data"
+           }
+         },
+         "401":{
+           "description":"This is how the response looks like when a user sends wrong email or password",
+           "schema":{
+             "$ref":"#/login-definition/login-response-wrong-data"
+           }
+         }
+        }
+      }
     }
   },
   "definitions": {
@@ -137,6 +186,35 @@
         "error": {
           "type": "string",
           "example": "Sign up failed! Please try again later"
+        }
+      }
+    }
+  },"login-definition":{
+    "login-response-real-data":{
+      "properties": {
+        "message":{
+          "type":"string",
+          "example":"successfully logged in"
+        },
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        }
+      }
+    },
+    "login-response-wrong-data":{
+      "properties": {
+        "message":{
+          "type":"string",
+          "example":"unknown credentials"
+        }
+      }
+    },
+    "login-response-empty-data":{
+      "properties": {
+        "message":{
+          "type":"string",
+          "example":"enter your email or password"
         }
       }
     }
