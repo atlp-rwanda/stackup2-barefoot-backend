@@ -10,6 +10,7 @@ import UserService from '../services/authentication.service';
 import sendMail from '../utils/email.util';
 import { resetMessage, changedMessage } from '../utils/emailMessages';
 import sendEmail from '../services/sendEmail.service';
+import redisClient from '../database/redis.config';
 
 const {
   passwordHasher,
@@ -18,11 +19,11 @@ const {
   decodeToken
 } = utils;
 const { successResponse, errorResponse, updatedResponse } = responseHandlers;
-const { 
+const {
   handleSignUp,
-  findUserByEmailOrUsername, 
-  findUserEmailIfExist, 
-  updateUserPassword, 
+  findUserByEmailOrUsername,
+  findUserEmailIfExist,
+  updateUserPassword,
   updateIsVerified
 } = UserService;
 const {
@@ -46,20 +47,20 @@ export default class AuthenticationController {
   static async signUp(req, res) {
     const payload = await getFormData(req.body);
     const { email, username } = payload;
-      const checkEmail = await findUserEmailIfExist(email.toLowerCase());
-      const checkUsername = await findUserByEmailOrUsername(username);
-      if (checkEmail || checkUsername) {
-        return errorResponse(res, statusCodes.conflict, customMessages.alreadyExistEmailOrUsername);
-      }
-      const password = await passwordHasher(payload.password);
-      const dataWithoutPassword = _.omit(payload, 'password');
-      const userData = { ...dataWithoutPassword, password };
-      const saveUser = await handleSignUp(userData);
-      const savedUserObject = _.omit(saveUser, 'password');
-      const token = await generateToken(savedUserObject);
-      await sendEmail.sendSignUpVerificationLink(req.body.email, `${process.env.APP_URL}/api/auth/verify?token=${token}`, req.body.firstName);
-      return successResponse(res, statusCodes.created, customMessages.userSignupSuccess, token);
+    const checkEmail = await findUserEmailIfExist(email.toLowerCase());
+    const checkUsername = await findUserByEmailOrUsername(username);
+    if (checkEmail || checkUsername) {
+      return errorResponse(res, statusCodes.conflict, customMessages.alreadyExistEmailOrUsername);
     }
+    const password = await passwordHasher(payload.password);
+    const dataWithoutPassword = _.omit(payload, 'password');
+    const userData = { ...dataWithoutPassword, password };
+    const saveUser = await handleSignUp(userData);
+    const savedUserObject = _.omit(saveUser, 'password');
+    const token = await generateToken(savedUserObject);
+    await sendEmail.sendSignUpVerificationLink(req.body.email, `${process.env.APP_URL}/api/auth/verify?token=${token}`, req.body.firstName);
+    return successResponse(res, statusCodes.created, customMessages.userSignupSuccess, token);
+  }
 
   /**
    * @param {object} req
@@ -84,15 +85,15 @@ export default class AuthenticationController {
     const {
       intro, instruction, text
     } = resetMessage;
-      const users = await findUserEmailIfExist(email.toLowerCase());
-      if (users) {
-        const user = users.dataValues;
-        const token = await generateToken(user);
-        const url = `${token}`;
-        await sendMail(user.email, user.firstName, intro, instruction, text, url);
-        return successResponse(res, statusCodes.ok, customMessages.resetEmail, token);
-      }
-      return errorResponse(res, statusCodes.forbidden, customMessages.notExistUser);
+    const users = await findUserEmailIfExist(email.toLowerCase());
+    if (users) {
+      const user = users.dataValues;
+      const token = await generateToken(user);
+      const url = `${token}`;
+      await sendMail(user.email, user.firstName, intro, instruction, text, url);
+      return successResponse(res, statusCodes.ok, customMessages.resetEmail, token);
+    }
+    return errorResponse(res, statusCodes.forbidden, customMessages.notExistUser);
   }
 
   /**
@@ -108,13 +109,13 @@ export default class AuthenticationController {
       intro, instruction, text
     } = changedMessage;
 
-      const userDetails = await decodeToken(token);
-      const users = await findUserByEmailOrUsername(userDetails.email);
-      const user = users.dataValues;
-      const hashed = await passwordHasher(password);
-      await updateUserPassword(hashed, user.id);
-      await sendMail(user.email, user.firstName, intro, instruction, text, '#');
-      return updatedResponse(res, statusCodes.ok, customMessages.changed);
+    const userDetails = await decodeToken(token);
+    const users = await findUserByEmailOrUsername(userDetails.email);
+    const user = users.dataValues;
+    const hashed = await passwordHasher(password);
+    await updateUserPassword(hashed, user.id);
+    await sendMail(user.email, user.firstName, intro, instruction, text, '#');
+    return updatedResponse(res, statusCodes.ok, customMessages.changed);
   }
 
   static verify = async (req, res) => {
@@ -161,4 +162,16 @@ export default class AuthenticationController {
       token
     );
   }
+
+  /**
+   * @param {object} req request object
+   * @param {object} res response object
+   * @returns {object} response json object
+   * @description Log user out and save their token
+   */
+  static userLogout = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1];
+    redisClient.sadd('token', token);
+    return successResponse(res, statusCodes.ok, customMessages.userLogoutSuccess);
+  };
 }

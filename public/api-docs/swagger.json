@@ -61,7 +61,9 @@
     "/auth/login": {
       "post": {
         "summary": "User Login",
-        "tags":["User Login"],
+        "tags": [
+          "User Login"
+        ],
         "produces": [
           "application/json"
         ],
@@ -186,13 +188,13 @@
         }
       }
     },
-    "/trips":{
+    "/trips": {
       "post": {
         "summary": "create a one way trip request",
         "produces": [
           "application/json"
         ],
-        "consumes":[
+        "consumes": [
           "application/json"
         ],
         "parameters": [
@@ -252,24 +254,24 @@
           }
         ],
         "responses": {
-         "200":{
-           "description":"Trip request successfuly created",
-            "schema":{
-            "$ref": "#/responses/trip-request-success"
+          "200": {
+            "description": "Trip request successfuly created",
+            "schema": {
+              "$ref": "#/responses/trip-request-success"
+            }
+          },
+          "400": {
+            "description": "failed to create a trip request due to invalid input",
+            "schema": {
+              "$ref": "#/responses/trip-request-fail"
+            }
+          },
+          "401": {
+            "description": "access denied to protected resource",
+            "schema": {
+              "$ref": "#/responses/trip-request-unauthorized"
+            }
           }
-         },
-         "400":{
-           "description":"failed to create a trip request due to invalid input",
-           "schema":{
-             "$ref":"#/responses/trip-request-fail"
-           }
-         },
-         "401":{
-           "description":"access denied to protected resource",
-           "schema":{
-             "$ref":"#/responses/trip-request-unauthorized"
-           }
-         }
         }
       }
     },
@@ -280,10 +282,12 @@
           "User profile"
         ],
         "description": "After a user logged-in, this is an API to get that user's profile endpoint",
-        "produces": [  "application/json"
+        "produces": [
+          "application/json"
         ],
         "parameters": [
-          { "name": "User authentication token",
+          {
+            "name": "User authentication token",
             "in": "body",
             "description": "After login or signup you get a token, that token is the one you paste in here",
             "required": true,
@@ -303,6 +307,160 @@
             "description": "Profile not found",
             "schema": {
               "$ref": "#/responses/profileNotFound"
+            }
+          },
+          "403": {
+            "description": "Unverified account",
+            "schema": {
+              "$ref": "#/responses/verifyYourAccount"
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update user's profile",
+        "tags": [
+          "User profile"
+        ],
+        "description": "Update user profile endpoint",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "format": "email",
+            "description": "Email for securing user's account"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "format": "password",
+            "description": "Password for authentication"
+          },
+          {
+            "name": "firstName",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "User's first name"
+          },
+          {
+            "name": "lastName",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "User's last name"
+          },
+          {
+            "name": "username",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "User's new username"
+          },
+          {
+            "name": "gender",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "User's gender"
+          },
+          {
+            "name": "address",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "User's address (city - state)"
+          },
+          {
+            "name": "role",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "User's role"
+          },
+          {
+            "name": "birthDate",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "User's birthDate"
+          },
+          {
+            "name": "preferredLanguage",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "User's preferredLanguage"
+          },
+          {
+            "name": "preferredCurrency",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "User's preferredCurrency"
+          },
+          {
+            "name": "department",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "The department where you work"
+          },
+          {
+            "name": "lineManager",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "Line manager name"
+          },
+          {
+            "name": "idCardNumber",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "National identity card number or passport"
+          },
+          {
+            "name": "phoneNumber",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "text",
+            "description": "user's phone number including country code"
+          },
+          {
+            "name": "profileImage",
+            "in": "formData",
+            "required": false,
+            "type": "string",
+            "format": "file",
+            "description": "URL to the profile picture of a user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile update success",
+            "schema": {
+              "$ref": "#/responses/profileRetrievalSuccess"
             }
           },
           "403": {
@@ -357,162 +515,7 @@
         }
       }
     },
-    "/profile": {
-      "patch": {
-        "summary": "Update user's profile",
-        "tags": [
-          "User profile"
-        ],
-        "description": "Update user profile endpoint",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-            {
-              "name": "email",
-              "in": "formData",
-              "required": true,
-              "type": "string",
-              "format": "email",
-              "description": "Email for securing user's account"
-            },
-            {
-              "name": "password",
-              "in": "formData",
-              "required": true,
-              "type": "string",
-              "format": "password",
-              "description": "Password for authentication"
-            },
-            {
-              "name": "firstName",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "User's first name"
-            },
-            {
-              "name": "lastName",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "User's last name"
-            },
-            {
-              "name": "username",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "User's new username"
-            },
-            {
-              "name": "gender",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "User's gender"
-            },
-            {
-              "name": "address",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "User's address (city - state)"
-            },
-            {
-              "name": "role",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "User's role"
-            },
-            {
-              "name": "birthDate",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "User's birthDate"
-            },
-            {
-              "name": "preferredLanguage",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "User's preferredLanguage"
-            },
-            {
-              "name": "preferredCurrency",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "User's preferredCurrency"
-            },
-            {
-              "name": "department",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "The department where you work"
-            },
-            {
-              "name": "lineManager",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "Line manager name"
-            },
-            {
-              "name": "idCardNumber",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "National identity card number or passport"
-            },
-            {
-              "name": "phoneNumber",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "text",
-              "description": "user's phone number including country code"
-            },
-            {
-              "name": "profileImage",
-              "in": "formData",
-              "required": false,
-              "type": "string",
-              "format": "file",
-              "description": "URL to the profile picture of a user"
-            }
-          ],
-        "responses": {
-          "200": {
-            "description": "Profile update success",
-            "schema": {
-              "$ref": "#/responses/profileRetrievalSuccess"
-            }
-          },
-          "403": {
-            "description": "Unverified account",
-            "schema": {
-              "$ref": "#/responses/verifyYourAccount"
-            }
-          }
-        }
-      }
-    },"/profile/password":{
+    "/profile/password": {
       "patch": {
         "summary": "User change his password",
         "tags": [
@@ -542,7 +545,8 @@
             }
           }
         ],
-        "responses": {"200": {
+        "responses": {
+          "200": {
             "description": "Your password has been changed successfully",
             "schema": {
               "$ref": "#/responses/update-password-success"
@@ -563,41 +567,88 @@
         }
       }
     },
-    "/api/auth/facebook":{
-    "get": {
-      "summary": "Login using facebook account",
-      "tags":["User Login"],
-      "produces": [
-        "application/json"
-      ],
-      "consumes":[
-        "application/x-www-form-urlencoded"
-      ],
-      "responses": {
-       "200":{
-         "description":"The user is successufully authenticated by facebook"
-       }
+    "/api/auth/facebook": {
+      "get": {
+        "summary": "Login using facebook account",
+        "tags": [
+          "User Login"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "responses": {
+          "200": {
+            "description": "The user is successufully authenticated by facebook"
+          }
+        }
       }
-    }
     },
-    "/auth/google":{
-    "get": {
-      "summary": "Login using google account",
-      "tags":["User Login"],
-      "produces": [
-        "application/json"
-      ],
-      "consumes":[
-        "application/x-www-form-urlencoded"
-      ],
-      "responses": {
-       "200":{
-         "description":"The user is successufully authenticated by google"
-       }
+    "/auth/google": {
+      "get": {
+        "summary": "Login using google account",
+        "tags": [
+          "User Login"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "responses": {
+          "200": {
+            "description": "The user is successufully authenticated by google"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "summary": "Log out",
+        "tags": [
+          "Log out"
+        ],
+        "description": "User logout endpoint",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "User information",
+            "in": "headers",
+            "description": "User information required for logout",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/logout"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/responses/logout-success"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/responses/logout-fail-bad-request"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/responses/logout-fail-unauthorized"
+            }
+          }
+        }
       }
     }
-  }  
-},
+  },
   "definitions": {
     "signup": {
       "properties": {
@@ -635,7 +686,7 @@
     },
     "userProfileHeaders": {
       "properties": {
-        "toke":{
+        "toke": {
           "type": "string",
           "required": true,
           "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -670,7 +721,7 @@
         "example": "didiny"
       }
     },
-    "OneWaytripRequest":{
+    "OneWaytripRequest": {
       "travelFrom": {
         "type": "string",
         "required": true,
@@ -700,6 +751,15 @@
         "type": "boolean",
         "required": true,
         "example": true
+      }
+    },
+    "logout": {
+      "properties": {
+        "Authorization": {
+          "type": "string",
+          "required": true,
+          "example": "Bearer {{token}}"
+        }
       }
     }
   },
@@ -753,126 +813,157 @@
         "error": {
           "type": "string",
           "example": "User does not exist",
-    "update-password-success":{
-      "properties": {
-        "message": {
-          "type": "string",
-          "example": "Your password has been changed, login with new password"
-        }
-      }
-    },
-    "old-password-required":{
-      "properties": {
-        "message":{
-          "type":"string",
-          "example":"enter your old password"
-        }
-      }
-    },"incorrect-old-password":{
-      "properties":{
-        "error":{
-          "type":"string",
-          "example":"You have entered incorrect old password, if you have forgotten your password, logout and reset your password."
-        }
-      }
-    },
-  "profileRetrievalSuccess": {
-      "properties": {
-        "message": {
-          "type": "string",
-          "example": "You profile is successfully retrieved"
+          "update-password-success": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Your password has been changed, login with new password"
+              }
+            }
+          },
+          "old-password-required": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "enter your old password"
+              }
+            }
+          },
+          "incorrect-old-password": {
+            "properties": {
+              "error": {
+                "type": "string",
+                "example": "You have entered incorrect old password, if you have forgotten your password, logout and reset your password."
+              }
+            }
+          },
+          "profileRetrievalSuccess": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "You profile is successfully retrieved"
+              },
+              "data": {
+                "type": "object",
+                "example": {
+                  "firstName": "John",
+                  "lastName": "Doe"
+                }
+              }
+            }
+          },
+          "profileNotFound": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "The user you are trying ton search doesn't exist on our system"
+              }
+            }
+          },
+          "verifyYourAccount": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "You need to verify your account, before getting to profiles"
+              }
+            }
+          },
+          "update-password-fail": {
+            "properties": {
+              "error": {
+                "type": "string",
+                "example": "User does not exist"
+              }
+            }
+          },
+          "trip-request-success": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "trip request successfuly created and waiting for manager approval"
+              }
+            }
+          },
+          "trip-request-fail": {
+            "properties": {
+              "error": {
+                "type": "string",
+                "example": "you must provide a valid date value for \"travel date\""
+              }
+            }
+          },
+          "trip-request-unauthorized": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "access denied, you must login to use this resource"
+              }
+            }
+          }
         },
-        "data": {
-          "type": "object",
-          "example": {
-            "firstName":"John",
-            "lastName":"Doe"
+        "login-definition": {
+          "login-response-real-data": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "successfully logged in"
+              },
+              "token": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              }
+            }
+          },
+          "login-response-wrong-data": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "unknown credentials"
+              }
+            }
+          },
+          "login-response-empty-data": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "enter your email or password"
+              }
+            }
+          },
+          "notLoggedInUser": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "You are not allowed to access this resources, login or signup first"
+              }
+            }
           }
         }
       }
-      },
-      "profileNotFound":{
-        "properties": {
-        "message": {
-          "type": "string",
-          "example": "The user you are trying ton search doesn't exist on our system"
-        }
-      }
-      },
-      "verifyYourAccount":{
-        "properties": {
-        "message": {
-          "type": "string",
-          "example": "You need to verify your account, before getting to profiles"
-        }
-      }
-      },
-    "update-password-fail":{
-      "properties":{
-        "error":{
-          "type":"string",
-          "example":"User does not exist"
-        }
-      }
     },
-    "trip-request-success":{
-      "properties":{
-        "message":{
-          "type":"string",
-          "example":"trip request successfuly created and waiting for manager approval"
-        }
-      }
-    },
-    "trip-request-fail":{
-      "properties":{
-        "error":{
-          "type":"string",
-          "example":"you must provide a valid date value for \"travel date\""
-        }
-      }
-    },
-    "trip-request-unauthorized":{
-      "properties":{
-        "message":{
-          "type":"string",
-          "example":"access denied, you must login to use this resource"
-        }
-      }
-    }
-  },
-  "login-definition": {
-    "login-response-real-data": {
+    "logout-success": {
       "properties": {
         "message": {
           "type": "string",
-          "example": "successfully logged in"
-        },
-        "token": {
-          "type": "string",
-          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-      }
-    }
-  },
-    "login-response-wrong-data":{
-      "properties": {
-        "message": {
-          "type": "string",
-          "example": "unknown credentials"
+          "example": "Logout successful"
         }
       }
     },
-    "login-response-empty-data": {
+    "logout-fail-bad-request": {
       "properties": {
         "message": {
           "type": "string",
-          "example": "enter your email or password"
+          "example": "Authentication failed. Token is missing"
+        }
+      }
+    },
+    "logout-fail-unauthorized": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Sorry, we were unable to verify your identity, you must login to use this resource"
         }
       }
     }
-      ,"notLoggedInUser":{
-        "properties": {
-        "message": {
-          "type": "string",
-          "example": "You are not allowed to access this resources, login or signup first"
-        }}}}}}}}
-    
+  }
+}

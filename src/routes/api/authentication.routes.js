@@ -4,10 +4,19 @@ import { bothEmailAndPasswordExist, loginDataExistOnByOne, verifyCredentials } f
 import passport from '../../config/passport';
 import { signupValidation, passwordValidation, validateResetEmail } from '../../middlewares/authValidation';
 import { verifyToken } from '../../utils/validations';
+import Authentication from '../../middlewares/authentication';
 
 const {
-  signUp, userLogin, sendResetEmail, updatePassword, verify
+  signUp,
+  userLogin,
+  sendResetEmail,
+  updatePassword,
+  verify,
+  userLogout
 } = AuthenticationController;
+const {
+  isUserLoggedInAndVerified
+} = Authentication;
 
 const authenticationRouter = express.Router();
 
@@ -16,6 +25,7 @@ authenticationRouter.post('/login', bothEmailAndPasswordExist, loginDataExistOnB
 authenticationRouter.post('/resetpassword', validateResetEmail, sendResetEmail);
 authenticationRouter.post('/resetpassword/:token', passwordValidation, verifyToken, updatePassword);
 authenticationRouter.get('/verify', verify);
+authenticationRouter.get('/logout', isUserLoggedInAndVerified, userLogout);
 
 authenticationRouter.get('/facebook', passport.authenticate('facebook'));
 authenticationRouter.get('/facebook/callback', passport.authenticate('facebook', { session: false }), AuthenticationController.facebookLogin);

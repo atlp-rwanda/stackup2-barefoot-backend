@@ -12,8 +12,8 @@ const {
 const {
   invalidTravelType,
   oneWayTripRequestCreated,
-  tokenVerifyFailed,
-  tokenAbsent,
+  tokenInvalid,
+  tokenMissing,
   userSignupSuccess,
   accountNotVerified,
   verifyMessage,
@@ -170,10 +170,10 @@ describe('One way trip request', () => {
       .end((err, res) => {
         if (err) done(err);
         const { error } = res.body;
-        expect(res.status).to.equal(unAuthorized);
+        expect(res.status).to.equal(badRequest);
         expect(error);
         expect(error).to.be.a('string');
-        expect(error).to.equal(tokenAbsent);
+        expect(error).to.equal(tokenMissing);
         done();
       });
   });
@@ -187,10 +187,10 @@ describe('One way trip request', () => {
       .end((err, res) => {
         if (err) done(err);
         const { error } = res.body;
-        expect(res.status).to.equal(unAuthorized);
+        expect(res.status).to.equal(badRequest);
         expect(error);
         expect(error).to.be.a('string');
-        expect(error).to.equal(tokenVerifyFailed);
+        expect(error).to.equal(tokenInvalid);
         done();
       });
   });

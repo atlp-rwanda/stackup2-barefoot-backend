@@ -6,22 +6,27 @@ import customMessages from '../../src/utils/customMessages';
 import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
 import AuthenticationService from '../../src/services/authentication.service';
+import redisClient from '../../src/database/redis.config';
+import BackgroundTasks from '../../src/utils/backgroundTasks.utils';
+import scheduler from '../../src/taskScheduler';
 
 let generatedToken;
-const { 
-signupData,
-invalidFirstname, 
-invalidLastname,
-invalidUsername, 
-invalidEmail, 
-invalidGender,
-invalidPassword, 
-invalidAddress 
+const {
+  signupData,
+  invalidFirstname,
+  invalidLastname,
+  invalidUsername,
+  invalidEmail,
+  invalidGender,
+  invalidPassword,
+  invalidAddress,
+  testingTokens
 } = mockData;
+
+const { expiredTokenCleanUp } = BackgroundTasks;
 
 chai.use(chaiHttp);
 chai.should();
-
 
 describe('User sign up', () => {
   it('Should return 400 if firstname is invalid', (done) => {
@@ -241,18 +246,18 @@ describe('Reset Email', () => {
         done();
       });
   });
-    // reset email password not sent
-    it('reset password for invalid email', (done) => {
-      chai
-        .request(server)
-        .post('/api/auth/resetpassword')
-        .send(mockData.invalidResetEmail)
-        .end((err, res) => {
-          res.should.have.status(statusCodes.badRequest);
-          res.body.error.should.be.equal(customMessages.invalidEmail);
-          done();
-        });
-    });
+  // reset email password not sent
+  it('reset password for invalid email', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/resetpassword')
+      .send(mockData.invalidResetEmail)
+      .end((err, res) => {
+        res.should.have.status(statusCodes.badRequest);
+        res.body.error.should.be.equal(customMessages.invalidEmail);
+        done();
+      });
+  });
   // success update password
   it('update the password', (done) => {
     chai
@@ -288,7 +293,7 @@ describe('Reset Email', () => {
   });
   // occured an error while updating
   it('errored update of the password ', (done) => {
-    const wrongToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVnaXp3ZW5heW9kaW55QGdtYWlsLmNvbSIsInVzZXJJZCI6MSwiZmlyc3ROYW1lIjoiRGl2aW5lIiwiaWF0IjoxNTgzNDkyMzcxfQ.NHfHvcHcjVhaTYfrywu0-voW_VdVgH2Qcj4CTMOFhdU';
+    const { wrongToken } = testingTokens;
     chai
       .request(server)
       .post(`/api/auth/resetpassword/${wrongToken}`)
@@ -300,7 +305,6 @@ describe('Reset Email', () => {
       });
   });
 });
-
 describe('Verify the account tests', () => {
   it('Should verify the email with token', (done) => {
     chai.request(server)
@@ -313,11 +317,85 @@ describe('Verify the account tests', () => {
       });
   });
 });
-
 describe('Testing functions from authentication service class', () => {
-    it('Function findUserByEmailOrUsername() expect to return a user', async () => {
-      const { findUserByEmailOrUsername } = AuthenticationService;
-      const returnedUser = await findUserByEmailOrUsername(mockData.findUserByEmailOfUsername);
-        expect(returnedUser).to.be.an('object');
-    });
+  it('Function findUserByEmailOrUsername() expect to return a user', async () => {
+    const { findUserByEmailOrUsername } = AuthenticationService;
+    const returnedUser = await findUserByEmailOrUsername(mockData.findUserByEmailOfUsername);
+    expect(returnedUser).to.be.an('object');
+  });
+});
+describe('User logout', () => {
+  it('Verify user should return 200', (done) => {
+    chai.request(server)
+      .get(`/api/auth/verify?token=${generatedToken}`)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message } = res.body;
+        expect(res.status).to.equal(statusCodes.ok);
+        expect(message).to.equal(customMessages.verifyMessage);
+        done();
+      });
+  });
+  it('First time logout should return 200', (done) => {
+    chai
+      .request(server)
+      .get('/api/auth/logout')
+      .set('Authorization', `Bearer ${generatedToken}`)
+      .end((err, res) => {
+        const { message } = res.body;
+        expect(res.status).to.equal(statusCodes.ok);
+        expect(message);
+        expect(message).to.equal(customMessages.userLogoutSuccess);
+        done();
+      });
+  });
+  it('Invalid but not expired token should return 401', (done) => {
+    chai
+      .request(server)
+      .get('/api/auth/logout')
+      .set('Authorization', `Bearer ${generatedToken}`)
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.unAuthorized);
+        expect(error);
+        expect(error).to.equal(customMessages.tokenVerifyFailed);
+        done();
+      });
+  });
+  it('Logout without token should return 400', (done) => {
+    chai
+      .request(server)
+      .get('/api/auth/logout')
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.tokenMissing);
+        done();
+      });
+  });
+  it('Expired token should return 400', (done) => {
+    chai
+      .request(server)
+      .get('/api/auth/logout')
+      .set('Authorization', `Bearer ${testingTokens.expiredToken}`)
+      .end((err, res) => {
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.tokenInvalid);
+        done();
+      });
+  });
+});
+describe('Cron jobs for background tasks', () => {
+  it('Should start the scheduler', async () => {
+    scheduler.start();
+  });
+  before(() => {
+    redisClient.sadd('token', testingTokens.expiredToken);
+  });
+  it('Should remove expired tokens if any', async () => {
+    const result = await expiredTokenCleanUp();
+  });
 });

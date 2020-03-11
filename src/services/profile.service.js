@@ -16,7 +16,7 @@ export default class ProfileService {
     const updatedUser = await user.update(profileData, { where: { email }, returning: true });
     return updatedUser[1][0];
   }
-  
+
   /**
    * @param{string} newPassword
    * @param{string} email

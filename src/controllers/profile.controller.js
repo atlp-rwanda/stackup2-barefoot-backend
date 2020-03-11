@@ -25,13 +25,13 @@ export default class ProfileController {
     if (requestedProfile) {
       usernameTosearchInDb = requestedProfile;
     } else {
-      usernameTosearchInDb = req.authenticatedUser.username;
+      usernameTosearchInDb = req.sessionUser.username;
     }
     const profileDataFromDb = await findUserByEmailOrUsername(usernameTosearchInDb);
     if (profileDataFromDb) {
       const { dataValues } = profileDataFromDb;
-    const data = _.omit(dataValues, 'password');
-    successResponse(res, statusCodes.ok, messages.profileRetrievalSuccess, undefined, data);
+      const data = _.omit(dataValues, 'password');
+      successResponse(res, statusCodes.ok, messages.profileRetrievalSuccess, undefined, data);
     } else {
       errorResponse(res, statusCodes.notFound, messages.profileNotFound);
     }
@@ -45,20 +45,20 @@ export default class ProfileController {
   static updateUserProfile = async (req, res) => {
     await uploadProfilePic(req, res);
     const newProfileDataFromUi = req.body;
-    
+
     if (newProfileDataFromUi.username) {
-    const { username } = newProfileDataFromUi;
+      const { username } = newProfileDataFromUi;
       const checkUsername = await findUserByEmailOrUsername(username);
       if (checkUsername) {
         return errorResponse(res, statusCodes.conflict, messages.usernameExistOrEmpty);
       }
     }
-    
+
     const dataToInsertInDb = _.omit(newProfileDataFromUi, 'password');
     const newUpdatedUser = await ProfileService
-      .updateProfile(dataToInsertInDb, req.authenticatedUser.email);
-      const data = _.omit(newUpdatedUser.dataValues, 'password');
-      return successResponse(res, statusCodes.ok, messages.profileUpdateSuccess, undefined, data);
+      .updateProfile(dataToInsertInDb, req.sessionUser.email);
+    const data = _.omit(newUpdatedUser.dataValues, 'password');
+    return successResponse(res, statusCodes.ok, messages.profileUpdateSuccess, undefined, data);
   }
 
   /**
@@ -69,12 +69,12 @@ export default class ProfileController {
    */
   static changeUserPassword = async (req, res) => {
     const { password, oldPassword } = req.body;
-    const { email } = req.authenticatedUser;
+    const { email } = req.sessionUser;
     if (oldPassword) {
       const updaterUser = await findUserByEmailOrUsername(email);
       if (await isPasswordTrue(oldPassword, updaterUser.dataValues.password)) {
         const newPassword = await passwordHasher(password);
-        const reslt = await ProfileService.changePassword(newPassword, req.authenticatedUser.email);
+        const reslt = await ProfileService.changePassword(newPassword, req.sessionUser.email);
         successResponse(res, statusCodes.ok, messages.passwordChangeSuccess, undefined, reslt);
       } else {
         errorResponse(res, statusCodes.unAuthorized, messages.incorrectOldPassword);

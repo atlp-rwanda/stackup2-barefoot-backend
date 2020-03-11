@@ -28,10 +28,10 @@ const messages = {
   oneWayTripRequestCreated: 'trip request successfuly submitted and waiting for approval',
   serverError: 'Sorry, something went wrong on our end, please try again later',
   tokenAbsent: 'access denied, you must login to use this resource',
-  tokenVerifyFailed: 'sorry, we were unable to verify your identity, you must login to use this resource',
-  endpointNotFound: 'the requested resource was not found',
+  tokenVerifyFailed: 'Sorry, we were unable to verify your identity, you must login to use this resource',
+  endpointNotFound: 'The requested resource was not found',
   duplicateTripRequest: 'request failed, attempting to submit the same trip request twice',
-  accountNotVerified: 'sorry, your account is not yet verified.',
+  accountNotVerified: 'Sorry, we were unable to verify your identity, please verify your account',
   invalidTravelType: 'please specify the type of your trip',
   invalidTravelFrom: 'please specify where you are travelling from',
   invalidTravelTo: 'please provide where you are travelling to',
@@ -51,7 +51,9 @@ const messages = {
   usernameExistOrEmpty: 'The username you entered already exists or is empty, if you want to continue update your profile, change the new username or unselect it to remain with the old one',
   passwordChangeSuccess: 'Your password has been changed, login with new password',
   changeEmailNotAllowed: 'You cannot change your email, unselect it if you want to continue updating your profile, otherwise you will not be able to continue',
-  tokenInvalid: 'Authentication failed. Token is invalid'
+  tokenInvalid: 'Authentication failed. Token is invalid',
+  tokenMissing: 'Authentication failed. Token is missing',
+  userLogoutSuccess: 'Log out successful'
 };
 
 export default messages;
