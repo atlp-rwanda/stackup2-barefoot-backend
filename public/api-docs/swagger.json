@@ -694,6 +694,63 @@
           }
         }
       }
+    },
+    "/roles/assign-role": {
+      "patch": {
+        "summary": "assign role",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "body",
+            "description": "email for a user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/assignRole"
+            }
+          },
+          {
+            "name": "role",
+            "in": "body",
+            "description": "a role to assign to a user ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/assignRole"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "This is how the response looks like when user is assigned a role",
+            "schema": {
+              "$ref": "#/responses/assign-role-success"
+            }
+          },
+          "400": {
+            "description": "This is how the response looks like when occured an error",
+            "schema": {
+              "$ref": "#/responses/assign-role-error"
+            }
+          },
+          "403": {
+            "description": "This is how the response looks like when a user does not exist",
+            "schema": {
+              "$ref": "#/responses/assign-role-not-exist"
+            }
+          },
+          "401": {
+            "description": "This is how the response looks like when a user is not allowed to assign role",
+            "schema": {
+              "$ref": "#/responses/assign-role-not-authorized"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -822,6 +879,19 @@
           "example": "Bearer {{token}}"
         }
       }
+    },
+    "assignRole": {
+      "email": {
+        "type": "string",
+        "required": true,
+        "example": "john@doe.com"
+      },
+      "role": {
+        "type": "string",
+        "required": true,
+        "example": "manager"
+      }
+
     }
   },
   "responses": {
@@ -1041,6 +1111,38 @@
           "example": "Sorry, we were unable to verify your identity, you must login to use this resource"
         }
       }
+    },
+    "assign-role-success": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Role assigned to user successfully"
+        }
+      }
+    },
+    "assign-role-error": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "That is the existing role for this user"
+        }
+      }
+    },
+    "assign-role-not-exist": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "User does not exist"
+        }
+      }
+    },
+    "assign-role-not-authorized": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "You can not change the role for the super user"
+        }
+      } 
     }
   }
 }

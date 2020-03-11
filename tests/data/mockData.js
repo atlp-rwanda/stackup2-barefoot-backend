@@ -1,3 +1,8 @@
+import dotenv from 'dotenv';
+import roles from '../../src/utils/userRoles.utils';
+
+dotenv.config();
+
 export default {
   signupData: {
     firstName: 'John',
@@ -247,8 +252,8 @@ export default {
   signupDataNotVerified: {
     firstName: 'John',
     lastName: 'Doe',
-    username: 'diny',
-    email: 'diny@doe.com',
+    username: 'notVerified',
+    email: 'notVerified@doe.com',
     address: 'Kigali',
     password: 'Helloworld3@',
     gender: 'Female',
@@ -279,4 +284,59 @@ export default {
     travelType: 'return-trip',
     accommodation: true,
   },
+  loginSuperUser: {
+    email: process.env.SUPER_ADMIN_EMAIL,
+    password: process.env.SUPER_ADMIN_PASSWORD
+  },
+  assignRole: {
+    email: 'barefootnomad2@gmail.com',
+    role: 'Manager'
+  },
+  assignExistingRole: {
+    email: 'barefootnomad2@gmail.com',
+    role: 'Manager'
+  },
+  assignRoleNotUser: {
+    email: 'notExist@gmail.com',
+    role: 'Manager'
+  },
+  assignWrongRole: {
+    email: 'notExist@gmail.com',
+    role: 'Wrong'
+  },
+  assignRoleInvalidEmail: {
+    email: 'notExistgmail.com',
+    role: 'Manager'
+  },
+  normalUser: {
+    firstName: 'normal',
+    lastName: 'normal',
+    username: 'normal',
+    email: 'normal@barefootnomad.com',
+    address: 'Kigali',
+    password: 'Helloworld3@',
+    gender: 'Male',
+  },
+  adminUser: {
+    firstName: 'admin',
+    lastName: 'admin',
+    username: 'admin',
+    email: 'admin1@admin.com',
+    address: 'Kigali',
+    password: 'Helloworld3@',
+    gender: 'Male',
+  },
+  adminRole: {
+    email: 'admin1@admin.com',
+    role: roles.SUPER_ADMIN
+  },
+  changeSuperUser: {
+    email: process.env.SUPER_ADMIN_EMAIL,
+    role: 'Manager'
+  },
+  loginAdminUser: {
+    email: 'admin1@admin.com',
+    password: 'Helloworld3@'
+  }
+
 };

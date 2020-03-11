@@ -50,6 +50,24 @@ const validateSignup = (user) => {
       allowUnknown: true
   });
 };
+
+
+/**
+ * @param {object} data
+ * @returns {object} Return the validations
+ */
+const validateRole = (data) => {
+  const schema = Joi.object({
+    role: validationMethods(
+      /^super administrator$|^travel administrator$|^travel team member$|^requester$|^manager$/, 
+      { 'string.pattern.base': `${customMessages.invalidRole}` }
+),
+    email: validationMethods(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, { 'string.pattern.base': `${customMessages.invalidEmail}` })
+  });
+  return schema.validate(data, {
+    abortEarly: false
+  });
+};
 /**
 * @param {object} password
 * @returns {object} return body assigned to their validation methods
@@ -173,5 +191,6 @@ const validateTripRequest = async (req, res, next) => {
 export { validateSignup, 
   validateTripRequest, 
   validatePassword,
-  displayErrorMessages 
+  displayErrorMessages,
+  validateRole
 };

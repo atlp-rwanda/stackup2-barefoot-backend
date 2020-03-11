@@ -1,4 +1,14 @@
 
+import roles from '../../utils/userRoles.utils';
+
+const {
+  MANAGER,
+  REQUESTER,
+  SUPER_USER,
+  SUPER_ADMIN,
+  TRAVEL_ADMIN,
+  TRAVEL_TEAM_MEMBER,
+ } = roles;
 export default (sequelize, DataTypes) => {
   const user = sequelize.define('user', {
     firstName: DataTypes.STRING,
@@ -10,7 +20,14 @@ export default (sequelize, DataTypes) => {
     provider: DataTypes.STRING,
     gender: DataTypes.STRING,
     address: DataTypes.STRING,
-    role: DataTypes.STRING,
+    role: DataTypes.ENUM(
+      SUPER_USER, 
+      SUPER_ADMIN, 
+      TRAVEL_ADMIN, 
+      TRAVEL_TEAM_MEMBER, 
+      MANAGER, 
+      REQUESTER
+      ),
     isVerified: DataTypes.BOOLEAN,
     birthDate: DataTypes.DATE,
     preferredLanguage: DataTypes.STRING,

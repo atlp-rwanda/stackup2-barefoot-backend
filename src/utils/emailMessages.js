@@ -16,4 +16,5 @@ const verifyMessage = {
   text: 'Confirm'
 };
 
+
 export { resetMessage, changedMessage, verifyMessage };

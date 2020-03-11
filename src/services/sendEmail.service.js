@@ -1,4 +1,3 @@
-
 /* eslint-disable require-jsdoc */
 import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
