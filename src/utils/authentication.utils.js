@@ -1,6 +1,9 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
 * @param {object} payload
@@ -74,7 +77,7 @@ const generateToken = async (data) => {
    * @description decode the token to get account owner details
    */
 const decodeToken = async (token) => {
-  const data = jwt.verify(token, process.env.JWT_KEY);
+  const data = await jwt.verify(token, process.env.JWT_KEY);
   return data;
 };
 

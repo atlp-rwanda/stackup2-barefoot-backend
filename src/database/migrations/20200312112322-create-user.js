@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
   up: (queryInterface, Sequelize) => queryInterface.createTable('users', {
     id: {
       allowNull: false,
@@ -13,11 +13,9 @@ module.exports = {
     lastName: {
       type: Sequelize.STRING
     },
-    username: {
-      type: Sequelize.STRING
-    },
     email: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      unique: true
     },
     password: {
       type: Sequelize.STRING
@@ -33,6 +31,30 @@ module.exports = {
     },
     isVerified: {
       type: Sequelize.BOOLEAN
+    },
+    username: {
+      type: Sequelize.STRING
+    },
+    birthDate: {
+      type: Sequelize.DATE
+    },
+    preferredLanguage: {
+      type: Sequelize.STRING
+    },
+    preferredCurrency: {
+      type: Sequelize.STRING
+    },
+    department: {
+      type: Sequelize.STRING
+    },
+    lineManager: {
+      type: Sequelize.STRING
+    },
+    idCardNumber: {
+      type: Sequelize.STRING
+    },
+    phoneNumber: {
+      type: Sequelize.STRING
     },
     createdAt: {
       allowNull: false,

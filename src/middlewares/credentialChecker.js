@@ -39,7 +39,6 @@ export const loginDataExistOnByOne = (req, res, next) => {
      return errorResponse(res, statusCodes.badRequest, customMessages.loginPasswordEmpty);
   } 
   return errorResponse(res, statusCodes.badRequest, customMessages.loginEmailOrUsernameEmpty);
-  
 };
 
 

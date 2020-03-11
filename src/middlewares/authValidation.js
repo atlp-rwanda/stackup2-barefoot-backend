@@ -1,8 +1,12 @@
+import { verify } from 'jsonwebtoken';
 import { validateSignup } from './validations';
 import statusCodes from '../utils/statusCodes';
 import responseHandlers from '../utils/responseHandlers';
+import utils from '../utils/authentication.utils';
+import customMessages from '../utils/customMessages';
 
 const { errorResponse } = responseHandlers;
+const { decodeToken } = utils;
 
 /**
  * @param {object} req
@@ -10,7 +14,7 @@ const { errorResponse } = responseHandlers;
  * @param {object} next
  * @returns{object} return next() if validations pass
  */
-const signupValidation = async (req, res, next) => {
+export const signupValidation = async (req, res, next) => {
     const { error } = validateSignup(req.body);
     if (error) {
         const { details } = error;
@@ -20,4 +24,21 @@ const signupValidation = async (req, res, next) => {
     return next();
 };
 
-export default { signupValidation };
+/**
+ * 
+ * @param {object} req 
+ * @param {object} res
+ * @param {object} next 
+ * @returns{object} returns next if the token is valid
+ */
+export const authorizeAccess = async (req, res, next) => {
+  const { authorization } = req.headers;
+    try {
+        const token = authorization.split(' ')[1];
+        const authUser = await decodeToken(token);
+    req.authenticatedUser = authUser;
+    next();
+      } catch (err) {
+    errorResponse(res, statusCodes.unAuthorized, customMessages.notAllowedToAccessThisResources);
+    }
+};

@@ -20,7 +20,10 @@ const messages = {
   invalidGender: 'Gender should be male or female',
   invalidPassword: 'Password should consists of alphabets, numbers and at least 8 characters minimum',
   invalidAddress: 'Address should consists of alphabets and at least 3 minimum characters, without whitespace or special characters',
-  verifyMessage: 'You have now verified your account successfully'
+  profileRetrievalSuccess: 'You profile is successfully retrieved',
+  verifyYourAccount: 'You need to verify your account, before getting to profiles',
+  notAllowedToAccessThisResources: 'You are not allowed to access this resources, login or signup first',
+  profileNotFound: 'The user you are trying ton search doesn\'t exist on our system'
 };
 
 export default messages;
