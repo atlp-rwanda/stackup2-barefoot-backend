@@ -3,12 +3,14 @@
  * @param {integer} code
  * @param {string} message
  * @param {string} token
+ * @param {string} data
  * @returns {object} response
  * @description Returns a successful response
  */
-const successResponse = async (res, code, message, token) => res.status(code).json({
+const successResponse = (res, code, message, token, data = null) => res.status(code).json({
   message,
-  token
+  token,
+  data
 });
 
 /**
@@ -18,7 +20,7 @@ const successResponse = async (res, code, message, token) => res.status(code).js
  * @returns {object} response json object
  * @description Returns an error response
  */
-const errorResponse = async (res, code, error) => res.status(code).json({
+const errorResponse = (res, code, error) => res.status(code).json({
   error,
 });
 

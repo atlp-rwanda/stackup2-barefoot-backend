@@ -138,4 +138,21 @@ export default {
   emailGeneratorUtil: {
     email: 'andela@user.com'
   },
+  oneWayTripRequester: {
+    firstName: 'John',
+    lastName: 'Doe',
+    username: 'onewaytripreqr',
+    email: 'onewaytripreqr@example.com',
+    address: 'Kigali',
+    password: 'Onewaytripreq123',
+    gender: 'Male',
+  },
+  oneWayTripRequest: {
+    travelFrom: 'kigali',
+    travelTo: 'Butare',
+    travelDate: new Date().toDateString(),
+    travelReason: 'business meeting',
+    travelType: 'One-way',
+    accommodation: true,
+  },
 };

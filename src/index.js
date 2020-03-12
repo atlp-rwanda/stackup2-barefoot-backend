@@ -8,12 +8,16 @@ import '@babel/polyfill';
 import swaggerSpecs from '../public/api-docs/swagger.json';
 import allRoutes from './routes/index';
 import passport from './config/passport';
+import customMessages from './utils/customMessages';
+import statusCodes from './utils/statusCodes';
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 const docRouter = express.Router();
+const { notFound } = statusCodes;
+const { endpointNotFound } = customMessages;
 
 docRouter.use('/public/api-docs', serve, setup(swaggerSpecs));
 
@@ -30,6 +34,12 @@ app.get('/', (req, res) => {
   res.status(200).json({ message: 'welcome' });
 });
 app.use(allRoutes);
+
+app.use((req, res, next) => {
+  res.status(notFound).json({
+    message: endpointNotFound,
+  });
+});
 
 const server = app.listen(port, () => {
   console.log(`Listening on port ${server.address().port}`);
