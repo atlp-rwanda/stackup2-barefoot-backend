@@ -1,4 +1,5 @@
 import models from '../database/models';
+import findUser from '../utils/findUser';
 
 /**
  * @description Class to handle users
@@ -42,10 +43,7 @@ export default class UserService {
    * @returns {object} returns a user with the email in params
    */
   static findUserByEmail = async (email) => {
-    const { user } = models;
-    const currUser = await user.findOne({
-      where: { email }
-    });
+    const currUser = findUser(email);
     return currUser;
   }
 }

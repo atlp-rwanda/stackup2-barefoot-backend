@@ -8,7 +8,7 @@
     "dev": "nodemon --exec babel-node ./src/index.js",
     "migrations": "npx sequelize-cli db:migrate",
     "undo": "npx sequelize-cli db:migrate:undo",
-    "test": "npm run migrations && nyc mocha --require @babel/register ./tests/*.js  --timeout 25000 --exit && npm run undo",
+    "test": "npm run migrations && nyc mocha --require @babel/register ./tests/**/*.js  --timeout 25000 --exit && npm run undo",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "db:connect": "babel-node ./src/database/models/ connect"
   },

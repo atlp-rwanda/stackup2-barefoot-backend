@@ -19,6 +19,12 @@ module.exports = {
     password: {
       type: Sequelize.STRING
     },
+    social_media_id: {
+      type: Sequelize.STRING
+    },
+    provider: {
+      type: Sequelize.STRING
+    },
     gender: {
       type: Sequelize.STRING
     },
