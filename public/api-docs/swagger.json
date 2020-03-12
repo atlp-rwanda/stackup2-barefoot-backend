@@ -106,6 +106,83 @@
          }
         }
       }
+    },
+    "/auth/resetpassword":{
+      "post": {
+        "summary": "Reset email",
+        "produces": [
+          "application/json"
+        ],
+        "consumes":[
+          "application/json"
+        ],
+          "parameters": [
+            {
+              "name": "User email",
+              "in": "body",
+              "description": "email for a user ",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/resetEmail"
+              }
+            }],
+        "responses": {
+         "200":{
+           "description":"This is how the response looks like when user exist and an email is successful sent",
+            "schema":{
+            "$ref": "#/responses/reset-password-email-success"
+          }
+         },
+         "403":{
+           "description":"This is how the response looks like when a user does not exist",
+           "schema":{
+             "$ref":"#/responses/reset-password-email-fail"
+           }
+         },
+         "400":{
+          "description":"This is how the response looks like when there occured an error",
+          "schema":{
+            "$ref":"#/responses/reset-password-email-error"
+          }
+        }
+        }
+      }
+    },
+    "/auth/resetpassord/:token":{
+      "post": {
+        "summary": "update password",
+        "produces": [
+          "application/json"
+        ],
+        "consumes":[
+          "application/json"
+        ],
+          "parameters": [
+            {
+              "name": "User password",
+              "in": "body",
+              "description": "the new password ",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/updatePassword"
+              }
+            }
+          ],
+        "responses": {
+         "200":{
+           "description":"This is the response when password is updated",
+            "schema":{
+            "$ref": "#/responses/update-password-success"
+          }
+         },
+         "400":{
+           "description":"This is the response when occured an error while updating",
+           "schema":{
+             "$ref":"#/responses/reset-password-email-error"
+           }
+         }
+        }
+      }
     }
   },
   "definitions": {
@@ -166,6 +243,20 @@
           "example": "Kigali, Rwanda"
         }
       }
+    },
+    "resetEmail":{
+      "email": {
+        "type": "string",
+        "required": true,
+        "example": "john@doe.com"
+      }
+    },
+    "updatePassword":{
+      "password": {
+        "type": "string",
+        "required": true,
+        "example": "didiny"
+      }
     }
   },
   "responses": {
@@ -188,8 +279,49 @@
           "example": "Sign up failed! Please try again later"
         }
       }
+    },
+    "reset-password-email-success":{
+      "properties":{
+        "message":{
+          "type":"string",
+          "example":"The email has sent successful"
+        }
+      }
+    },
+    "reset-password-email-fail":{
+      "properties":{
+        "error":{
+          "type":"string",
+          "example":"User does not exist"
+        }
+      }
+    },
+    "reset-password-email-error":{
+      "properties":{
+        "error":{
+          "type":"string",
+          "example":"occured a error"
+        }
+      }
+    },
+    "update-password-success":{
+      "properties":{
+        "message":{
+          "type":"string",
+          "example":"password changed"
+        }
+      }
+    },
+    "update-password-fail":{
+      "properties":{
+        "error":{
+          "type":"string",
+          "example":"User does not exist"
+        }
+      }
     }
-  },"login-definition":{
+  },
+  "login-definition":{
     "login-response-real-data":{
       "properties": {
         "message":{
@@ -217,6 +349,5 @@
           "example":"enter your email or password"
         }
       }
-    }
-  }
+    }}
 }

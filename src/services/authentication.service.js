@@ -47,5 +47,24 @@ export default class UserService {
       where: { email }
     });
     return currUser;
+  };
+
+  /**
+   * function findAll() returns all users in db
+   * @param {string} password
+   * @param {string} id
+   * @returns {object} returns an updated user
+   */
+  static updateUserPassword = async (password, id) => {
+    const { user } = models;
+    const updatedUser = await user.update(
+      {
+        password
+      },
+      {
+        where: { id }
+      }
+    );
+    return updatedUser;
   }
 }
