@@ -1,5 +1,5 @@
 const messages = {
-  userSignupSuccess: 'Account created successfully',
+  userSignupSuccess: 'Your account has been created successfully! \n\n\n\n Please click on the button sent to your email to comfirm your account.',
   userSignupFailed: 'Sign up failed! Please try again later',
   loginSuccess: 'Successfully logged in',
   loginFail: 'Unknown credentials',
@@ -19,7 +19,8 @@ const messages = {
   invalidEmail: 'Email should look like example@email.com',
   invalidGender: 'Gender should be male or female',
   invalidPassword: 'Password should consists of alphabets, numbers and at least 8 characters minimum',
-  invalidAddress: 'Address should consists of alphabets and at least 3 minimum characters, without whitespace or special characters'
+  invalidAddress: 'Address should consists of alphabets and at least 3 minimum characters, without whitespace or special characters',
+  verifyMessage: 'You have now verified your account successfully'
 };
 
 export default messages;

@@ -1,13 +1,16 @@
-import { user } from '../database/models';
 import { Sequelize } from 'sequelize';
+import models from '../database/models';
 
+const { user } = models;
 const sequelize = Sequelize;
 /**
+ * @param {string} email
+ * @returns {object} Object of messages
  * @description Class to handle users
  */
 export default class UserService {
   /**
-   *@description Saves user object in the database
+   * @description Saves user object in the database
    * @param {object} data User data to save to the database
    * @returns {object} dataValues User object that was saved to the database
     */
@@ -97,5 +100,13 @@ export default class UserService {
       }
     );
     return updatedUser;
+  }
+
+  static updateIsVerified = async (email) => {
+    const update = await user.update(
+      { isVerified: true },
+      { where: { email } }
+    );
+    return update;
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../src/index';
@@ -120,11 +121,11 @@ describe('User sign up', () => {
       .send(signupData)
       .end((err, res) => {
         const { message, token } = res.body;
+        generatedToken = token;
         expect(res.status).to.equal(statusCodes.created);
         expect(message);
-        expect(token);
         expect(message).to.equal(customMessages.userSignupSuccess);
-        expect(token).to.be.a('string');
+        expect(token);
         done();
       });
   });
@@ -330,6 +331,19 @@ describe('Reset Email', () => {
       .end((err, res) => {
         res.should.have.status(statusCodes.badRequest);
         res.body.error.should.be.equal(customMessages.errorMessage);
+        done();
+      });
+  });
+});
+
+describe('Verify the account tests', () => {
+  it('Should verify the email with token', (done) => {
+    chai.request(server)
+      .get(`/api/auth/verify?token=${generatedToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('message');
         done();
       });
   });

@@ -1,3 +1,5 @@
+/* eslint-disable require-jsdoc */
+import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 import utils from '../utils/authentication.utils';
 import responseHandlers from '../utils/responseHandlers';
@@ -6,6 +8,7 @@ import customMessages from '../utils/customMessages';
 import UserService from '../services/authentication.service';
 import sendMail from '../utils/email.util';
 import { resetMessage, changedMessage } from '../utils/emailMessages';
+import sendEmail from '../services/sendEmail.service';
 
 const {
   passwordHasher,
@@ -19,11 +22,15 @@ const {
   findUserByEmail, 
   findUserByEmailOrUsername, 
   findUserEmailIfExist, 
-  updateUserPassword 
+  updateUserPassword,
+  updateIsVerified
 } = UserService;
 
 /**
-   * @description User authentication class
+   *@param {object} req request object
+   *@param {object} res response object
+   *@returns {object} response json object
+   *  @description User authentication class
    */
 export default class AuthenticationController {
   /**
@@ -46,8 +53,9 @@ export default class AuthenticationController {
       const saveUser = await handleSignUp(userData);
       const savedUserObject = _.omit(saveUser, 'password');
       const token = await generateToken(savedUserObject);
-      return successResponse(res, statusCodes.created, customMessages.userSignupSuccess, token);    
-  }
+      await sendEmail.sendSignUpVerificationLink(req.body.email, `${process.env.APP_URL}/api/auth/verify?token=${token}`, req.body.firstName);
+      return successResponse(res, statusCodes.created, customMessages.userSignupSuccess, token);
+    }
 
   /**
    * @param {object} req
@@ -110,5 +118,13 @@ export default class AuthenticationController {
     } catch (err) {
       return errorResponse(res, statusCodes.badRequest, customMessages.errorMessage);
     }
+  }
+
+  static verify = async (req, res) => {
+    const { token } = req.query;
+    const decoded = jwtDecode(token);
+    const { email } = decoded;
+    await updateIsVerified(email);
+    return successResponse(res, statusCodes.ok, customMessages.verifyMessage);
   }
 }
