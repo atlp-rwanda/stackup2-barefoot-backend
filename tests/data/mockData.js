@@ -75,10 +75,6 @@ export default {
     email: 'john@doe.com',
     password: 'helloworld3'
   },
-  realLoginDataFromTheDb1: {
-    username: 'Jdoe',
-    password: 'helloworld3'
-  },
   WrongLoginPasswordData: {
     email: 'john@doe.com',
     password: '12334ewe'
@@ -155,4 +151,70 @@ export default {
     travelType: 'One-way',
     accommodation: true,
   },
+  realLoginDataFromDbVerifiedUser: {
+    email: 'john@doe.com',
+    password: 'markjoe45'
+  },
+  realLoginDataFromDbVerifiedUserwithUsername: {
+    username: 'Jdoe',
+    password: 'markjoe45'
+  },
+  realLoginDataFromDbUnVerifiedUser: {
+    email: 'barefootnomad2@gmail.com',
+    password: 'barefootnomad2'
+  },
+  updateProfileWithValidData: {
+    firstName: 'Emma',
+    lastName: 'descholar',
+    username: 'descholartr',
+    gender: 'Male',
+    birthDate: '2000-01-01',
+    preferredCurrency: 'USD',
+    preferredLanguage: 'English',
+    department: 'IT',
+    idCardNumber: '123456789'
+  },
+  updateProfileWithEmailWithinThem: {
+    email: 'barefootnomad@gmail.com',
+    firstName: 'Emma',
+    lastName: 'descholar',
+    username: 'descholartr',
+    gender: 'Male',
+    birthDate: '2000-01-01',
+    preferredCurrency: 'USD',
+    preferredLanguage: 'English',
+    department: 'IT',
+    idCardNumber: '123456789'
+  },
+  updateProfileWithEmptyUsername: {
+    firstName: 'Emma',
+    lastName: 'descholar',
+    username: '',
+    gender: 'Male',
+    birthDate: '2000-01-01',
+    preferredCurrency: 'USD',
+    preferredLanguage: 'English',
+    department: 'IT',
+    idCardNumber: '123456789'
+  },
+  updateProfileWithAlreadyExistsUsername: {
+    firstName: 'Emma',
+    lastName: 'descholar',
+    username: 'UDivine',
+    gender: 'Male',
+    birthDate: '2000-01-01',
+    preferredCurrency: 'USD',
+    preferredLanguage: 'English',
+    department: 'IT',
+    idCardNumber: '123456789'
+  },
+  changeUserPasswordWithValidDataAndVerified: {
+    passwordToUpdate: 'Mugirase1', oldPassword: 'clueradevil'
+  },
+  changeUserPasswordWithValidData: {
+    passwordToUpdate: 'Mugirase1', oldPassword: 'markjoe45'
+  },
+  changeUserPasswordWithoutOldPassword: {
+    passwordToUpdate: 'Mugirase1' },
+  findUserByEmailOfUsername: 'barefootnomad2@gmail.com'
 };

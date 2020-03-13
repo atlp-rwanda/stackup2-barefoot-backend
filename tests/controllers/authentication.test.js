@@ -5,6 +5,7 @@ import server from '../../src/index';
 import customMessages from '../../src/utils/customMessages';
 import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
+import AuthenticationService from '../../src/services/authentication.service';
 
 let generatedToken;
 const { 
@@ -143,38 +144,6 @@ describe('User sign up', () => {
   });
 });
 describe('Login', () => {
-  it(`Login with real data especially email which are in the db, should return an
-   object with a property of message and token`, (done) => {
-    chai
-      .request(server)
-      .post('/api/auth/login')
-      .set('Accept', 'Application/json')
-      .send(mockData.realLoginDataFromTheDb)
-      .end((err, res) => {
-        if (err) done(err);
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('message').to.equal('Successfully logged in');
-        expect(res.body).to.have.property('token');
-        done();
-      });
-  });
-  it(`Login with real data especially username which are in the db, should return an
-   object with a property of message and token`, (done) => {
-    chai
-      .request(server)
-      .post('/api/auth/login')
-      .set('Accept', 'Application/json')
-      .send(mockData.realLoginDataFromTheDb1)
-      .end((err, res) => {
-        if (err) done(err);
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('message').to.equal('Successfully logged in');
-        expect(res.body).to.have.property('token');
-        done();
-      });
-  });
   it('Login with empty credentials should return an object with property error', (done) => {
     chai
       .request(server)
@@ -347,4 +316,12 @@ describe('Verify the account tests', () => {
         done();
       });
   });
+});
+
+describe('Testing functions from authentication service class', () => {
+    it('Function findUserByEmailOrUsername() expect to return a user', async () => {
+      const { findUserByEmailOrUsername } = AuthenticationService;
+      const returnedUser = await findUserByEmailOrUsername(mockData.findUserByEmailOfUsername);
+        expect(returnedUser).to.be.an('object');
+    });
 });

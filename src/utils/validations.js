@@ -1,9 +1,9 @@
 import Joi from '@hapi/joi';
 import _ from 'lodash';
-import customMessages from '../utils/customMessages';
-import responseHandlers from '../utils/responseHandlers';
-import statusCodes from '../utils/statusCodes';
-import Validators from '../utils/validators';
+import customMessages from './customMessages';
+import responseHandlers from './responseHandlers';
+import statusCodes from './statusCodes';
+import Validators from './validators';
 
 const { errorResponse } = responseHandlers;
 const { badRequest } = statusCodes;
@@ -13,10 +13,13 @@ const { validateOneWayTripRequest } = Validators;
 /**
 * @param {string} pattern
 * @param {string} messages
+* @param {boolean} isProfileUpdate
 * @returns {object} a chained validation methods
 */
-const validationMethods = (pattern, messages) => {
-    const methods = Joi.string()
+const validationMethods = (pattern, messages, isProfileUpdate) => {
+    const methods = isProfileUpdate ? Joi.string()
+    .regex(pattern)
+    .messages(messages) : Joi.string()
     .regex(pattern)
     .trim()
     .required()
@@ -26,20 +29,23 @@ const validationMethods = (pattern, messages) => {
 
 /**
 * @param {object} user
+* @param {object} isProfileUpdate
 * @returns {object} return body assigned to their validation methods
 */
-const validateSignup = user => {
+const validateSignup = (user) => {
+  const { isProfileUpdate } = user;
     const schema = Joi.object({
-        firstName: validationMethods(/^([a-zA-Z]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidFirstname}` }),
-        lastName: validationMethods(/^([a-zA-Z]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidLastname}` }),
-        username: validationMethods(/^([a-zA-Z0-9@_.-]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidUsername}` }),
-        email: validationMethods(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, { 'string.pattern.base': `${customMessages.invalidEmail}` }),
-        gender: validationMethods(/^Male$|^male$|^Female$|^female$/, { 'string.pattern.base': `${customMessages.invalidGender}` }),
-        password: validationMethods(/^(?=.*\d)(?=.*[a-z])[0-9a-zA-Z]{8,}$/, { 'string.pattern.base': `${customMessages.invalidPassword}` }),
-        address: validationMethods(/^(\w)+$/, { 'string.pattern.base': `${customMessages.invalidAddress}` }),
+        firstName: validationMethods(/^([a-zA-Z]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidFirstname}` }, isProfileUpdate),
+        lastName: validationMethods(/^([a-zA-Z]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidLastname}` }, isProfileUpdate),
+        username: validationMethods(/^([a-zA-Z0-9@_.-]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidUsername}` }, isProfileUpdate),
+        email: validationMethods(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, { 'string.pattern.base': `${customMessages.invalidEmail}` }, isProfileUpdate),
+        gender: validationMethods(/^Male$|^male$|^Female$|^female$/, { 'string.pattern.base': `${customMessages.invalidGender}` }, isProfileUpdate),
+        password: validationMethods(/^(?=.*\d)(?=.*[a-z])[0-9a-zA-Z]{8,}$/, { 'string.pattern.base': `${customMessages.invalidPassword}` }, isProfileUpdate),
+        address: validationMethods(/^(\w)+$/, { 'string.pattern.base': `${customMessages.invalidAddress}` }, isProfileUpdate),
 });
     return schema.validate(user, {
-    abortEarly: false
+      abortEarly: false,
+      allowUnknown: true
   });
 };
 

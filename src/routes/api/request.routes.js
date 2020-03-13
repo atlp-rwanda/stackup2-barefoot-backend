@@ -1,7 +1,7 @@
 import express from 'express';
 import RequestController from '../../controllers/request.controller';
 import Authentication from '../../middlewares/authentication';
-import { validateTripRequest } from '../../middlewares/validations';
+import { validateTripRequest } from '../../utils/validations';
 
 const { createTripRequest } = RequestController;
 const {

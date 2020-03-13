@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { serve, setup } from 'swagger-ui-express';
 import '@babel/polyfill';
+import fileupload from 'express-fileupload';
 import swaggerSpecs from '../public/api-docs/swagger.json';
 import allRoutes from './routes/index';
 import passport from './config/passport';
@@ -27,6 +28,7 @@ app.use(cors());
 app.use(morgan('development'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(fileupload({ useTempFiles: true }));
 app.use(express.static(`${__dirname}/public`));
 app.use(passport.initialize());
 

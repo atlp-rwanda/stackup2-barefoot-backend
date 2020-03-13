@@ -3,10 +3,11 @@ const codes = {
   created: 201,
   badRequest: 400,
   unAuthorized: 401,
+  notFound: 404,
   conflict: 409,
   forbidden: 403,
   serverError: 500,
-  notFound: 404,
+  unsupportedMediaType: 415,
 };
 
 export default codes;

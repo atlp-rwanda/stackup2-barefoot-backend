@@ -59,6 +59,8 @@ export default class UserService {
    * function findOne() returns all users in db
    * @param {string} value
    * @returns {object} returns a user with the value of email or username in params
+   * @description this function findUserByEmailOrUsername returns a profile user 
+   * details depending on the value passed
    */
   static findUserByEmailOrUsername = async (value) => {
     let currUser = await user.findOne({
@@ -66,11 +68,13 @@ export default class UserService {
     });
     if (!currUser) {
       currUser = await user.findOne({
-        where: { email: value },
+      where: { email: value },
       });
     }
+   
     return currUser;
-  };
+       }
+  ;
 
   /**
    * function findOne() returns all users in db
@@ -87,7 +91,6 @@ export default class UserService {
   };
 
   /**
-   * function findAll() returns all users in db
    * @param {string} password
    * @param {string} id
    * @returns {object} returns an updated user
