@@ -5,7 +5,7 @@ export default {
     username: 'Jdoe',
     email: 'john@doe.com',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Male',
   },
   invalidFirstname: {
@@ -14,7 +14,7 @@ export default {
     username: 'Jdoe',
     email: 'john@doe.com',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Male',
   },
   invalidLastname: {
@@ -23,7 +23,7 @@ export default {
     username: 'Jdoe',
     email: 'john@doe.com',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Male',
   },
   invalidUsername: {
@@ -32,7 +32,7 @@ export default {
     username: 'Jdo,e',
     email: 'john@doe.com',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Male',
   },
   invalidEmail: {
@@ -41,7 +41,7 @@ export default {
     username: 'Jdoe',
     email: 'john@doe',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Male',
   },
   invalidGender: {
@@ -50,7 +50,7 @@ export default {
     username: 'Jdoe',
     email: 'john@doe.com',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'none',
   },
   invalidPassword: {
@@ -68,12 +68,16 @@ export default {
     username: 'Jdoe',
     email: 'john@doe.com',
     address: 'Kiga 3li',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Male',
   },
   realLoginDataFromTheDb: {
     email: 'john@doe.com',
-    password: 'helloworld3'
+    password: 'Helloworld3@'
+  },
+  realLoginDataFromTheDb1: {
+    username: 'Jdoe',
+    password: 'Helloworld3@'
   },
   WrongLoginPasswordData: {
     email: 'john@doe.com',
@@ -81,7 +85,7 @@ export default {
   },
   WrongLoginEmailData: {
     email: 'emmamugi@gmail.com',
-    password: 'helloworld3'
+    password: 'Helloworld3@'
   },
   emptyLoginPassword: {
     email: 'john@doe.com',
@@ -97,14 +101,14 @@ export default {
     username: 'Jdoe',
     email: 'jane@doe.com',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Female',
   },
   usernameGeneratorUtil: {
     firstName: 'Joe',
     lastName: 'Doe',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Male',
   },
   usernameGeneratorUtilOne: {
@@ -112,7 +116,7 @@ export default {
     lastName: 'Doe',
     email: 'joy@doe.com',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Female',
   },
   usernameGeneratorUtilTwo: {
@@ -120,7 +124,7 @@ export default {
     lastName: 'Brad',
     email: 'andela@user.com',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Female',
   },
   usernameGeneratorUtilThree: {
@@ -128,7 +132,7 @@ export default {
     lastName: 'Brown',
     email: 'andela@user.com',
     address: 'Kigali',
-    password: 'helloworld3',
+    password: 'Helloworld3@',
     gender: 'Female',
   },
   emailGeneratorUtil: {
@@ -140,7 +144,7 @@ export default {
     username: 'onewaytripreqr',
     email: 'onewaytripreqr@example.com',
     address: 'Kigali',
-    password: 'Onewaytripreq123',
+    password: 'Onewaytripreq123@',
     gender: 'Male',
   },
   oneWayTripRequest: {
@@ -153,11 +157,11 @@ export default {
   },
   realLoginDataFromDbVerifiedUser: {
     email: 'john@doe.com',
-    password: 'markjoe45'
+    password: 'Markjoe45@'
   },
   realLoginDataFromDbVerifiedUserwithUsername: {
     username: 'Jdoe',
-    password: 'markjoe45'
+    password: 'Markjoe45@'
   },
   realLoginDataFromDbUnVerifiedUser: {
     email: 'barefootnomad2@gmail.com',
@@ -209,12 +213,30 @@ export default {
     idCardNumber: '123456789'
   },
   changeUserPasswordWithValidDataAndVerified: {
-    passwordToUpdate: 'Mugirase1', oldPassword: 'clueradevil'
+    password: 'Mugirase1@', oldPassword: 'clueradevil'
   },
   changeUserPasswordWithValidData: {
-    passwordToUpdate: 'Mugirase1', oldPassword: 'markjoe45'
+    password: 'Mugirase1@', oldPassword: 'Markjoe45@'
+  },
+  changeUserPasswordWithInValidData: {
+    password: 'Mugirase1', oldPassword: 'Markjoe45@'
   },
   changeUserPasswordWithoutOldPassword: {
-    passwordToUpdate: 'Mugirase1' },
-  findUserByEmailOfUsername: 'barefootnomad2@gmail.com'
+    password: 'Mugirase1@' },
+  findUserByEmailOfUsername: 'barefootnomad2@gmail.com',
+  existEmail: {
+    email: 'john@doe.com'
+  },
+  notExistEmail: {
+    email: 'joe1@gmail.com'
+  },
+  invalidResetEmail: {
+    email: 'joe1mail.com'
+  },
+  invalidNewPassword: {
+    password: 'min'
+  },
+  validNewPassword: {
+    password: 'Markjoe45@'
+  }
 };

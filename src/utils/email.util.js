@@ -9,7 +9,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const mailGenerator = new Mailgen({
   theme: 'default',
   product: {
-    name: 'Reset password email',
+    name: 'Barefoot Nomad',
     link: '#'
   }
 });
@@ -19,11 +19,10 @@ const mailGenerator = new Mailgen({
    * @param {string} instructions - The instructions for email.
    * @param {string} buttonText - The text within a button.
    * @param {string} link - The link for the reset password form.
-   * @param {string} outro - The outro for email.
    * @returns {object} response json object
    * @description send reset password email
    */
-const generateEmail = async (name, intro, instructions, buttonText, link, outro) => ({
+const generateEmail = async (name, intro, instructions, buttonText, link) => ({
   body: {
     name,
     intro,
@@ -34,8 +33,7 @@ const generateEmail = async (name, intro, instructions, buttonText, link, outro)
         text: buttonText,
         link
       }
-    },
-    outro
+    }
   }
 });
 /**
@@ -58,12 +56,11 @@ const generateMessage = async (email, template) => ({
    * @param {string} instructions - The instructions for email.
    * @param {string} buttonText - The text within a button.
    * @param {string} link - The link for the reset password form.
-   * @param {string} outro - The outro for email.
    * @returns {object} response json object
    * @description send reset password email
    */
-const sendMail = async (data, name, intro, instructions, buttonText, link, outro) => {
-  const email = await generateEmail(name, intro, instructions, buttonText, link, outro);
+const sendMail = async (data, name, intro, instructions, buttonText, link) => {
+  const email = await generateEmail(name, intro, instructions, buttonText, link);
   const template = mailGenerator.generate(email);
   const message = await generateMessage(data, template);
   await sgMail.send(message);

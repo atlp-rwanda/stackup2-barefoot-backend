@@ -1,52 +1,65 @@
 const authMockData = [
   {
-    id: '3569457606459924',
-    displayName: 'Muhire Josué',
-    name: { familyName: 'Josué', givenName: 'Muhire' },
-    emails: [{ value: 'rutayisirejosue@yahoo.fr' }],
+    id: '3155979791293255',
+    username: undefined,
+    displayName: 'Ugizwenayo Divine',
+    name: {
+      familyName: 'Divine',
+      givenName: 'Ugizwenayo',
+      middleName: undefined
+    },
+    gender: undefined,
+    profileUrl: undefined,
     provider: 'facebook',
-    _raw: '{"id":"3569457606459924","name":"Muhire Josu\\u00e9","email":"rutayisirejosue\\u0040yahoo.fr","first_name":"Muhire","last_name":"Josu\\u00e9"}',
+    _raw: '{"id":"3155979791293255","name":"Ugizwenayo Divine","first_name":"Ugizwenayo","last_name":"Divine"}',
     _json: {
-      id: '3569457606459924', name: 'Muhire Josué', email: 'rutayisirejosue@yahoo.fr', first_name: 'Muhire', last_name: 'Josué'
+      id: '3155979791293255',
+      name: 'Ugizwenayo Divine',
+      first_name: 'Ugizwenayo',
+      last_name: 'Divine'
     }
   },
   {
     provider: 'google',
-    sub: '117377618858044356572',
-    id: '117377618858044356572',
-    displayName: 'josue muhire',
-    name: { givenName: 'josue', familyName: 'muhire' },
-    given_name: 'josue',
-    family_name: 'muhire',
+    sub: '116572417699286087831',
+    id: '116572417699286087831',
+    displayName: 'ugizwenayo Divine',
+    name: { givenName: 'ugizwenayo', familyName: 'Divine' },
+    given_name: 'ugizwenayo',
+    family_name: 'Divine',
     email_verified: true,
     verified: true,
-    language: 'en-GB',
+    language: 'en',
     locale: undefined,
-    email: 'muhirejosue09@gmail.com',
-    emails: [{ value: 'muhirejosue09@gmail.com', type: 'account' }],
-    photos:
-   [{
-     value:
-        'https://lh3.googleusercontent.com/a-/AOh14GjB3miITcKA9F6s2CW3WbDdz3oun0PB94N-SddB9Q',
-     type: 'default'
-   }],
-    picture:
-   'https://lh3.googleusercontent.com/a-/AOh14GjB3miITcKA9F6s2CW3WbDdz3oun0PB94N-SddB9Q',
-    _raw:
-   '{\n  "sub": "117377618858044356572",\n  "name": "josue muhire",\n  "given_name": "josue",\n  "family_name": "muhire",\n  "picture": "https://lh3.googleusercontent.com/a-/AOh14GjB3miITcKA9F6s2CW3WbDdz3oun0PB94N-SddB9Q",\n  "email": "muhirejosue09@gmail.com",\n  "email_verified": true,\n  "locale": "en-GB"\n}',
-    _json:
-   {
-     sub: '117377618858044356572',
-     id: '117377618858044356572',
-     name: 'josue muhire',
-     given_name: 'josue',
-     family_name: 'muhire',
-     picture:
-      'https://lh3.googleusercontent.com/a-/AOh14GjB3miITcKA9F6s2CW3WbDdz3oun0PB94N-SddB9Q',
-     email: 'muhirejosue09@gmail.com',
-     email_verified: true,
-     locale: 'en-GB'
-   }
+    email: 'ugizwenayodiny@gmail.com',
+    emails: [{ value: 'ugizwenayodiny@gmail.com', type: 'account' }],
+    photos: [
+      {
+        value: 'https://lh4.googleusercontent.com/-rpYRT-YWYMg/AAAAAAAAAAI/AAAAAAAAAAA/AKF05nB_hbF9PQGxb5vmkoBus1U1Qe0ujQ/photo.jpg',
+        type: 'default'
+      }
+    ],
+    picture: 'https://lh4.googleusercontent.com/-rpYRT-YWYMg/AAAAAAAAAAI/AAAAAAAAAAA/AKF05nB_hbF9PQGxb5vmkoBus1U1Qe0ujQ/photo.jpg',
+    _raw: '{\n'
+      + '  "sub": "116572417699286087831",\n'
+      + '  "name": "ugizwenayo Divine",\n'
+      + '  "given_name": "ugizwenayo",\n'
+      + '  "family_name": "Divine",\n'
+      + '  "picture": "https://lh4.googleusercontent.com/-rpYRT-YWYMg/AAAAAAAAAAI/AAAAAAAAAAA/AKF05nB_hbF9PQGxb5vmkoBus1U1Qe0ujQ/photo.jpg",\n'
+      + '  "email": "ugizwenayodiny@gmail.com",\n'
+      + '  "email_verified": true,\n'
+      + '  "locale": "en"\n'
+      + '}',
+    _json: {
+      sub: '116572417699286087831',
+      name: 'ugizwenayo Divine',
+      given_name: 'ugizwenayo',
+      family_name: 'Divine',
+      picture: 'https://lh4.googleusercontent.com/-rpYRT-YWYMg/AAAAAAAAAAI/AAAAAAAAAAA/AKF05nB_hbF9PQGxb5vmkoBus1U1Qe0ujQ/photo.jpg',
+      email: 'ugizwenayodiny@gmail.com',
+      email_verified: true,
+      locale: 'en'
+    }
   },
   {
     socialMediaId: '11111111111',

@@ -1,8 +1,9 @@
 import express from 'express';
 import AuthenticationController from '../../controllers/authentication.controller';
 import { bothEmailAndPasswordExist, loginDataExistOnByOne, verifyCredentials } from '../../middlewares/credentialChecker';
-import { signupValidation } from '../../middlewares/authValidation';
 import passport from '../../config/passport';
+import { signupValidation, passwordValidation, validateResetEmail } from '../../middlewares/authValidation';
+import { verifyToken } from '../../utils/validations';
 
 const {
   signUp, userLogin, sendResetEmail, updatePassword, verify
@@ -12,8 +13,8 @@ const authenticationRouter = express.Router();
 
 authenticationRouter.post('/signup', signupValidation, signUp);
 authenticationRouter.post('/login', bothEmailAndPasswordExist, loginDataExistOnByOne, verifyCredentials, userLogin);
-authenticationRouter.post('/resetpassword', sendResetEmail);
-authenticationRouter.post('/resetpassword/:token', updatePassword);
+authenticationRouter.post('/resetpassword', validateResetEmail, sendResetEmail);
+authenticationRouter.post('/resetpassword/:token', passwordValidation, verifyToken, updatePassword);
 authenticationRouter.get('/verify', verify);
 
 authenticationRouter.get('/facebook', passport.authenticate('facebook'));
