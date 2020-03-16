@@ -23,6 +23,10 @@ static createValidationErrors(fieldDataType, errorMessage) {
    return {
     [`${fieldDataType}.base`]: errorMessage,
     [`${fieldDataType}.empty`]: errorMessage,
+    [`${fieldDataType}.min`]: errorMessage,
+    [`${fieldDataType}.max`]: errorMessage,
+    [`${fieldDataType}.format`]: errorMessage,
+    'any.required': errorMessage,
   };
 }
 
@@ -31,6 +35,8 @@ static createValidationErrors(fieldDataType, errorMessage) {
 * @returns {Promise<any>} a Promise of validation output
 */
 static async validateOneWayTripRequest(tripRequestData) {
+  const maxDate = new Date().setHours(0, 0, 0, 0) + 15811200000;
+  const minDate = new Date().setHours(0, 0, 0, 0) - 86400000;
   const whiteSpaces = /\s+/g;
   const { createValidationErrors } = Validators;
   const cleanString = Joi.string().replace(whiteSpaces, ' ').trim().required();
@@ -41,7 +47,8 @@ static async validateOneWayTripRequest(tripRequestData) {
       .messages(createValidationErrors('string', invalidTravelTo)),
       travelReason: cleanString
       .messages(createValidationErrors('string', invalidTravelReason)),
-      travelDate: Joi.date().required()
+      travelDate: Joi.date().required().min(minDate).max(maxDate)
+      .iso()
       .messages(createValidationErrors('date', invalidTravelDate)),
       accommodation: Joi.bool().required()
       .messages(createValidationErrors('boolean', invalidTravelAccomodation)),
@@ -50,4 +57,19 @@ static async validateOneWayTripRequest(tripRequestData) {
   });
   return schema.validateAsync(tripRequestData, { abortEarly: false });
   }
+
+/**
+* @param {object} tripRequest return trip request data
+* @returns {Promise<any>} a Promise of validation output
+*/
+static async validateReturnDate(tripRequest) {
+  const { createValidationErrors } = Validators;
+  const schema = Joi.object({
+    returnDate: Joi.date().required().min(new Date()).iso()
+.min(Joi.ref('travelDate'))
+.messages(createValidationErrors('date', invalidTravelDate))
+});
+return schema.validateAsync(tripRequest, { abortEarly: false, 
+  allowUnknown: true });
+}
 }

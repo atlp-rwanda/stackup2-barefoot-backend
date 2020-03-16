@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import responseHandlers from '../utils/responseHandlers';
 import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';

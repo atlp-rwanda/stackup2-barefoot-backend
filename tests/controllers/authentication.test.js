@@ -11,6 +11,10 @@ import BackgroundTasks from '../../src/utils/backgroundTasks.utils';
 import scheduler from '../../src/taskScheduler';
 
 let generatedToken;
+const loginToken = {
+  token: null,
+  notVerified: null
+};
 const {
   signupData,
   invalidFirstname,
@@ -20,6 +24,7 @@ const {
   invalidGender,
   invalidPassword,
   invalidAddress,
+  signupDataNotVerified,
   testingTokens
 } = mockData;
 
@@ -135,6 +140,21 @@ describe('User sign up', () => {
         done();
       });
   });
+  it('Should return 201 not verified', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(signupDataNotVerified)
+      .end((err, res) => {
+        const { message, token } = res.body;
+        loginToken.notVerified = token;
+        expect(res.status).to.equal(statusCodes.created);
+        expect(message);
+        expect(message).to.equal(customMessages.userSignupSuccess);
+        expect(token);
+        done();
+      });
+  });
   it('Should return 409 if provided email or username exist', (done) => {
     chai
       .request(server)
@@ -149,6 +169,39 @@ describe('User sign up', () => {
   });
 });
 describe('Login', () => {
+  it(`Login with real data especially email which are in the db, should return an
+   object with a property of message and token`, (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/login')
+      .set('Accept', 'Application/json')
+      .send(mockData.realLoginDataFromTheDb)
+      .end((err, res) => {
+        if (err) done(err);
+        loginToken.token = res.body.token;
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('message').to.equal('Successfully logged in');
+        expect(res.body).to.have.property('token');
+        done();
+      });
+  });
+  it(`Login with real data especially username which are in the db, should return an
+   object with a property of message and token`, (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/login')
+      .set('Accept', 'Application/json')
+      .send(mockData.realLoginDataFromTheDb1)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('message').to.equal('Successfully logged in');
+        expect(res.body).to.have.property('token');
+        done();
+      });
+  });
   it('Login with empty credentials should return an object with property error', (done) => {
     chai
       .request(server)
@@ -399,3 +452,5 @@ describe('Cron jobs for background tasks', () => {
     const result = await expiredTokenCleanUp();
   });
 });
+
+export default loginToken;

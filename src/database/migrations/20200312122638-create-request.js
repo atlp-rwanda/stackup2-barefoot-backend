@@ -25,7 +25,11 @@ module.exports = {
     },
     travelDate: {
       allowNull: false,
-      type: Sequelize.DATE
+      type: Sequelize.DATEONLY
+    },
+    returnDate: {
+      allowNull: true,
+      type: Sequelize.DATEONLY
     },
     travelReason: {
       allowNull: false,
