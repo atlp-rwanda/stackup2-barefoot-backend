@@ -7,7 +7,7 @@ import requestStatus from '../utils/tripRequestsStatus.util';
 import userRoles from '../utils/userRoles.utils';
 import UserService from '../services/authentication.service';
 
-const { getOneRequestFromDb, findTripRequestById } = requestService;
+const { getOneRequestFromDb, getOneRequestFromDb1, findTripRequestById } = requestService;
 const { errorResponse } = responseHandler;
 const {
   tripRequestNotFound,
@@ -33,6 +33,24 @@ const checkData = async (newData, existingData) => (
 );
 
 /**
+ * @param {Request} body Node/Express Request object
+ * @param {Response} id Node/Express Response object
+ * @returns {NextFunction | Object} Node/Express Next callback function or an error response
+ * @description Checks if request exists,
+ * get request id from request parameter, checks if the request exist or not
+ */
+const requestFromDb2 = async (body, id) => {
+  const result1 = await getOneRequestFromDb1(id);
+  const { dataValues } = result1;
+  return {
+    travelTo: checkData(body, dataValues.travelTo),
+    travelFrom: checkData(body, dataValues.travelFrom),
+    travelDate: checkData(body, dataValues.travelDate),
+    returnDate: checkData(body, dataValues.returnDate),
+  };
+};
+
+/**
  * @param {Request} req Node/Express Request object
  * @param {Response} res Node/Express Response object
  * @param {NextFunction} next Node/Express Next callback function
@@ -43,6 +61,7 @@ const checkData = async (newData, existingData) => (
 const isRequestValid = async (req, res, next) => {
   const { requestId } = req.params;
   const result = await getOneRequestFromDb(requestId);
+  
   if (Object.keys(req.body).length === 0) {
     return errorResponse(res, badRequest, customMessages.emptyUpdate);
   }
@@ -50,14 +69,15 @@ const isRequestValid = async (req, res, next) => {
     return errorResponse(res, badRequest, customMessages.notExistRequest);
   }
   const { dataValues } = result;
+  
   req.requestOwner = dataValues.userId;
   req.requestStatus = dataValues.status;
   req.body = {
-    travelTo: await checkData(req.body.travelTo, dataValues.travelTo),
-    travelFrom: await checkData(req.body.travelFrom, dataValues.travelFrom),
+    travelTo: await (await requestFromDb2(req.body.travelTo, dataValues.id)).travelTo,
+    travelFrom: await (await requestFromDb2(req.body.travelFrom, dataValues.id)).travelFrom,
     travelType: await checkData(req.body.travelType, dataValues.travelType),
-    travelDate: await checkData(req.body.travelDate, dataValues.travelDate),
-    returnDate: await checkData(req.body.returnDate, dataValues.returnDate),
+    travelDate: await (await requestFromDb2(req.body.travelDate, dataValues.id)).travelDate,
+    returnDate: await (await requestFromDb2(req.body.returnDate, dataValues.id)).returnDate,
     travelReason: await checkData(req.body.travelReason, dataValues.travelReason),
     accommodation: await checkData(req.body.accommodation, dataValues.accommodation)
   };

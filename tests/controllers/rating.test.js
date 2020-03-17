@@ -18,7 +18,7 @@ const {
     loginSuperUser,
 } = mockData;
 const { 
-    oneWayTripRequestCreated, 
+    tripRequestCreated, 
     bookedAccommodation, 
     successRating,
     beforeTripDate,
@@ -130,7 +130,7 @@ describe('Rating an accommodation', () => {
             expect(data);
             expect(data).to.be.an('object');
             expect(message).to.be.a('string');
-            expect(message).to.equal(oneWayTripRequestCreated);
+            expect(message).to.equal(tripRequestCreated);
             done();
           });
         });
@@ -149,7 +149,7 @@ describe('Rating an accommodation', () => {
                 expect(data);
                 expect(data).to.be.an('object');
                 expect(message).to.be.a('string');
-                expect(message).to.equal(oneWayTripRequestCreated);
+                expect(message).to.equal(tripRequestCreated);
                 done();
               });
             });
@@ -168,7 +168,7 @@ describe('Rating an accommodation', () => {
                 expect(data);
                 expect(data).to.be.an('object');
                 expect(message).to.be.a('string');
-                expect(message).to.equal(oneWayTripRequestCreated);
+                expect(message).to.equal(tripRequestCreated);
                 done();
               });
             });
