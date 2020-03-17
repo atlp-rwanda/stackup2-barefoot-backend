@@ -3,7 +3,7 @@
 import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 import mailGen from 'mailgen';
-import { verifyMessage } from '../utils/emailMessages';
+import { verifyMessage, userRoleMessage } from '../utils/emailMessages';
 
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -17,7 +17,6 @@ export default class EmailSender {
         link: '#'
       }
     });
-
     const generateEmail = async () => ({
       body: {
         name,
@@ -45,4 +44,40 @@ export default class EmailSender {
 
     await sgMail.send(message);
   };
+
+  static userRoleSettings = async (toEmail, link, name) => {
+    const mailGenerator = new mailGen({
+      theme: 'default',
+      product: {
+        name: 'Barefoot Nomad',
+        link: '#'
+      }
+    });
+    const generateEmail = async () => ({
+      body: {
+        name,
+        intro: userRoleMessage.intro,
+        action: {
+          instructions: userRoleMessage.instructions,
+          button: {
+            color: '#2E5D89',
+            text: userRoleMessage.text,
+            link
+          }
+        },
+        outro: userRoleMessage.outro
+      }
+    });
+
+    const email = await generateEmail();
+    const template = await mailGenerator.generate(email);
+    const message = {
+      to: `${toEmail}`,
+      from: `${process.env.BAREFOOT_GMAIL_ACCOUNT}`,
+      subject: 'User role assigned successfully!',
+      html: template
+    };
+
+    await sgMail.send(message);
+  }
 }

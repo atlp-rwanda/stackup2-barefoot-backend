@@ -1,3 +1,4 @@
+/* eslint-disable valid-jsdoc */
 import { Sequelize } from 'sequelize';
 import models from '../database/models';
 
@@ -17,6 +18,33 @@ export default class UserService {
   static handleSignUp = async (data) => {
     const role = 'requester';
     const isVerified = false;
+    const newData = {
+      ...data,
+      role,
+      isVerified
+    };
+    const { dataValues } = await user.create(
+      newData,
+      {
+        fields: [
+          'firstName',
+          'lastName',
+          'username',
+          'email',
+          'password',
+          'gender',
+          'address',
+          'role',
+          'isVerified',
+        ],
+      },
+    );
+    return dataValues;
+  };
+
+  static handleSignUp2 = async (data) => {
+    const role = 'superAdmin';
+    const isVerified = true;
     const newData = {
       ...data,
       role,

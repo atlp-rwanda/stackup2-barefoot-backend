@@ -183,6 +183,55 @@
          }
         }
       }
+    },
+    "/admin/assignrole": {
+      "post": {
+        "summary": "Super user(IT staff) can Assign roles to users",
+        "tags": [
+          "User Role settings"
+        ],
+        "description": "user role settings",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Role and email information",
+            "in": "body",
+            "description": "Email and role information are required",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/assignrole"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Assigned role success",
+            "schema": {
+              "$ref": "#/responses/assignRoleSuccess"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/responses/assignRoleFail"
+            }
+          },
+          "401": {
+            "description": "UnAuthorized",
+            "schema": {
+              "$ref": "#/responses/assignRoleFail"
+            }
+          },
+          "403": {
+            "description": "User not Exist",
+            "schema": {
+              "$ref": "#/responses/assignRoleFail"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -257,6 +306,20 @@
         "required": true,
         "example": "didiny"
       }
+    },
+    "assignrole": {
+      "properties":{
+        "email": {
+          "type": "string",
+          "required": true,
+          "example": "john@doe.com"
+        },
+        "role": {
+          "type": "string",
+          "required": true,
+          "example": "manager | superAdmin | travelAdmin | travelTeamMember | requester"
+        }
+      }      
     }
   },
   "responses": {
