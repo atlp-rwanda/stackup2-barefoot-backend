@@ -23,8 +23,6 @@ const messages = {
   verifyMessage: 'You have now verified your account successfully',
   socialMediaAuthSucess: 'User authenticated successfully',
   loginPasswordAndEmailEmpty: 'Please enter your email and your password',
-  oneWayTripRequestFailed: 'Trip request request failed',
-  oneWayTripRequestCreated: 'Trip request successfuly submitted and waiting for approval',
   serverError: 'Sorry, something went wrong on our end, please try again later',
   tokenAbsent: 'Access denied, you must login to use this resource',
   tokenVerifyFailed: 'Sorry, we were unable to verify your identity, you must login to use this resource',
@@ -162,7 +160,15 @@ const messages = {
   pageNotFound: 'This page does not have content',
   updateFailed: 'Update Failed, please try again!',
   cantDltAccommWithRooms: 'You are not allowed to delete this accommodation because it has some rooms, delete all of its rooms first, and then delete it!',
-  itemNotExist: 'Update failed because the item you want to update does not exist'
+  itemNotExist: 'Update failed because the item you want to update does not exist',
+  tripRequestFailed: 'trip request request failed',
+  tripRequestCreated: 'trip request successfuly submitted and waiting for approval',
+  dataLengthErr: 'should not have less than 2 or more than 3 destinations',
+  travelFromEqualError: 'Request first or second destination should be the same as the second or third origin',
+  travelDateError: 'Request first or second date should not be greater than second or third',
+  arrayLengthError: 'Request travelFrom, travelTo and travelDate, should all hold the same amount of data',
+  firstOriginError: 'First origin should not equal to any destination',
+  travelFromNETravelTo: 'travelFrom location should not equal to travelTo location on the same request row'
 };
 
 export default messages;

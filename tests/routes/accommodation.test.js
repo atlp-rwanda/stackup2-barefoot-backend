@@ -579,7 +579,7 @@ describe('Accommodation tests', () => {
           .request(server)
           .post('/api/accommodations/book')
           .set('Authorization', authTokenRequester)
-          .send({ ...bookAccommodation, tripRequestId: requesterTripRequests[0].id })
+          .send({ ...bookAccommodation, tripRequestId: requesterTripRequests[0].requestId })
           .end((err, res) => {
               if (err) done(err);
               const { data, message } = res.body;
@@ -597,7 +597,7 @@ describe('Accommodation tests', () => {
           .request(server)
           .post('/api/accommodations/book')
           .set('Authorization', authTokenRequester)
-          .send({ ...bookAccommodation, tripRequestId: requesterTripRequests[0].id })
+          .send({ ...bookAccommodation, tripRequestId: requesterTripRequests[0].requestId })
           .end((err, res) => {
               if (err) done(err);
               const { error } = res.body;
