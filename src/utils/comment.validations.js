@@ -13,8 +13,6 @@ const { createValidationErrors } = Validators;
 const { errorResponse } = responseHandlers;
 const { unAuthorized, notFound } = statusCodes;
 
-const { getCommentByPk } = CommentService;
-const { getOneRequestFromDb } = RequestService;
 /**
  * 
  * @param {object} commentData 
@@ -76,13 +74,13 @@ const isItemExists = async (req) => {
   if (req.params.commentId) {
     itemId = req.params.commentId;
     if (!isNaN(itemId)) {
-      foundItem = await getCommentByPk(itemId);
+      foundItem = await CommentService.getOneBy({ id: itemId });
       req.commentFromDb = foundItem;
       result = true;
     }
   } else {
     itemId = req.params.requestId;
-    foundItem = await getOneRequestFromDb(itemId);
+    foundItem = await RequestService.getOneBy({ id: itemId });
     req.travelReqFromDb = foundItem;
     result = true;
   }
@@ -117,7 +115,7 @@ const yesTravelExists = (role, id, travelReq, result) => {
 const isReqExistsAndPermitted = async (req) => {
   const { requestId } = req.query;
   const { role, id } = req.sessionUser;
-  const travelReq = await getOneRequestFromDb(requestId);
+  const travelReq = await RequestService.getOneBy({ id: requestId });
   let result = [false];
   
   if (travelReq) {

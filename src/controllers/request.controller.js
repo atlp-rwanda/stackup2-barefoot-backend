@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { omit } from 'lodash';
+import { Op } from 'sequelize';
 import responseHandlers from '../utils/responseHandlers';
 import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
@@ -7,32 +8,29 @@ import RequestService from '../services/request.service';
 import { offsetAndLimit } from '../utils/comment.utils';
 import userRoles from '../utils/userRoles.utils';
 import Validators from '../utils/validators';
-import UserService from '../services/authentication.service';
+import { refactorRequests } from '../utils/validations-previous';
+import UserService from '../services/user.service';
 import tripRequestsStatus from '../utils/tripRequestsStatus.util';
+import TripService from '../services/trip.service';
 
 const {
-  handleTripRequest,
-  getMostTraveledDestinations,
-  getAllRequests,
-  updateTripRequest,
+   handleSearchTripRequests,
+  getTripsStats,
 } = RequestService;
-const { viewStatsUnauthorized, requesterNotRegistered, emptySearchResult, } = customMessages;
-const { created, badRequest, ok, notFound, conflict, unAuthorized, forbidden } = statusCodes;
+const {   
+  tripRequestCreated,
+  duplicateTripRequest,
+  viewStatsUnauthorized, requesterNotRegistered, emptySearchResult } = customMessages;
+  const { created, badRequest, ok, notFound, conflict, unAuthorized, forbidden } = statusCodes;
 const { successResponse, errorResponse, updatedResponse } = responseHandlers;
 const { REQUESTER, MANAGER } = userRoles;
 const {
-  handleSearchTripRequests,
-  getTripsStats,
-  updateTripRequestStatus,
-  reassignTripRequest
-} = RequestService;
-const {
   validateTripsStatsTimeframe,
   validateRequesterInfo,
+  func, 
+  findUserDate
 } = Validators;
-const { getUserById } = UserService;
 const { ACCEPTED, REJECTED } = tripRequestsStatus;
-
 /**
    * @description Trip requests controller class
    */
@@ -44,20 +42,37 @@ export default class RequestController {
    * @description creates trip requests
    */
   static async createTripRequest(req, res) {
-    try {
       const requestData = req.body;
-      const newTrip = await handleTripRequest(requestData);
-      return successResponse(
-        res,
-        created,
-        customMessages.oneWayTripRequestCreated,
-        undefined,
-        newTrip
-      );
-    } catch (dbError) {
-      return errorResponse(res, badRequest, customMessages.duplicateTripRequest);
+      const { travelType, travelFrom, travelTo, travelDate, returnDate } = requestData;
+      if (await findUserDate(travelDate, req.sessionUser.id)) {
+        return errorResponse(res, badRequest, duplicateTripRequest);
+      }
+      const data1 = omit({ ...requestData }, ['travelDate', 'travelTo', 'travelFrom', 'returnDate']);
+      const newTrip = await RequestService.saveAll(data1);
+      const reqId = newTrip.id;
+        let subTrip = null;
+        if (travelType === 'multi-city') {
+          const arr = func(travelFrom, travelTo, travelDate, reqId);
+          arr.forEach(async item => await TripService.saveAll(item));
+          const { dataValues } = newTrip;
+          const idObj = {
+            request: {
+              ...dataValues,
+              trips: [...arr]
+            } };
+          subTrip = [idObj];
+        } else {
+          const data2 = {
+            travelFrom,
+            travelTo,
+            travelDate,
+            returnDate, 
+            requestId: reqId
+          };
+          subTrip = await TripService.saveAll(data2);
+        }
+        return successResponse(res, created, tripRequestCreated, undefined, subTrip);
     }
-  }
 
   /**
    * @param {object} req
@@ -65,7 +80,7 @@ export default class RequestController {
    * @returns {object} sends response to user
    */
   static placesAndVisitTimes = async (req, res) => {
-    const visitTimes = await getMostTraveledDestinations();
+    const visitTimes = await RequestService.getMostTraveledDestinations();
     if (visitTimes[0].length !== 0) {
       const destinations = visitTimes[0];
       const destinationCount = destinations.map(dest => ({
@@ -89,22 +104,27 @@ export default class RequestController {
     const pageToView = page > 0 ? page : undefined;
     const { offset, limit } = offsetAndLimit(pageToView);
     const userId = req.sessionUser.id;
-    const requests = await getAllRequests({ userId, offset, limit });
+    const requests = await RequestService
+      .getAndCountAllIncludeAssociation({ userId }, offset, limit);
     const reqNum = requests.count;
-    if (reqNum !== 0) {
-      const foundReqs = requests.rows;
-      if (foundReqs.length === 0) {
-        errorResponse(res, notFound, customMessages.noRequestsFoundOnThisPage);
-      } else {
-        const resultToSend = {
-          totalRequests: reqNum,
-          foundRequests: foundReqs
-        };
-        successResponse(res, ok, customMessages.requestsRetrieved, null, resultToSend);
-      }
-    } else {
-      errorResponse(res, notFound, customMessages.noRequestsYet);
-    }
+    await refactorRequests(requests, reqNum, res);
+  }
+
+  static getListOfAllRequests = async (req, res) => {
+    const { page } = req.query;
+    const pageToView = page > 0 ? page : undefined;
+    const { offset, limit } = offsetAndLimit(pageToView);
+    const whereObj = {
+      [Op.or]: [
+        { travelType: 'one-way' },
+        { travelType: 'return-trip' },
+        { travelType: 'multi-city' }
+      ]
+    };
+    const requests = await RequestService
+    .getAndCountAllIncludeAssociation(whereObj, offset, limit);
+    const reqCount = requests.count;
+     await refactorRequests(requests, reqCount, res);
   }
 
   /**
@@ -114,14 +134,26 @@ export default class RequestController {
  * @description update open trip request
  */
   static async updateTripRequest(req, res) {
-    const requestData = req.body;
-    const { requestId } = req.params;
-    try {
-      await updateTripRequest(requestData, requestId);
-      return updatedResponse(res, ok, customMessages.requestUpdated);
-    } catch (err) {
-      return errorResponse(res, badRequest, customMessages.duplicateTripRequest);
-    }
+      const requestData = req.body;
+      const { travelDate } = requestData;
+      const { requestId } = req.params;
+      if (await findUserDate(travelDate, req.sessionUser.id)) {
+        return errorResponse(res, badRequest, duplicateTripRequest);
+      }
+      const { 
+        travelReason, 
+        travelType, 
+        accommodation, 
+        travelTo, 
+        travelFrom, 
+        returnDate 
+      } = requestData;
+
+        await RequestService
+            .updateBy({ travelReason, travelType, accommodation }, { id: requestId });
+          await TripService
+            .updateBy({ travelTo, travelFrom, travelDate, returnDate }, { requestId });
+        return updatedResponse(res, ok, customMessages.requestUpdated);
   }
 
   /**
@@ -211,7 +243,7 @@ export default class RequestController {
         startDate,
         endDate,
       } = await validateTripsStatsTimeframe(timeframe);
-      const isUserRegistered = !!await getUserById(requesterId);
+      const isUserRegistered = !!await UserService.getOneBy({ id: requesterId });
       if (!isUserRegistered) {
         return errorResponse(res, badRequest, requesterNotRegistered);
       }
@@ -242,7 +274,7 @@ export default class RequestController {
       return errorResponse(res, forbidden, customMessages.tripRequestAlreadyRejected);
     }
     const handledBy = req.sessionUser.id;
-    await updateTripRequestStatus(tripRequestId, ACCEPTED, handledBy);
+    await RequestService.updateBy({ status: ACCEPTED, handledBy }, { id: tripRequestId });
     return successResponse(res, ok, customMessages.requestApprovalSuccess, undefined, undefined);
   }
 
@@ -257,7 +289,8 @@ export default class RequestController {
     if (req.tripRequestCurrentStatus === REJECTED) {
       return errorResponse(res, conflict, customMessages.tripRequestAlreadyRejected);
     }
-    await updateTripRequestStatus(tripRequestId, REJECTED, req.sessionUser.id);
+    await RequestService
+    .updateBy({ status: REJECTED, handledBy: req.sessionUser.id }, { id: tripRequestId });
     return successResponse(res, ok, customMessages.requestRejectionSuccess, undefined, undefined);
   }
 
@@ -273,7 +306,7 @@ export default class RequestController {
     if (newManagerId === req.tripRequestData.handledBy) {
       return errorResponse(res, conflict, customMessages.tripRequestReassignConflict);
     }
-    await reassignTripRequest(tripRequestId, newManagerId);
+    await RequestService.updateBy({ handledBy: newManagerId }, { id: tripRequestId });
     return successResponse(
       res,
       ok,

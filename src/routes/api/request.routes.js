@@ -23,10 +23,12 @@ const {
   updateTripRequest,
   searchTripRequests,
   getUserTripsStats,
+  getListOfAllRequests
 } = RequestController;
 const {
   isUserLoggedInAndVerified,
   isUserManager,
+  isUserSuperAdmin
 } = Authentication;
 const {
   isRequestOpenIsRequestYours,
@@ -51,6 +53,7 @@ router.get('/comment', isUserLoggedInAndVerified, validateCommentRetrieval, getC
 router.patch('/comment/:commentId', isUserLoggedInAndVerified, validateCommentUpdate, updateComments);
 router.delete('/comment/:commentId', isUserLoggedInAndVerified, validateCommentDelete, deleteComment);
 router.get('/', isUserLoggedInAndVerified, validateReqRetrieve, getListOfMyRequests);
+router.get('/requests', isUserLoggedInAndVerified, isUserSuperAdmin, validateReqRetrieve, getListOfAllRequests);
 router.get('/search', [isUserLoggedInAndVerified, isTripRequestsSearchValid], searchTripRequests);
 router.get('/stats', [isUserLoggedInAndVerified], getUserTripsStats);
 router.patch('/:requestId', isUserLoggedInAndVerified, isRequestValid, isRequestOpenIsRequestYours, isTripRequestValid, updateTripRequest);

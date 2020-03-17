@@ -623,7 +623,7 @@ it('Will delete accommodation, expect it to return an object with message and an
           .send({ 
                ...bookAccommodation, 
                accommodationId, 
-               tripRequestId: requesterTripRequests[0].id 
+               tripRequestId: requesterTripRequests[0].requestId
             })
           .end((err, res) => {
               if (err) done(err);
@@ -645,7 +645,7 @@ it('Will delete accommodation, expect it to return an object with message and an
           .send({ 
               ...bookAccommodation, 
               accommodationId, 
-              tripRequestId: requesterTripRequests[0].id 
+              tripRequestId: requesterTripRequests[0].requestId
             })
           .end((err, res) => {
               if (err) done(err);

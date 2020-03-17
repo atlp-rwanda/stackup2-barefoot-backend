@@ -1,12 +1,9 @@
 import responseHandlers from '../utils/responseHandlers';
 import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
-import roles from '../services/role.service';
-import authentication from '../services/authentication.service';
+import UserService from '../services/user.service';
 import userRoles from '../utils/userRoles.utils';
 
-const { assignRole } = roles;
-const { findUserByEmailOrUsername } = authentication;
 const { notExistUser, roleAssigned, existingRole, superUser } = customMessages;
 const { forbidden, ok } = statusCodes;
 const { SUPER_USER } = userRoles;
@@ -23,7 +20,7 @@ export default class UserRoleController {
    */
     static assignRole = async (req, res) => {
         const { email, role } = req.body;
-        const userExists = await findUserByEmailOrUsername(email);
+        const userExists = await UserService.getOneBy({ email });
         if (!userExists) {
             return responseHandlers.errorResponse(res, forbidden, notExistUser);
         }
@@ -33,7 +30,7 @@ export default class UserRoleController {
         if (userExists.dataValues.role === SUPER_USER) {
             return responseHandlers.errorResponse(res, statusCodes.badRequest, superUser);
         }
-        await assignRole(req.body);
+        await UserService.updateBy({ role }, { email });
         return responseHandlers.successResponse(res, ok, roleAssigned);
     };
 }
