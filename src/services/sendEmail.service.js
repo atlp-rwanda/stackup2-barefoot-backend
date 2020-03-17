@@ -3,7 +3,7 @@
 import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 import mailGen from 'mailgen';
-import { verifyMessage } from '../utils/emailMessages';
+import { verifyMessage, userRoleMessage } from '../utils/emailMessages';
 
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -17,7 +17,6 @@ export default class EmailSender {
         link: '#'
       }
     });
-
     const generateEmail = async () => ({
       body: {
         name,

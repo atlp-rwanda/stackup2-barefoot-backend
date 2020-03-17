@@ -20,7 +20,11 @@ const messages = {
   invalidGender: 'Gender should be male or female',
   invalidPassword: 'Password should consists of alphabets, numbers and at least 8 characters minimum',
   invalidAddress: 'Address should consists of alphabets and at least 3 minimum characters, without whitespace or special characters',
-  verifyMessage: 'You have now verified your account successfully'
+  verifyMessage: 'You have now verified your account successfully',
+  assignRoleMessage: 'role assigned to user successfully',
+  checkInternet: 'Check your internet connection and try again',
+  invalidRole: 'Role should be superAdmin or travelAdmin or travelTeamMember or manager or requester',
+  userNotAuthorized: 'You are not allowed to do this action'
 };
 
 export default messages;

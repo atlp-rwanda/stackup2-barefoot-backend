@@ -19,4 +19,11 @@ const verifyMessage = {
   outro: 'Barefoot Nomad'
 };
 
-export { resetMessage, changedMessage, verifyMessage };
+const userRoleMessage = {
+  intro: 'Congratulations, you have been assigned an account well!',
+  instructions: 'Click on the button below to go to your dashboard!',
+  text: 'Dashboard',
+  outro: 'Barefoot Nomad'
+};
+
+export { resetMessage, changedMessage, verifyMessage, userRoleMessage };
