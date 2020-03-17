@@ -34,4 +34,17 @@ const validateSignup = user => {
   });
 };
 
-export { validateSignup };
+/**
+* @param {object} user
+* @returns {object} return body assigned to their validation methods
+*/
+const validateRoleAssigning = user => {
+  const schema = Joi.object({
+    email: validationMethods(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, { 'string.pattern.base': `${customMessages.invalidEmail}` }),
+    role: validationMethods(/^superAdmin$|^travelAdmin$|^travelTeamMember$|^manager|^requester$/, { 'string.pattern.base': `${customMessages.invalidRole}` })
+  });
+  return schema.validate(user, {
+    abortEarly: false
+  });
+};
+export { validateSignup, validateRoleAssigning };

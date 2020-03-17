@@ -1,3 +1,5 @@
+/* eslint-disable require-jsdoc */
+
 export default {
   signupData: {
     firstName: 'John',
@@ -75,6 +77,10 @@ export default {
     email: 'john@doe.com',
     password: 'helloworld3'
   },
+  realLoginDataFromTheDb2: {
+    email: 'admin@admin.com',
+    password: 'helloworld3'
+  },
   realLoginDataFromTheDb1: {
     username: 'Jdoe',
     password: 'helloworld3'
@@ -94,5 +100,25 @@ export default {
   emptyLoginEmail: {
     email: '',
     password: 'hheerr'
+  },
+  userRoleData: {
+    email: 'user@user.com',
+    role: 'manager'
+  },
+  userRoleDataEmailNotExist: {
+    email: 'userrrr@user.com',
+    role: 'manager'
+  },
+  invalidEmailForUserRole: {
+    email: 'useruser.com',
+    role: 'manager'
+  },
+  emptyEmailForUserRole: {
+    email: '',
+    role: 'manager'
+  },
+  invalidRoleForUserRole: {
+    email: 'user@user.com',
+    role: 'test'
   }
 };
