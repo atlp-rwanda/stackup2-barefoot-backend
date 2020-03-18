@@ -43,8 +43,8 @@ describe('Create user roles', () => {
             gender: 'Male',
         };
 
-        await handleSignUp.handleSignUp2(signupData2);
-        await handleSignUp.handleSignUp(signupData3);
+        await handleSignUp.handleSignUp(signupData2, 'superAdmin', true);
+        await handleSignUp.handleSignUp(signupData3, 'requester', true);
     });
 
     it('Should login to super user', (done) => {

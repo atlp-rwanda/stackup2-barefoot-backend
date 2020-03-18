@@ -1,4 +1,5 @@
 import models from '../database/models';
+import updateFunction from './updateFunction.service';
 
 const { user } = models;
 
@@ -12,10 +13,6 @@ export default class UserAdmin {
     */
     
     static updateRole = async (email, role) => {
-        const assignRoles = await user.update(
-            { role },
-            { where: { email } }
-        );
-        return assignRoles;
+        await updateFunction(email, role);
     };
 }

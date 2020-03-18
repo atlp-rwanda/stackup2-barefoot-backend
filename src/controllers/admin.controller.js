@@ -5,6 +5,7 @@ import customMessages from '../utils/customMessages';
 import adminService from '../services/admin.service';
 import userService from '../services/authentication.service';
 import sendEmail from '../services/sendEmail.service';
+import { userRoleMessage } from '../utils/emailMessages';
 
 const { successResponse, errorResponse } = responseHandlers;
 const { updateRole } = adminService;
@@ -33,7 +34,17 @@ export default class AdminController {
         const userExists = await findUserByEmail(email.toLowerCase());
         if (userExists) {
             await updateRole(email, role);
-            await sendEmail.userRoleSettings(email, `${process.env.APP_URL}/dashboard`, userExists.firstName);
+            await sendEmail(
+                email,
+                `${process.env.APP_URL}/dashboard`,
+                userExists.firstName,
+                userRoleMessage.intro,
+                userRoleMessage.instructions,
+                userRoleMessage.text,
+                userRoleMessage.outro,
+                'Congratulations, User role assigned successfully'
+            );
+            
             return successResponse(res, statusCodes.ok, customMessages.assignRoleMessage);
         }
         return errorResponse(res, statusCodes.forbidden, customMessages.notExistUser);

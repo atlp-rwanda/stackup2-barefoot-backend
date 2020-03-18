@@ -1,6 +1,7 @@
 /* eslint-disable valid-jsdoc */
 import { Sequelize } from 'sequelize';
 import models from '../database/models';
+import updateFunction from './updateFunction.service';
 
 const { user } = models;
 const sequelize = Sequelize;
@@ -15,36 +16,7 @@ export default class UserService {
    * @param {object} data User data to save to the database
    * @returns {object} dataValues User object that was saved to the database
     */
-  static handleSignUp = async (data) => {
-    const role = 'requester';
-    const isVerified = false;
-    const newData = {
-      ...data,
-      role,
-      isVerified
-    };
-    const { dataValues } = await user.create(
-      newData,
-      {
-        fields: [
-          'firstName',
-          'lastName',
-          'username',
-          'email',
-          'password',
-          'gender',
-          'address',
-          'role',
-          'isVerified',
-        ],
-      },
-    );
-    return dataValues;
-  };
-
-  static handleSignUp2 = async (data) => {
-    const role = 'superAdmin';
-    const isVerified = true;
+  static handleSignUp = async (data, role, isVerified) => {
     const newData = {
       ...data,
       role,
@@ -119,15 +91,7 @@ export default class UserService {
    * @returns {object} returns an updated user
    */
   static updateUserPassword = async (password, id) => {
-    const updatedUser = await user.update(
-      {
-        password
-      },
-      {
-        where: { id }
-      }
-    );
-    return updatedUser;
+    await updateFunction(password, id);
   }
 
   static updateIsVerified = async (email) => {
