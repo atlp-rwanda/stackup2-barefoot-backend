@@ -1,6 +1,7 @@
 import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 import Mailgen from 'mailgen';
+import emailBody from './bodyMessage.utils';
 
 dotenv.config();
 
@@ -23,21 +24,7 @@ const mailGenerator = new Mailgen({
    * @returns {object} response json object
    * @description send reset password email
    */
-const generateEmail = async (name, intro, instructions, buttonText, link, outro) => ({
-  body: {
-    name,
-    intro,
-    action: {
-      instructions,
-      button: {
-        color: '#C02006',
-        text: buttonText,
-        link
-      }
-    },
-    outro
-  }
-});
+const generateEmail = async (name, intro, instructions, buttonText, link, outro) => emailBody(name, intro, instructions, '#C04156', buttonText, link, outro);
 /**
    * @param {string} email - The name of receiver.
    * @param {object} template - The template for email.

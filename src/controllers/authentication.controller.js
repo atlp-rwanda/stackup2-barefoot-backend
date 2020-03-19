@@ -7,7 +7,7 @@ import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
 import UserService from '../services/authentication.service';
 import sendMail from '../utils/email.util';
-import { resetMessage, changedMessage } from '../utils/emailMessages';
+import { resetMessage, changedMessage, verifyMessage } from '../utils/emailMessages';
 import sendEmail from '../services/sendEmail.service';
 
 const {
@@ -50,10 +50,19 @@ export default class AuthenticationController {
       const password = await passwordHasher(payload.password);
       const dataWithoutPassword = _.omit(payload, 'password');
       const userData = { ...dataWithoutPassword, password };
-      const saveUser = await handleSignUp(userData);
+      const saveUser = await handleSignUp(userData, 'requester', false);
       const savedUserObject = _.omit(saveUser, 'password');
       const token = await generateToken(savedUserObject);
-      await sendEmail.sendSignUpVerificationLink(req.body.email, `${process.env.APP_URL}/api/auth/verify?token=${token}`, req.body.firstName);
+    await sendEmail(
+      req.body.email,
+      `${process.env.APP_URL}/api/auth/verify?token=${token}`,
+      req.body.firstName,
+      verifyMessage.intro,
+      verifyMessage.instructions,
+      verifyMessage.text,
+      verifyMessage.outro,
+      'Verification Email'
+    );
       return successResponse(res, statusCodes.created, customMessages.userSignupSuccess, token);
     }
 
