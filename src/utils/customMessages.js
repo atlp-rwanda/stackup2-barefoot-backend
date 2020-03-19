@@ -1,3 +1,4 @@
+
 const messages = {
   userSignupSuccess: 'Your account has been created successfully! \n\n\n\n Please click on the button sent to your email to comfirm your account.',
   userSignupFailed: 'Sign up failed! Please try again later',
@@ -18,7 +19,7 @@ const messages = {
   invalidUsername: 'Username should consists of alphabets, numbers, 3 minimum characters and special characters like @._-, without whitespace',
   invalidEmail: 'Email should look like example@email.com',
   invalidGender: 'Gender should be male or female',
-  invalidPassword: 'Password should consists of alphabets, numbers and at least 8 characters minimum',
+  invalidPassword: 'Password should consists of alphabets, capital letter, special characters, numbers and at least 8 characters minimum',
   invalidAddress: 'Address should consists of alphabets and at least 3 minimum characters, without whitespace or special characters',
   verifyMessage: 'You have now verified your account successfully',
   socialMediaAuthSucess: 'User authenticated successfully',
@@ -49,7 +50,8 @@ const messages = {
   incorrectOldPassword: 'You have entered incorrect old password, if you have forgotten your password, logout and reset your password.',
   usernameExistOrEmpty: 'The username you entered already exists or is empty, if you want to continue update your profile, change the new username or unselect it to remain with the old one',
   passwordChangeSuccess: 'Your password has been changed, login with new password',
-  changeEmailNotAllowed: 'You cannot change your email, unselect it if you want to continue updating your profile, otherwise you will not be able to continue'
+  changeEmailNotAllowed: 'You cannot change your email, unselect it if you want to continue updating your profile, otherwise you will not be able to continue',
+  tokenInvalid: 'Authentication failed. Token is invalid'
 };
 
 export default messages;

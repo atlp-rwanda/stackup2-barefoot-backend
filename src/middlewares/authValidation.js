@@ -1,4 +1,4 @@
-import { validateSignup } from '../utils/validations';
+import Joi from '@hapi/joi';
 import statusCodes from '../utils/statusCodes';
 import responseHandlers from '../utils/responseHandlers';
 import utils from '../utils/authentication.utils';
@@ -6,6 +6,7 @@ import customMessages from '../utils/customMessages';
 
 const { errorResponse } = responseHandlers;
 const { decodeToken } = utils;
+import { validateSignup, validatePassword, displayErrorMessages } from '../utils/validations';
 
 /**
  * @param {object} req
@@ -13,14 +14,9 @@ const { decodeToken } = utils;
  * @param {object} next
  * @returns{object} return next() if validations pass
  */
-export const signupValidation = async (req, res, next) => {
+const signupValidation = async (req, res, next) => {
     const { error } = validateSignup(req.body);
-    if (error) {
-        const { details } = error;
-      const messages = details.map((err) => err.message.replace(/['"]/g, '')).join(', ');
-    return errorResponse(res, statusCodes.badRequest, messages);
-  }
-    return next();
+    displayErrorMessages(error, res, next);
 };
 
 /**
@@ -30,7 +26,7 @@ export const signupValidation = async (req, res, next) => {
  * @param {object} next 
  * @returns{object} returns next if the token is valid
  */
-export const authorizeAccess = async (req, res, next) => {
+const authorizeAccess = async (req, res, next) => {
   const { authorization } = req.headers;
     try {
         const token = authorization.split(' ')[1];
@@ -41,3 +37,38 @@ export const authorizeAccess = async (req, res, next) => {
     errorResponse(res, statusCodes.unAuthorized, customMessages.notAllowedToAccessThisResources);
     }
 };
+
+/**
+ * @param {object} req
+ * @param {object} res
+ * @param {object} next
+ * @returns{object} return next() if validations pass
+ */
+const passwordValidation = async (req, res, next) => {
+  const { error } = validatePassword(req.body);
+  if (error) {
+    return errorResponse(res, statusCodes.badRequest, customMessages.invalidPassword);
+  }
+  return next();
+};
+/**
+* @param {object} req
+* @param {object} res
+* @param {object} next
+* @returns {object} return body assigned to their validation methods
+*/
+const validateResetEmail = (req, res, next) => {
+  const email = req.body;
+  const schema = Joi.object({
+    email: Joi.string().trim().email().required()
+  });
+  const { error } = schema.validate(email, {
+    abortEarly: false
+  });
+  if (error) { 
+  return errorResponse(res, statusCodes.badRequest, customMessages.invalidEmail);
+  }
+  next();
+};
+
+export { signupValidation, passwordValidation, authorizeAccess, validateResetEmail };

@@ -82,22 +82,17 @@ export default class AuthenticationController {
   static async sendResetEmail(req, res) {
     const { email } = req.body;
     const {
-      intro, instruction, text, outro
+      intro, instruction, text
     } = resetMessage;
-    try {
-      const emailToUse = email.toLowerCase();
-      const users = await findUserByEmailOrUsername(emailToUse);
+      const users = await findUserEmailIfExist(email.toLowerCase());
       if (users) {
         const user = users.dataValues;
         const token = await generateToken(user);
         const url = `${token}`;
-        await sendMail(user.email, user.firstName, intro, instruction, text, url, outro);
+        await sendMail(user.email, user.firstName, intro, instruction, text, url);
         return successResponse(res, statusCodes.ok, customMessages.resetEmail, token);
       }
       return errorResponse(res, statusCodes.forbidden, customMessages.notExistUser);
-    } catch (err) {
-      return errorResponse(res, statusCodes.badRequest, customMessages.errorMessage);
-    }
   }
 
   /**
@@ -110,19 +105,16 @@ export default class AuthenticationController {
     const { token } = req.params;
     const { password } = req.body;
     const {
-      intro, instruction, text, outro
+      intro, instruction, text
     } = changedMessage;
-    try {
+
       const userDetails = await decodeToken(token);
       const users = await findUserByEmailOrUsername(userDetails.email);
       const user = users.dataValues;
       const hashed = await passwordHasher(password);
       await updateUserPassword(hashed, user.id);
-      await sendMail(user.email, user.firstName, intro, instruction, text, '#', outro);
+      await sendMail(user.email, user.firstName, intro, instruction, text, '#');
       return updatedResponse(res, statusCodes.ok, customMessages.changed);
-    } catch (err) {
-      return errorResponse(res, statusCodes.badRequest, customMessages.errorMessage);
-    }
   }
 
   static verify = async (req, res) => {

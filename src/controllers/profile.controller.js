@@ -68,12 +68,12 @@ export default class ProfileController {
    * @returns{object} login
    */
   static changeUserPassword = async (req, res) => {
-    const { passwordToUpdate, oldPassword } = req.body;
+    const { password, oldPassword } = req.body;
     const { email } = req.authenticatedUser;
     if (oldPassword) {
       const updaterUser = await findUserByEmailOrUsername(email);
       if (await isPasswordTrue(oldPassword, updaterUser.dataValues.password)) {
-        const newPassword = await passwordHasher(passwordToUpdate);
+        const newPassword = await passwordHasher(password);
         const reslt = await ProfileService.changePassword(newPassword, req.authenticatedUser.email);
         successResponse(res, statusCodes.ok, messages.passwordChangeSuccess, undefined, reslt);
       } else {

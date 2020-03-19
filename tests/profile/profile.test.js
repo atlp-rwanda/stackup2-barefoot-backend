@@ -275,4 +275,19 @@ describe('Profile tests', () => {
           done();
         });
     });
-});
+    it(`Change password with invalid should return an object and message informing a user that his password 
+    has must include capital letter, number and special characters`, (done) => {
+        chai
+          .request(server)
+          .patch('/api/profile/password')
+          .set('authorization', `Bearer ${authTokenOfVerifiedUser}`)
+          .send(mockData.changeUserPasswordWithInValidData)
+          .end((err, res) => {
+            if (err) done(err);
+            expect(res).to.have.status(statusCodes.badRequest);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.property('error').to.equal(customMessages.invalidPassword);
+            done();
+          });
+      });
+  });
