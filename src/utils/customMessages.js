@@ -22,6 +22,21 @@ const messages = {
   invalidAddress: 'Address should consists of alphabets and at least 3 minimum characters, without whitespace or special characters',
   verifyMessage: 'You have now verified your account successfully',
   socialMediaAuthSucess: 'User authenticated successfully',
+  loginPasswordAndEmailEmpty: 'Please enter your email and your password',
+  oneWayTripRequestFailed: 'trip request request failed',
+  oneWayTripRequestCreated: 'trip request successfuly submitted and waiting for approval',
+  serverError: 'Sorry, something went wrong on our end, please try again later',
+  tokenAbsent: 'access denied, you must login to use this resource',
+  tokenVerifyFailed: 'sorry, we were unable to verify your identity, you must login to use this resource',
+  endpointNotFound: 'the requested resource was not found',
+  duplicateTripRequest: 'request failed, attempting to submit the same trip request twice',
+  accountNotVerified: 'sorry, your account is not yet verified.',
+  invalidTravelType: 'please specify the type of your trip',
+  invalidTravelFrom: 'please specify where you are travelling from',
+  invalidTravelTo: 'please provide where you are travelling to',
+  invalidTravelReason: 'please provide the reason for the trip',
+  invalidTravelDate: 'please provide the date when you plan to take the trip',
+  invalidTravelAccomodation: 'please specify wether you want acommodation on your trip',
 };
 
 export default messages;

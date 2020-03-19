@@ -184,6 +184,93 @@
           }
         }
       }
+    },
+    "/trips":{
+      "post": {
+        "summary": "create a one way trip request",
+        "produces": [
+          "application/json"
+        ],
+        "consumes":[
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Travel from",
+            "in": "body",
+            "description": "a place where requester travels from",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Travel to",
+            "in": "body",
+            "description": "a place where requester wishes to travel to",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Travel reason",
+            "in": "body",
+            "description": "the reason for the trip",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Travel date",
+            "in": "body",
+            "description": "date requester wishes to take the trip",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Travel type",
+            "in": "body",
+            "description": "the type of trip the requester wishes to make",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Accommodation",
+            "in": "body",
+            "description": "wether requester wants accommodation",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          }
+        ],
+        "responses": {
+         "200":{
+           "description":"Trip request successfuly created",
+            "schema":{
+            "$ref": "#/responses/trip-request-success"
+          }
+         },
+         "400":{
+           "description":"failed to create a trip request due to invalid input",
+           "schema":{
+             "$ref":"#/responses/trip-request-fail"
+           }
+         },
+         "401":{
+           "description":"access denied to protected resource",
+           "schema":{
+             "$ref":"#/responses/trip-request-unauthorized"
+           }
+         }
+        }
+      }
     }
   },
   "/api/auth/facebook":{
@@ -290,6 +377,38 @@
         "required": true,
         "example": "didiny"
       }
+    },
+    "OneWaytripRequest":{
+      "travelFrom": {
+        "type": "string",
+        "required": true,
+        "example": "Kigali"
+      },
+      "travelTo": {
+        "type": "string",
+        "required": true,
+        "example": "Butare"
+      },
+      "travelReason": {
+        "type": "string",
+        "required": true,
+        "example": "Business meeting"
+      },
+      "travelDate": {
+        "type": "date",
+        "required": true,
+        "example": "2020-03-14T15:12:22.360Z"
+      },
+      "travelType": {
+        "type": "string",
+        "required": true,
+        "example": "One-way"
+      },
+      "accommodation": {
+        "type": "boolean",
+        "required": true,
+        "example": true
+      }
     }
   },
   "responses": {
@@ -350,6 +469,30 @@
         "error": {
           "type": "string",
           "example": "User does not exist"
+        }
+      }
+    },
+    "trip-request-success":{
+      "properties":{
+        "message":{
+          "type":"string",
+          "example":"trip request successfuly created and waiting for manager approval"
+        }
+      }
+    },
+    "trip-request-fail":{
+      "properties":{
+        "error":{
+          "type":"string",
+          "example":"you must provide a valid date value for \"travel date\""
+        }
+      }
+    },
+    "trip-request-unauthorized":{
+      "properties":{
+        "message":{
+          "type":"string",
+          "example":"access denied, you must login to use this resource"
         }
       }
     }

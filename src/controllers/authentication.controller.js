@@ -23,7 +23,7 @@ const {
   findUserByEmail, 
   findUserByEmailOrUsername, 
   findUserEmailIfExist, 
-  updateUserPassword,
+  updateUserPassword, 
   updateIsVerified
 } = UserService;
 const {

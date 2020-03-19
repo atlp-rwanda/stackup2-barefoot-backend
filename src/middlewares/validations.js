@@ -1,5 +1,14 @@
 import Joi from '@hapi/joi';
+import _ from 'lodash';
 import customMessages from '../utils/customMessages';
+import responseHandlers from '../utils/responseHandlers';
+import statusCodes from '../utils/statusCodes';
+import Validators from '../utils/validators';
+
+const { errorResponse } = responseHandlers;
+const { badRequest } = statusCodes;
+const { invalidTravelType } = customMessages;
+const { validateOneWayTripRequest } = Validators;
 
 /**
 * @param {string} pattern
@@ -34,4 +43,34 @@ const validateSignup = user => {
   });
 };
 
-export { validateSignup };
+/**
+ * @param {Request} req Node/express request
+ * @param {Response} res Node/express response
+ * @param {NextFunction} next Node/Express Next callback function
+ * @returns {Object} Custom response with created trip details
+ * @description validates all trip requests
+ */
+const validateTripRequest = async (req, res, next) => {
+  const tripRequestInfo = req.body;
+  let { travelType } = tripRequestInfo;
+  if (!travelType) {
+    return errorResponse(res, badRequest, invalidTravelType);
+  }
+  const whiteSpaces = /\s+/g;
+  travelType = String(travelType).replace(whiteSpaces, ' ').trim().toLowerCase();
+  switch (travelType) {
+    case 'one-way':
+      try {
+        const validationOutput = await validateOneWayTripRequest(tripRequestInfo);
+        validationOutput.userId = req.sessionUser.id;
+        req.body = validationOutput;
+        return next();
+      } catch (validationError) {
+        return errorResponse(res, badRequest, validationError.message);
+      }
+    default:
+      return errorResponse(res, badRequest, invalidTravelType);
+  }
+};
+
+export { validateSignup, validateTripRequest, };
