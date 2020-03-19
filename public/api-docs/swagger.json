@@ -58,130 +58,163 @@
         }
       }
     },
-  "/auth/login":{
+    "/auth/login": {
       "post": {
         "summary": "User Login",
         "produces": [
           "application/json"
         ],
-        "consumes":[
+        "consumes": [
           "application/x-www-form-urlencoded"
         ],
-          "parameters": [
-            {
-              "name": "email",
-              "in": "formData",
-              "required": true,
-              "type": "string",
-              "format": "email",
-              "description": "Email for securing user's account"
-            },
-            {
-              "name": "password",
-              "in": "formData",
-              "required": true,
-              "type": "string",
-              "format": "password",
-              "description": "Password for authentication"
-            }
-          ],
-        "responses": {
-         "200":{
-           "description":"This is how the response looks like when login is successful",
-            "schema":{
-            "$ref": "#/login-definition/login-response-real-data"
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "format": "email",
+            "description": "Email for securing user's account"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "format": "password",
+            "description": "Password for authentication"
           }
-         },
-         "400":{
-           "description":"This is how the response looks like when a user sends empty email, or empty password or both empty",
-           "schema":{
-             "$ref":"#/login-definition/login-response-empty-data"
-           }
-         },
-         "401":{
-           "description":"This is how the response looks like when a user sends wrong email or password",
-           "schema":{
-             "$ref":"#/login-definition/login-response-wrong-data"
-           }
-         }
+        ],
+        "responses": {
+          "200": {
+            "description": "This is how the response looks like when login is successful",
+            "schema": {
+              "$ref": "#/login-definition/login-response-real-data"
+            }
+          },
+          "400": {
+            "description": "This is how the response looks like when a user sends empty email, or empty password or both empty",
+            "schema": {
+              "$ref": "#/login-definition/login-response-empty-data"
+            }
+          },
+          "401": {
+            "description": "This is how the response looks like when a user sends wrong email or password",
+            "schema": {
+              "$ref": "#/login-definition/login-response-wrong-data"
+            }
+          }
         }
       }
     },
-    "/auth/resetpassword":{
+    "/auth/resetpassword": {
       "post": {
         "summary": "Reset email",
         "produces": [
           "application/json"
         ],
-        "consumes":[
+        "consumes": [
           "application/json"
         ],
-          "parameters": [
-            {
-              "name": "User email",
-              "in": "body",
-              "description": "email for a user ",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/resetEmail"
-              }
-            }],
+        "parameters": [
+          {
+            "name": "User email",
+            "in": "body",
+            "description": "email for a user ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/resetEmail"
+            }
+          }
+        ],
         "responses": {
-         "200":{
-           "description":"This is how the response looks like when user exist and an email is successful sent",
-            "schema":{
-            "$ref": "#/responses/reset-password-email-success"
+          "200": {
+            "description": "This is how the response looks like when user exist and an email is successful sent",
+            "schema": {
+              "$ref": "#/responses/reset-password-email-success"
+            }
+          },
+          "400": {
+            "description": "This is how the response looks like when there occured an error",
+            "schema": {
+              "$ref": "#/responses/reset-password-email-error"
+            }
+          },
+          "403": {
+            "description": "This is how the response looks like when a user does not exist",
+            "schema": {
+              "$ref": "#/responses/reset-password-email-fail"
+            }
           }
-         },
-         "403":{
-           "description":"This is how the response looks like when a user does not exist",
-           "schema":{
-             "$ref":"#/responses/reset-password-email-fail"
-           }
-         },
-         "400":{
-          "description":"This is how the response looks like when there occured an error",
-          "schema":{
-            "$ref":"#/responses/reset-password-email-error"
-          }
-        }
         }
       }
     },
-    "/auth/resetpassord/:token":{
+    "/auth/resetpassord/:token": {
       "post": {
         "summary": "update password",
         "produces": [
           "application/json"
         ],
-        "consumes":[
+        "consumes": [
           "application/json"
         ],
-          "parameters": [
-            {
-              "name": "User password",
-              "in": "body",
-              "description": "the new password ",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/updatePassword"
-              }
+        "parameters": [
+          {
+            "name": "User password",
+            "in": "body",
+            "description": "the new password ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updatePassword"
             }
-          ],
-        "responses": {
-         "200":{
-           "description":"This is the response when password is updated",
-            "schema":{
-            "$ref": "#/responses/update-password-success"
           }
-         },
-         "400":{
-           "description":"This is the response when occured an error while updating",
-           "schema":{
-             "$ref":"#/responses/reset-password-email-error"
-           }
-         }
+        ],
+        "responses": {
+          "200": {
+            "description": "This is the response when password is updated",
+            "schema": {
+              "$ref": "#/responses/update-password-success"
+            }
+          },
+          "400": {
+            "description": "This is the response when occured an error while updating",
+            "schema": {
+              "$ref": "#/responses/reset-password-email-error"
+            }
+          }
         }
+      }
+    }
+  },
+  "/api/auth/facebook":{
+    "get": {
+      "summary": "Login using facebook account",
+      "produces": [
+        "application/json"
+      ],
+      "consumes":[
+        "application/x-www-form-urlencoded"
+      ],
+      "responses": {
+       "200":{
+         "description":"The user is successufully authenticated by facebook"
+       }
+      }
+    }
+  },
+  "/api/auth/google":{
+    "get": {
+      "summary": "Login using google account",
+      "produces": [
+        "application/json"
+      ],
+      "consumes":[
+        "application/x-www-form-urlencoded"
+      ],
+      "responses": {
+       "200":{
+         "description":"The user is successufully authenticated by google"
+       }
       }
     }
   },
@@ -244,14 +277,14 @@
         }
       }
     },
-    "resetEmail":{
+    "resetEmail": {
       "email": {
         "type": "string",
         "required": true,
         "example": "john@doe.com"
       }
     },
-    "updatePassword":{
+    "updatePassword": {
       "password": {
         "type": "string",
         "required": true,
@@ -280,53 +313,53 @@
         }
       }
     },
-    "reset-password-email-success":{
-      "properties":{
-        "message":{
-          "type":"string",
-          "example":"The email has sent successful"
+    "reset-password-email-success": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "The email has sent successful"
         }
       }
     },
-    "reset-password-email-fail":{
-      "properties":{
-        "error":{
-          "type":"string",
-          "example":"User does not exist"
+    "reset-password-email-fail": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "User does not exist"
         }
       }
     },
-    "reset-password-email-error":{
-      "properties":{
-        "error":{
-          "type":"string",
-          "example":"occured a error"
+    "reset-password-email-error": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "occured a error"
         }
       }
     },
-    "update-password-success":{
-      "properties":{
-        "message":{
-          "type":"string",
-          "example":"password changed"
+    "update-password-success": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "password changed"
         }
       }
     },
-    "update-password-fail":{
-      "properties":{
-        "error":{
-          "type":"string",
-          "example":"User does not exist"
+    "update-password-fail": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "User does not exist"
         }
       }
     }
   },
-  "login-definition":{
-    "login-response-real-data":{
+  "login-definition": {
+    "login-response-real-data": {
       "properties": {
-        "message":{
-          "type":"string",
-          "example":"successfully logged in"
+        "message": {
+          "type": "string",
+          "example": "successfully logged in"
         },
         "token": {
           "type": "string",
@@ -334,20 +367,21 @@
         }
       }
     },
-    "login-response-wrong-data":{
+    "login-response-wrong-data": {
       "properties": {
-        "message":{
-          "type":"string",
-          "example":"unknown credentials"
+        "message": {
+          "type": "string",
+          "example": "unknown credentials"
         }
       }
     },
-    "login-response-empty-data":{
+    "login-response-empty-data": {
       "properties": {
-        "message":{
-          "type":"string",
-          "example":"enter your email or password"
+        "message": {
+          "type": "string",
+          "example": "enter your email or password"
         }
       }
-    }}
+    }
+  }
 }

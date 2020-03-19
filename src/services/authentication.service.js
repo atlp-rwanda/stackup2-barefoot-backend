@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize';
 import models from '../database/models';
+import findUser from '../utils/identifyUser';
 
 const { user } = models;
 const sequelize = Sequelize;
@@ -17,10 +18,12 @@ export default class UserService {
   static handleSignUp = async (data) => {
     const role = 'requester';
     const isVerified = false;
+    const provider = 'Barefootnomad';
     const newData = {
       ...data,
+      provider,
       role,
-      isVerified
+      isVerified,
     };
     const { dataValues } = await user.create(
       newData,
@@ -31,6 +34,7 @@ export default class UserService {
           'username',
           'email',
           'password',
+          'provider',
           'gender',
           'address',
           'role',
@@ -47,9 +51,7 @@ export default class UserService {
    * @returns {object} returns a user with the email in params
    */
   static findUserByEmail = async (email) => {
-    const currUser = await user.findOne({
-      where: { email }
-    });
+    const currUser = findUser(email);
     return currUser;
   };
 
@@ -58,7 +60,7 @@ export default class UserService {
    * @param {string} value
    * @returns {object} returns a user with the value of email or username in params
    */
-  static findUserByEmailOrUsername = async value => {
+  static findUserByEmailOrUsername = async (value) => {
     let currUser = await user.findOne({
       where: { username: value },
     });

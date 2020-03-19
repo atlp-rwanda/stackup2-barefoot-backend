@@ -1,10 +1,11 @@
-/* eslint-disable require-jsdoc */
 import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 import utils from '../utils/authentication.utils';
 import responseHandlers from '../utils/responseHandlers';
 import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
+import objectFormatter from '../utils/objectFormatter';
+import passportResponse from '../utils/passportResponse';
 import UserService from '../services/authentication.service';
 import sendMail from '../utils/email.util';
 import { resetMessage, changedMessage } from '../utils/emailMessages';
@@ -25,6 +26,10 @@ const {
   updateUserPassword,
   updateIsVerified
 } = UserService;
+const {
+  fbObjectFormatter,
+  googleObjectFormatter
+} = objectFormatter;
 
 /**
    *@param {object} req request object
@@ -126,5 +131,42 @@ export default class AuthenticationController {
     const { email } = decoded;
     await updateIsVerified(email);
     return successResponse(res, statusCodes.ok, customMessages.verifyMessage);
+  }
+
+  /**
+  * @param {object} req
+  * @param {object} res
+  * @returns {object} sends response to the user
+  * @description sends the response of successful login
+  */
+  static async facebookLogin(req, res) {
+    const User = req.user;
+    const { provider, _json: jsonFbObj } = User;
+    const user = fbObjectFormatter(jsonFbObj, provider);
+    const token = await passportResponse(user);
+    return successResponse(
+      res,
+      statusCodes.ok,
+      customMessages.socialMediaAuthSucess,
+      token
+    );
+  }
+
+  /**
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} sends response to the user
+   * @description sends the response of successful login
+   */
+  static async googleLogin(req, res) {
+    const User = req.user;
+    const { id, provider, _json: jsongoogleObj } = User;
+    const user = googleObjectFormatter(jsongoogleObj, provider, id);
+    const token = await passportResponse(user);
+    return successResponse(
+      res,
+      statusCodes.ok, customMessages.socialMediaAuthSucess,
+      token
+    );
   }
 }

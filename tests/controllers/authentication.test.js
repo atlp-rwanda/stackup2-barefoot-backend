@@ -1,10 +1,10 @@
 /* eslint-disable require-jsdoc */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../src/index';
-import customMessages from '../src/utils/customMessages';
-import statusCodes from '../src/utils/statusCodes';
-import mockData from './data/mockData';
+import server from '../../src/index';
+import customMessages from '../../src/utils/customMessages';
+import statusCodes from '../../src/utils/statusCodes';
+import mockData from '../data/mockData';
 
 let generatedToken;
 const { 

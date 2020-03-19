@@ -94,5 +94,48 @@ export default {
   emptyLoginEmail: {
     email: '',
     password: 'hheerr'
-  }
+  },
+  userServiceData: {
+    firstName: 'Jane',
+    lastName: 'Doe',
+    username: 'Jdoe',
+    email: 'jane@doe.com',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'Female',
+  },
+  usernameGeneratorUtil: {
+    firstName: 'Joe',
+    lastName: 'Doe',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'Male',
+  },
+  usernameGeneratorUtilOne: {
+    firstName: 'Joy',
+    lastName: 'Doe',
+    email: 'joy@doe.com',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'Female',
+  },
+  usernameGeneratorUtilTwo: {
+    firstName: 'Jeff',
+    lastName: 'Brad',
+    email: 'andela@user.com',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'Female',
+  },
+  usernameGeneratorUtilThree: {
+    firstName: 'Lyse',
+    lastName: 'Brown',
+    email: 'andela@user.com',
+    address: 'Kigali',
+    password: 'helloworld3',
+    gender: 'Female',
+  },
+  emailGeneratorUtil: {
+    email: 'andela@user.com'
+  },
 };
