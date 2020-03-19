@@ -61,6 +61,7 @@
     "/auth/login": {
       "post": {
         "summary": "User Login",
+        "tags":["User Login"],
         "produces": [
           "application/json"
         ],
@@ -271,11 +272,301 @@
          }
         }
       }
-    }
-  },
-  "/api/auth/facebook":{
+    },
+    "/profile": {
+      "get": {
+        "summary": "Get currently logged in user's profile",
+        "tags": [
+          "User profile"
+        ],
+        "description": "After a user logged-in, this is an API to get that user's profile endpoint",
+        "produces": [  "application/json"
+        ],
+        "parameters": [
+          { "name": "User authentication token",
+            "in": "body",
+            "description": "After login or signup you get a token, that token is the one you paste in here",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userProfileHeaders"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile retrieval success",
+            "schema": {
+              "$ref": "#/responses/profileRetrievalSuccess"
+            }
+          },
+          "404": {
+            "description": "Profile not found",
+            "schema": {
+              "$ref": "#/responses/profileNotFound"
+            }
+          },
+          "403": {
+            "description": "Unverified account",
+            "schema": {
+              "$ref": "#/responses/verifyYourAccount"
+            }
+          }
+        }
+      }
+    },
+    "/profile/:username": {
+      "get": {
+        "summary": "Get any user's profile",
+        "tags": [
+          "User profile"
+        ],
+        "description": "After a user logged-in, this is an API that helps to get any user's profile endpoint",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "User authentication token",
+            "in": "body",
+            "description": "After login or signup you get a token, that token is the one you paste in here",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userProfileHeaders"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile retrieval success",
+            "schema": {
+              "$ref": "#/responses/profileRetrievalSuccess"
+            }
+          },
+          "404": {
+            "description": "Profile not found",
+            "schema": {
+              "$ref": "#/responses/profileNotFound"
+            }
+          },
+          "403": {
+            "description": "Unverified account",
+            "schema": {
+              "$ref": "#/responses/verifyYourAccount"
+            }
+          }
+        }
+      }
+    },
+    "/profile": {
+      "patch": {
+        "summary": "Update user's profile",
+        "tags": [
+          "User profile"
+        ],
+        "description": "Update user profile endpoint",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+            {
+              "name": "email",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "format": "email",
+              "description": "Email for securing user's account"
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "format": "password",
+              "description": "Password for authentication"
+            },
+            {
+              "name": "firstName",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "User's first name"
+            },
+            {
+              "name": "lastName",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "User's last name"
+            },
+            {
+              "name": "username",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "User's new username"
+            },
+            {
+              "name": "gender",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "User's gender"
+            },
+            {
+              "name": "address",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "User's address (city - state)"
+            },
+            {
+              "name": "role",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "User's role"
+            },
+            {
+              "name": "birthDate",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "User's birthDate"
+            },
+            {
+              "name": "preferredLanguage",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "User's preferredLanguage"
+            },
+            {
+              "name": "preferredCurrency",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "User's preferredCurrency"
+            },
+            {
+              "name": "department",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "The department where you work"
+            },
+            {
+              "name": "lineManager",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "Line manager name"
+            },
+            {
+              "name": "idCardNumber",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "National identity card number or passport"
+            },
+            {
+              "name": "phoneNumber",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "text",
+              "description": "user's phone number including country code"
+            },
+            {
+              "name": "profileImage",
+              "in": "formData",
+              "required": false,
+              "type": "string",
+              "format": "file",
+              "description": "URL to the profile picture of a user"
+            }
+          ],
+        "responses": {
+          "200": {
+            "description": "Profile update success",
+            "schema": {
+              "$ref": "#/responses/profileRetrievalSuccess"
+            }
+          },
+          "403": {
+            "description": "Unverified account",
+            "schema": {
+              "$ref": "#/responses/verifyYourAccount"
+            }
+          }
+        }
+      }
+    },"/profile/password":{
+      "patch": {
+        "summary": "User change his password",
+        "tags": [
+          "User profile"
+        ],
+        "description": "User update his profile",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "User authentication token",
+            "in": "headers",
+            "description": "After login or signup you get a token, that token is the one you paste in here",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userProfileHeaders"
+            }
+          },
+          {
+            "name": "User authentication token",
+            "in": "body",
+            "description": "Params you need to send with change password",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/changePasswordParams"
+            }
+          }
+        ],
+        "responses": {"200": {
+            "description": "Your password has been changed successfully",
+            "schema": {
+              "$ref": "#/responses/update-password-success"
+            }
+          },
+          "400": {
+            "description": "Old password required",
+            "schema": {
+              "$ref": "#/responses/old-password-required"
+            }
+          },
+          "401": {
+            "description": "Incorrect old password",
+            "schema": {
+              "$ref": "#/responses/incorrect-old-password"
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/facebook":{
     "get": {
       "summary": "Login using facebook account",
+      "tags":["User Login"],
       "produces": [
         "application/json"
       ],
@@ -288,10 +579,11 @@
        }
       }
     }
-  },
-  "/api/auth/google":{
+    },
+    "/auth/google":{
     "get": {
       "summary": "Login using google account",
+      "tags":["User Login"],
       "produces": [
         "application/json"
       ],
@@ -304,7 +596,8 @@
        }
       }
     }
-  },
+  }  
+},
   "definitions": {
     "signup": {
       "properties": {
@@ -340,27 +633,26 @@
         }
       }
     },
-    "incompleteSignup": {
+    "userProfileHeaders": {
       "properties": {
-        "firstName": {
+        "toke":{
           "type": "string",
           "required": true,
-          "example": "John"
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+      }
+    },
+    "changePasswordParams": {
+      "properties": {
+        "newPassword": {
+          "type": "password",
+          "required": true,
+          "example": "JohnDoe1"
         },
-        "lastName": {
-          "type": "string",
+        "oldPassword": {
+          "type": "password",
           "required": true,
-          "example": "Doe"
-        },
-        "email": {
-          "type": "string",
-          "required": true,
-          "example": "john@doe.com"
-        },
-        "address": {
-          "type": "string",
-          "required": true,
-          "example": "Kigali, Rwanda"
+          "example": "yoURPassword23"
         }
       }
     },
@@ -456,19 +748,70 @@
         }
       }
     },
-    "update-password-success": {
-      "properties": {
-        "message": {
-          "type": "string",
-          "example": "password changed"
-        }
-      }
-    },
     "update-password-fail": {
       "properties": {
         "error": {
           "type": "string",
-          "example": "User does not exist"
+          "example": "User does not exist",
+    "update-password-success":{
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Your password has been changed, login with new password"
+        }
+      }
+    },
+    "old-password-required":{
+      "properties": {
+        "message":{
+          "type":"string",
+          "example":"enter your old password"
+        }
+      }
+    },"incorrect-old-password":{
+      "properties":{
+        "error":{
+          "type":"string",
+          "example":"You have entered incorrect old password, if you have forgotten your password, logout and reset your password."
+        }
+      }
+    },
+  "profileRetrievalSuccess": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "You profile is successfully retrieved"
+        },
+        "data": {
+          "type": "object",
+          "example": {
+            "firstName":"John",
+            "lastName":"Doe"
+          }
+        }
+      }
+      },
+      "profileNotFound":{
+        "properties": {
+        "message": {
+          "type": "string",
+          "example": "The user you are trying ton search doesn't exist on our system"
+        }
+      }
+      },
+      "verifyYourAccount":{
+        "properties": {
+        "message": {
+          "type": "string",
+          "example": "You need to verify your account, before getting to profiles"
+        }
+      }
+      },
+    "update-password-fail":{
+      "properties":{
+        "error":{
+          "type":"string",
+          "example":"User does not exist"
         }
       }
     },
@@ -506,11 +849,11 @@
         },
         "token": {
           "type": "string",
-          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        }
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
       }
-    },
-    "login-response-wrong-data": {
+    }
+  },
+    "login-response-wrong-data":{
       "properties": {
         "message": {
           "type": "string",
@@ -526,5 +869,10 @@
         }
       }
     }
-  }
-}
+      ,"notLoggedInUser":{
+        "properties": {
+        "message": {
+          "type": "string",
+          "example": "You are not allowed to access this resources, login or signup first"
+        }}}}}}}}
+    

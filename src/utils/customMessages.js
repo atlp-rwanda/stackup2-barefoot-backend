@@ -37,6 +37,19 @@ const messages = {
   invalidTravelReason: 'please provide the reason for the trip',
   invalidTravelDate: 'please provide the date when you plan to take the trip',
   invalidTravelAccomodation: 'please specify wether you want acommodation on your trip',
+  profileRetrievalSuccess: 'You profile is successfully retrieved',
+  verifyYourAccount: 'You need to verify your account, before getting to profiles',
+  notAllowedToAccessThisResources: 'You are not allowed to access this resources, login or signup first',
+  profileNotFound: 'The user you are trying ton search doesn\'t exist on our system',
+  profileUpdateSuccess: 'Profile updated successfully',
+  internalServerError: 'Something unexpected occurred, please try again',
+  profilePicUpdateErr: 'Your Profile picture couldn\'t be uploaded, please try again!',
+  invalidProfilePicExt: 'The profile picture you are trying to upload doesn\'t have valid extension, please use jpg, png, or gif images',
+  updaterEmailRequired: 'Enter your email please!',
+  incorrectOldPassword: 'You have entered incorrect old password, if you have forgotten your password, logout and reset your password.',
+  usernameExistOrEmpty: 'The username you entered already exists or is empty, if you want to continue update your profile, change the new username or unselect it to remain with the old one',
+  passwordChangeSuccess: 'Your password has been changed, login with new password',
+  changeEmailNotAllowed: 'You cannot change your email, unselect it if you want to continue updating your profile, otherwise you will not be able to continue'
 };
 
 export default messages;

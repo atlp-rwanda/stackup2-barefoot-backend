@@ -19,8 +19,7 @@ const {
 } = utils;
 const { successResponse, errorResponse, updatedResponse } = responseHandlers;
 const { 
-  handleSignUp, 
-  findUserByEmail, 
+  handleSignUp,
   findUserByEmailOrUsername, 
   findUserEmailIfExist, 
   updateUserPassword, 
@@ -45,8 +44,8 @@ export default class AuthenticationController {
    * @description User sign up controller
    */
   static async signUp(req, res) {
-      const payload = await getFormData(req.body);
-      const { email, username } = payload;
+    const payload = await getFormData(req.body);
+    const { email, username } = payload;
       const checkEmail = await findUserEmailIfExist(email.toLowerCase());
       const checkUsername = await findUserByEmailOrUsername(username);
       if (checkEmail || checkUsername) {
@@ -86,7 +85,8 @@ export default class AuthenticationController {
       intro, instruction, text, outro
     } = resetMessage;
     try {
-      const users = await findUserByEmail(email.toLowerCase());
+      const emailToUse = email.toLowerCase();
+      const users = await findUserByEmailOrUsername(emailToUse);
       if (users) {
         const user = users.dataValues;
         const token = await generateToken(user);
@@ -114,7 +114,7 @@ export default class AuthenticationController {
     } = changedMessage;
     try {
       const userDetails = await decodeToken(token);
-      const users = await findUserByEmail(userDetails.email);
+      const users = await findUserByEmailOrUsername(userDetails.email);
       const user = users.dataValues;
       const hashed = await passwordHasher(password);
       await updateUserPassword(hashed, user.id);
