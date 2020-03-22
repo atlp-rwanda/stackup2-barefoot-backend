@@ -657,6 +657,43 @@
           }
         }
       }
+    },
+    "/api/trips/most-traveled-destinations": {
+      "get": {
+        "summary": "Get most traveled destinations",
+        "tags": [
+          "Trips"
+        ],
+        "description": "This end point, helps to get the most traveled destinations in desc order",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Currently logged in user token",
+            "in": "headers",
+            "description": "Currently logged in user token is required to be sent as a bearer token",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/currLoggedInToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/responses/placeRetrieved"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/responses/noTripYet"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -769,6 +806,15 @@
       }
     },
     "logout": {
+      "properties": {
+        "Authorization": {
+          "type": "string",
+          "required": true,
+          "example": "Bearer {{token}}"
+        }
+      }
+    },
+    "currLoggedInToken": {
       "properties": {
         "Authorization": {
           "type": "string",
@@ -959,11 +1005,32 @@
         }
       }
     },
+    "placeRetrieved": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Successfully retrieved destinations and their visit times"
+        },
+        "data":{
+          "type":"array",
+          "example":{
+          }
+        }
+      }
+    },
     "logout-fail-bad-request": {
       "properties": {
         "message": {
           "type": "string",
           "example": "Authentication failed. Token is missing"
+        }
+      }
+    },
+    "noTripYet": {
+      "properties": {
+        "error": {
+          "type": "String",
+          "example": "Data not available for now, because there is no any trip yet, please try again later"
         }
       }
     },

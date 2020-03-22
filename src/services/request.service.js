@@ -1,6 +1,6 @@
 import models from '../database/models';
 
-const { request } = models;
+const { request, sequelize } = models;
 
 /**
  * @description Trip requests service
@@ -27,5 +27,15 @@ export default class RequestService {
         ]
       }
     );
+  }
+
+  /**
+   * @returns {Integer} returns number of traveled places
+   * @description returns all of the destinations a and their appearance times from the database
+   */
+  static getMostTraveledDestinations = async () => {
+    const placeAndTheirVisitTimes = await sequelize.query('SELECT "travelTo", COUNT(*) FROM requests WHERE status =\'accepted\' OR status=\'Accepted\' GROUP BY "travelTo" ORDER BY count DESC');
+    
+    return placeAndTheirVisitTimes;
   }
 }
