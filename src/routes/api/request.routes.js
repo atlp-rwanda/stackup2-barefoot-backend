@@ -5,12 +5,11 @@ import { validateTripRequest } from '../../utils/validations';
 
 const { createTripRequest } = RequestController;
 const {
-    isCurrentUserLoggedIn,
-    isCurrentUserVerified,
+    isUserLoggedInAndVerified
 } = Authentication;
 
 const router = express.Router();
 
-router.post('/', [isCurrentUserLoggedIn, isCurrentUserVerified, validateTripRequest], createTripRequest);
+router.post('/', [isUserLoggedInAndVerified, validateTripRequest], createTripRequest);
 
 export default router;

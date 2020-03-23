@@ -16,21 +16,6 @@ export const validatProfilUpdate = (req, res, next) => {
   next();
 };
 
-
-/**
- *
- * @param {object} req
- * @param {object} res
- * @param {object} next
- * @returns {object} sends response to the user
- */
-const isUserVerified = (req) => {
-  const { isVerified } = req.authenticatedUser;
-  if (isVerified) {
-    return true;
-  }
-};
-
 /**
  * 
  * @param {req} req 
@@ -41,8 +26,8 @@ const isEmailUpdate = (req) => {
   const { email, isProfileUpdate } = req.body;
   if (isProfileUpdate && email) {
     return true;
-    } 
-    return false;
+  }
+  return false;
 };
 
 /**
@@ -53,13 +38,9 @@ const isEmailUpdate = (req) => {
  * @returns{object} next
  */
 export const profileReqCheckpoint = async (req, res, next) => {
-  if (isUserVerified(req)) {
-    if (isEmailUpdate(req)) {
-      errorResponse(res, statusCodes.badRequest, messages.changeEmailNotAllowed);
-    } else {
-      next();
-    }
+  if (isEmailUpdate(req)) {
+    errorResponse(res, statusCodes.badRequest, messages.changeEmailNotAllowed);
   } else {
-    errorResponse(res, statusCodes.forbidden, messages.verifyYourAccount);
+    next();
   }
 };

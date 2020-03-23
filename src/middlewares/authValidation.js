@@ -15,28 +15,28 @@ import { validateSignup, validatePassword, displayErrorMessages } from '../utils
  * @returns{object} return next() if validations pass
  */
 const signupValidation = async (req, res, next) => {
-    const { error } = validateSignup(req.body);
-    displayErrorMessages(error, res, next);
+  const { error } = validateSignup(req.body);
+  displayErrorMessages(error, res, next);
 };
 
-/**
- * 
- * @param {object} req 
- * @param {object} res
- * @param {object} next 
- * @returns{object} returns next if the token is valid
- */
-const authorizeAccess = async (req, res, next) => {
-  const { authorization } = req.headers;
-    try {
-        const token = authorization.split(' ')[1];
-        const authUser = await decodeToken(token);
-    req.authenticatedUser = authUser;
-    next();
-      } catch (err) {
-    errorResponse(res, statusCodes.unAuthorized, customMessages.notAllowedToAccessThisResources);
-    }
-};
+// /**
+//  * 
+//  * @param {object} req 
+//  * @param {object} res
+//  * @param {object} next 
+//  * @returns{object} returns next if the token is valid
+//  */
+// const authorizeAccess = async (req, res, next) => {
+//   const { authorization } = req.headers;
+//     try {
+//         const token = authorization.split(' ')[1];
+//         const authUser = await decodeToken(token);
+//     req.authenticatedUser = authUser;
+//     next();
+//       } catch (err) {
+//     errorResponse(res, statusCodes.unAuthorized, customMessages.notAllowedToAccessThisResources);
+//     }
+// };
 
 /**
  * @param {object} req
@@ -65,10 +65,14 @@ const validateResetEmail = (req, res, next) => {
   const { error } = schema.validate(email, {
     abortEarly: false
   });
-  if (error) { 
-  return errorResponse(res, statusCodes.badRequest, customMessages.invalidEmail);
+  if (error) {
+    return errorResponse(res, statusCodes.badRequest, customMessages.invalidEmail);
   }
   next();
 };
 
-export { signupValidation, passwordValidation, authorizeAccess, validateResetEmail };
+export {
+  signupValidation,
+  passwordValidation,
+  validateResetEmail
+};

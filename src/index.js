@@ -11,6 +11,7 @@ import allRoutes from './routes/index';
 import passport from './config/passport';
 import customMessages from './utils/customMessages';
 import statusCodes from './utils/statusCodes';
+import scheduler from './taskScheduler';
 
 dotenv.config();
 
@@ -45,6 +46,7 @@ app.use((req, res, next) => {
 
 const server = app.listen(port, () => {
   console.log(`Listening on port ${server.address().port}`);
+  scheduler.start();
 });
 
 export default app;

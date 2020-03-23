@@ -1,14 +1,22 @@
 import express from 'express';
 import controllers from '../../controllers';
 import { profileReqCheckpoint, validatProfilUpdate } from '../../middlewares/profileDataChecker';
-import { authorizeAccess, signupValidation, passwordValidation } from '../../middlewares/authValidation';
+import { signupValidation, passwordValidation } from '../../middlewares/authValidation';
+import Authentication from '../../middlewares/authentication';
 
 const profileRouter = express.Router();
-const { displayUserProfile, updateUserProfile, changeUserPassword } = controllers.ProfileController;
+const {
+  displayUserProfile,
+  updateUserProfile,
+  changeUserPassword
+} = controllers.ProfileController;
+const {
+  isUserLoggedInAndVerified
+} = Authentication;
 
-profileRouter.get('/:requestedProfile', authorizeAccess, profileReqCheckpoint, displayUserProfile);
-profileRouter.get('/', authorizeAccess, profileReqCheckpoint, displayUserProfile);
-profileRouter.patch('/', authorizeAccess, validatProfilUpdate, profileReqCheckpoint, signupValidation, updateUserProfile);
-profileRouter.patch('/password', authorizeAccess, profileReqCheckpoint, passwordValidation, changeUserPassword);
+profileRouter.get('/:requestedProfile', isUserLoggedInAndVerified, profileReqCheckpoint, displayUserProfile);
+profileRouter.get('/', isUserLoggedInAndVerified, profileReqCheckpoint, displayUserProfile);
+profileRouter.patch('/', isUserLoggedInAndVerified, validatProfilUpdate, profileReqCheckpoint, signupValidation, updateUserProfile);
+profileRouter.patch('/password', isUserLoggedInAndVerified, profileReqCheckpoint, passwordValidation, changeUserPassword);
 
 export default profileRouter;

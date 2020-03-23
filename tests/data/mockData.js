@@ -222,7 +222,8 @@ export default {
     password: 'Mugirase1', oldPassword: 'Markjoe45@'
   },
   changeUserPasswordWithoutOldPassword: {
-    password: 'Mugirase1@' },
+    password: 'Mugirase1@'
+  },
   findUserByEmailOfUsername: 'barefootnomad2@gmail.com',
   existEmail: {
     email: 'john@doe.com'
@@ -238,5 +239,9 @@ export default {
   },
   validNewPassword: {
     password: 'Markjoe45@'
+  },
+  testingTokens: {
+    expiredToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3ROYW1lIjoiQmVydHJhbmQiLCJsYXN0TmFtZSI6Ik1hc2FibyIsInVzZXJuYW1lIjoiYmVydHJhbmQiLCJlbWFpbCI6ImJlcnRyYW5kbWFzYWJvMjJAZ21haWwuY29tIiwiZ2VuZGVyIjoiTWFsZSIsImFkZHJlc3MiOiJLaWdhbGkiLCJyb2xlIjoicmVxdWVzdGVyIiwiaXNWZXJpZmllZCI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjAtMDMtMTZUMjM6Mjk6NDUuNTc3WiIsInVwZGF0ZWRBdCI6IjIwMjAtMDMtMTZUMjM6Mjk6NDUuNTc3WiIsImlhdCI6MTU4NDQwMTQxMywiZXhwIjoxNTg0NDAxNzEzfQ.Xk_N8YspMiuUlwtIoqPTIdfYlzOaf_zOmYTkasQNI4c',
+    wrongToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVnaXp3ZW5heW9kaW55QGdtYWlsLmNvbSIsInVzZXJJZCI6MSwiZmlyc3ROYW1lIjoiRGl2aW5lIiwiaWF0IjoxNTgzNDkyMzcxfQ.NHfHvcHcjVhaTYfrywu0-voW_VdVgH2Qcj4CTMOFhdU'
   }
 };
