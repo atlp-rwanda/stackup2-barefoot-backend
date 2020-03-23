@@ -56,7 +56,9 @@ const messages = {
   userLogoutSuccess: 'Log out successful',
   invalidReturnDate: 'The return date should not be empty, should be greater than travel date and look like 2001-01-01',
   placesRetrieved: 'Successfully retrieved destinations and their visit times',
-  noPlacesRetrieved: 'Data not available for now, because there is no any trip yet, please try again later'
+  noPlacesRetrieved: 'Data not available for now, because there is no any trip yet, please try again later',
+  invalidTripsStatsStartDate: 'Please provide a start date for the stats, it must be a correct date in the past and less than the end date',
+  invalidTripsStatsEndDate: 'Please provide an end date for the stats, it must be a correct date in the past and greater than the start date',
 };
 
 export default messages;

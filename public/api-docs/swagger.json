@@ -285,6 +285,57 @@
         }
       }
     },
+    "/trips/stats": {
+      "get": {
+        "summary": "Retrieves users' trips stats",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Start date",
+            "in": "query",
+            "description": "a preferred start date for stats",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TripsStats"
+            }
+          },
+          {
+            "name": "Travel to",
+            "in": "query",
+            "description": "a preferred end date for stats",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TripsStats"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved trips stats",
+            "schema": {
+              "$ref": "#/responses/view-trips-stats-success"
+            }
+          },
+          "400": {
+            "description": "Failed to retrieve trips stats due to bad user input",
+            "schema": {
+              "$ref": "#/responses/view-trips-stats-fail"
+            }
+          },
+          "401": {
+            "description": "access denied to protected resource",
+            "schema": {
+              "$ref": "#/responses/trip-request-unauthorized"
+            }
+          }
+        }
+      }
+    },
     "/profile": {
       "get": {
         "summary": "Get currently logged in user's profile",
@@ -822,6 +873,18 @@
           "example": "Bearer {{token}}"
         }
       }
+    },
+    "TripsStats": {
+      "startDate": {
+        "type": "date",
+        "required": true,
+        "example": "2020-01-01"
+      },
+      "endDate": {
+        "type": "date",
+        "required": true,
+        "example": "2020-01-08"
+      }
     }
   },
   "responses": {
@@ -1039,6 +1102,30 @@
         "message": {
           "type": "string",
           "example": "Sorry, we were unable to verify your identity, you must login to use this resource"
+        }
+      }
+    },
+    "view-trips-stats-success": {
+      "properties": {
+        "data": {
+          "type": "object",
+          "example": {
+            "data": {
+              "startDate": "2020-01-01T00:00:00.000Z",
+              "endDate": "2020-02-23T00:00:00.000Z",
+              "tripsMade": 0
+            }
+          }
+        }
+      }
+    },
+    "view-trips-stats-fail": {
+      "properties": {
+        "error": {
+          "type": "object",
+          "example": {
+            "error": "Please provide an end date for the stats, ..."
+          }
         }
       }
     }

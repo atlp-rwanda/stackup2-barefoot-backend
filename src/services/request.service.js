@@ -1,6 +1,7 @@
 import models from '../database/models';
 
-const { request, sequelize } = models;
+const { request, sequelize, Sequelize } = models;
+const { Op } = Sequelize;
 
 /**
  * @description Trip requests service
@@ -37,5 +38,24 @@ export default class RequestService {
     const placeAndTheirVisitTimes = await sequelize.query('SELECT "travelTo", COUNT(*) FROM requests WHERE status =\'accepted\' OR status=\'Accepted\' GROUP BY "travelTo" ORDER BY count DESC');
     
     return placeAndTheirVisitTimes;
+  }
+
+  /**
+  *@description Retrieves trip requests stats from database
+  * @param {Number} userId current user's database id
+  * @param {Date} startDate start date for stats
+  * @param {Date} endDate end date for stats
+  * @returns {Object} trips stats
+   */
+ static getTripsStats(userId, startDate, endDate) {
+   return request.count({
+     where: {
+       userId,
+       status: 'accepted',
+       travelDate: {
+         [Op.between]: [startDate, endDate]
+       }
+     }
+   });
   }
 }

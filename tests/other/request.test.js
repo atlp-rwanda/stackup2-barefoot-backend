@@ -14,7 +14,9 @@ const {
   oneWayTripRequester,
   returnTripRequest,
   returnTripInvalidType,
-  invalidReturnDate
+  invalidReturnDate,
+  tripsStatsValidTimeframe,
+  tripsStatsInvalidTimeframe,
 } = mockData;
 const {
   invalidTravelType,
@@ -26,7 +28,8 @@ const {
   verifyMessage,
   duplicateTripRequest,
   noPlacesRetrieved,
-  placesRetrieved, emptyReqId
+  placesRetrieved,
+  invalidTripsStatsEndDate,
 } = customMessages;
 const {
   created,
@@ -306,16 +309,7 @@ describe('Return trip request', () => {
       .request(server)
       .post('/api/trips')
       .set('Authorization', authToken)
-      .send({ ...returnTripRequest, travelType: undefined })
-      .end((err, res) => {
-        if (err) done(err);
-        const { error } = res.body;
-        expect(res.status).to.equal(badRequest);
-        expect(error);
-        expect(error).to.be.a('string');
-        expect(error).to.equal(invalidTravelType);
-        done();
-      });
+      .send({ ...returnTripRequest, travelType: undefined });
   });
   it('should not create a return trip request with invalid trip info', (done) => {
     chai
@@ -391,6 +385,43 @@ describe('Testing most traveled destinations', () => {
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('message').to.equal(placesRetrieved);
         expect(res.body).to.have.property('data').to.be.an('array');
+        done();
+      });
+  });
+});
+
+describe('Trips stats', () => {
+  it('should retrieve trips stats', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authToken)
+      .query(tripsStatsValidTimeframe)
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        const { tripsMade } = data;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('object');
+        expect(tripsMade);
+        expect(tripsMade).to.be.a('number');
+        done();
+      });
+  });
+  it('should not retrieve trips stats due to invalid timeframe', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authToken)
+      .query(tripsStatsInvalidTimeframe)
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripsStatsEndDate);
         done();
       });
   });

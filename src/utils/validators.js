@@ -8,6 +8,8 @@ const {
   invalidTravelDate,
   invalidTravelType,
   invalidTravelAccomodation,
+  invalidTripsStatsStartDate,
+  invalidTripsStatsEndDate,
  } = customMessages;
 
 /**
@@ -27,6 +29,8 @@ static createValidationErrors(fieldDataType, errorMessage) {
     [`${fieldDataType}.max`]: errorMessage,
     [`${fieldDataType}.format`]: errorMessage,
     'any.required': errorMessage,
+    [`${fieldDataType}.less`]: errorMessage,
+    [`${fieldDataType}.greater`]: errorMessage,
   };
 }
 
@@ -56,6 +60,35 @@ static async validateOneWayTripRequest(tripRequestData) {
       .messages(createValidationErrors('string', invalidTravelType)),
   });
   return schema.validateAsync(tripRequestData, { abortEarly: false });
+  // /**
+  // * @param {object} fieldDataType data type for the field
+  // * @param {object} errorMessage error message to display
+  // * @returns {object} an object of validation error messages
+  // */
+  // static createValidationErrors(fieldDataType, errorMessage) {
+  //   return {
+  //     [`${fieldDataType}.base`]: errorMessage,
+  //     [`${fieldDataType}.empty`]: errorMessage,
+  //     'any.required': errorMessage,
+  //     [`${fieldDataType}.less`]: errorMessage,
+  //     [`${fieldDataType}.greater`]: errorMessage,
+  //   };
+  }
+
+  /**
+  * @param {Date} tripsStatsTimeframe a timeframe for trip requests stats(start date & end date)
+  * @returns {Promise<any>} validation output
+  */
+  static async validateTripsStatsTimeframe(tripsStatsTimeframe) {
+    const { createValidationErrors } = Validators;
+    const validDate = Joi.date().required().less(Date.now());
+    const schema = Joi.object({
+        startDate: validDate
+        .messages(createValidationErrors('date', invalidTripsStatsStartDate)),
+        endDate: validDate.greater(Joi.ref('startDate'))
+        .messages(createValidationErrors('date', invalidTripsStatsEndDate)),
+    });
+    return schema.validateAsync(tripsStatsTimeframe, { abortEarly: false });
   }
 
 /**
