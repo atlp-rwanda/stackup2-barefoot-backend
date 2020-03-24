@@ -150,7 +150,7 @@ export default {
   oneWayTripRequest: {
     travelFrom: 'kigali',
     travelTo: 'Butare',
-    travelDate: new Date().toDateString(),
+    travelDate: new Date(),
     travelReason: 'business meeting',
     travelType: 'One-way',
     accommodation: true,
@@ -243,5 +243,40 @@ export default {
   testingTokens: {
     expiredToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3ROYW1lIjoiQmVydHJhbmQiLCJsYXN0TmFtZSI6Ik1hc2FibyIsInVzZXJuYW1lIjoiYmVydHJhbmQiLCJlbWFpbCI6ImJlcnRyYW5kbWFzYWJvMjJAZ21haWwuY29tIiwiZ2VuZGVyIjoiTWFsZSIsImFkZHJlc3MiOiJLaWdhbGkiLCJyb2xlIjoicmVxdWVzdGVyIiwiaXNWZXJpZmllZCI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjAtMDMtMTZUMjM6Mjk6NDUuNTc3WiIsInVwZGF0ZWRBdCI6IjIwMjAtMDMtMTZUMjM6Mjk6NDUuNTc3WiIsImlhdCI6MTU4NDQwMTQxMywiZXhwIjoxNTg0NDAxNzEzfQ.Xk_N8YspMiuUlwtIoqPTIdfYlzOaf_zOmYTkasQNI4c',
     wrongToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVnaXp3ZW5heW9kaW55QGdtYWlsLmNvbSIsInVzZXJJZCI6MSwiZmlyc3ROYW1lIjoiRGl2aW5lIiwiaWF0IjoxNTgzNDkyMzcxfQ.NHfHvcHcjVhaTYfrywu0-voW_VdVgH2Qcj4CTMOFhdU'
-  }
+  },
+  signupDataNotVerified: {
+    firstName: 'John',
+    lastName: 'Doe',
+    username: 'diny',
+    email: 'diny@doe.com',
+    address: 'Kigali',
+    password: 'Helloworld3@',
+    gender: 'Female',
+  },
+  returnTripRequest: {
+    travelFrom: 'kigali',
+    travelTo: 'Butare',
+    travelDate: '2020-08-05',
+    returnDate: '2021-09-14T15:12:59.360Z',
+    travelReason: 'business meeting',
+    travelType: 'return-trip',
+    accommodation: true,
+  },
+  returnTripInvalidType: {
+    travelFrom: 'kigali',
+    travelTo: 'Butare',
+    travelDate: '2020-08-09',
+    returnDate: new Date(),
+    travelReason: 'business meeting',
+    travelType: 'return-t',
+    accommodation: true,
+  },
+  invalidReturnDate: {
+    travelFrom: 'kigali',
+    travelTo: 'Butare',
+    travelDate: '2020-08-05',
+    travelReason: 'business meeting',
+    travelType: 'return-trip',
+    accommodation: true,
+  },
 };

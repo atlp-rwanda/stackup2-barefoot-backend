@@ -235,6 +235,16 @@
             }
           },
           {
+            "name": "Return date",
+            "in": "body",
+            "description": "date requester wishes to return from the trip",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          
+          {
             "name": "Travel type",
             "in": "body",
             "description": "the type of trip the requester wishes to make",
@@ -742,6 +752,11 @@
         "required": true,
         "example": "2020-03-14T15:12:22.360Z"
       },
+      "returnDate": {
+        "type": "date",
+        "required": false,
+        "example": "2020-03-14T15:12:22.360Z"
+      },
       "travelType": {
         "type": "string",
         "required": true,
@@ -812,7 +827,10 @@
       "properties": {
         "error": {
           "type": "string",
-          "example": "User does not exist",
+          "example": "User does not exist"
+        }
+      }
+    },
           "update-password-success": {
             "properties": {
               "message": {
@@ -868,14 +886,6 @@
               }
             }
           },
-          "update-password-fail": {
-            "properties": {
-              "error": {
-                "type": "string",
-                "example": "User does not exist"
-              }
-            }
-          },
           "trip-request-success": {
             "properties": {
               "message": {
@@ -888,7 +898,7 @@
             "properties": {
               "error": {
                 "type": "string",
-                "example": "you must provide a valid date value for \"travel date\""
+                "example": "The travel date must be in future, not more than 6 months from now and look like 2001-01-01"
               }
             }
           },
@@ -900,7 +910,7 @@
               }
             }
           }
-        },
+        ,
         "login-definition": {
           "login-response-real-data": {
             "properties": {
@@ -939,8 +949,8 @@
             }
           }
         }
-      }
-    },
+      
+    ,
     "logout-success": {
       "properties": {
         "message": {

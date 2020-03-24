@@ -8,9 +8,9 @@ import utils from './authentication.utils';
 
 const { errorResponse } = responseHandlers;
 const { badRequest } = statusCodes;
-const { invalidTravelType } = customMessages;
-const { validateOneWayTripRequest } = Validators;
+const { invalidTravelType, invalidReturnDate } = customMessages;
 const { decodeToken } = utils;
+const { validateOneWayTripRequest, validateReturnDate } = Validators;
 
 /**
 * @param {string} pattern
@@ -78,7 +78,6 @@ const displayErrorMessages = (error, res, next) => {
   }
   return next();
 };
-
 /**
 * @param {object} req
 * @param {object} res
@@ -89,12 +88,61 @@ const displayErrorMessages = (error, res, next) => {
 export const verifyToken = async (req, res, next) => {
   try {
       const { token } = req.params;
-      // jwt.verify(token, process.env.JWT_KEY);
       await decodeToken(token);
       next();
   } catch (error) {
     return errorResponse(res, statusCodes.badRequest, customMessages.tokenInvalid);
   }
+};
+ /** 
+ * @param {object}tripRequestInfo Node/express request
+ * @param {object} req Node/express request
+ * @param {object} res Node/express response
+ * @param {object} next Node/Express Next callback function
+ * @returns {Object} Custom response with created trip details
+ * @description validates all trip requests
+ */
+const oneWayHandler = async (tripRequestInfo, req, res, next) => {
+  try {
+    const validationOutput = await validateOneWayTripRequest(tripRequestInfo);
+    validationOutput.userId = req.sessionUser.id;
+    req.body = validationOutput;
+    return next();
+  } catch (validationError) {
+    return errorResponse(res, badRequest, validationError.message);
+  }
+};
+ /** 
+ * @param {object}tripRequestInfo Node/express request
+ * @param {object} req Node/express request
+ * @param {object} res Node/express response
+ * @param {object} next Node/Express Next callback function
+ * @returns {Object} Custom response with created trip details
+ * @description validates all trip requests
+ */
+const returnTripHandler = async (tripRequestInfo, req, res, next) => {
+  const errorMessage = [];
+  let errors = '';
+   try {
+    const commonInfo = _.omit(tripRequestInfo, 'returnDate');
+     await validateOneWayTripRequest(commonInfo);
+   } catch (err) {
+    errorMessage.push(err.message);
+   }
+    try {
+      const validRequest = await validateReturnDate(tripRequestInfo);
+      validRequest.userId = req.sessionUser.id;
+      req.body = validRequest;
+    } catch (err) {
+      errorMessage.push(invalidReturnDate);
+}
+        if (errorMessage.length === 0) {
+          return next(); 
+    }
+    errorMessage.forEach((element) => {
+      errors += `${element}.`;
+     });
+      return errorResponse(res, badRequest, errors);
 };
 
 /**
@@ -114,14 +162,9 @@ const validateTripRequest = async (req, res, next) => {
   travelType = String(travelType).replace(whiteSpaces, ' ').trim().toLowerCase();
   switch (travelType) {
     case 'one-way':
-      try {
-        const validationOutput = await validateOneWayTripRequest(tripRequestInfo);
-        validationOutput.userId = req.sessionUser.id;
-        req.body = validationOutput;
-        return next();
-      } catch (validationError) {
-        return errorResponse(res, badRequest, validationError.message);
-      }
+      return oneWayHandler(tripRequestInfo, req, res, next);
+    case 'return-trip':
+      return returnTripHandler(tripRequestInfo, req, res, next);
     default:
       return errorResponse(res, badRequest, invalidTravelType);
   }

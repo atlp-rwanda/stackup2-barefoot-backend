@@ -21,5 +21,6 @@ export default (sequelize, DataTypes) => {
     phoneNumber: DataTypes.STRING,
     profileImage: DataTypes.STRING
   }, {});
+
   return user;
 };

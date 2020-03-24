@@ -22,6 +22,7 @@ export default class RequestService {
           'travelReason',
           'travelType',
           'travelDate',
+          'returnDate',
           'accommodation'
         ]
       }
