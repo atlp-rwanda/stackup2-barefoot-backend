@@ -1,8 +1,8 @@
 {
-  "name": "express-authorshaven",
+  "name": "express-barefootnomad",
   "version": "1.0.0",
-  "description": "A Social platform for the creative at heart",
-  "main": "index.js",
+  "description": "Make company global travel and accommodation easy and convenient for the strong workforce of savvy members of staff, by leveraging the modern web.",
+  "main": "./src/index.js",
   "scripts": {
     "lint": "eslint ./src",
     "start": "cross-env NODE_ENV=development && babel-node ./src/index.js",

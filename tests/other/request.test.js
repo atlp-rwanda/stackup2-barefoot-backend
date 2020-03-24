@@ -1,11 +1,14 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
+import models from '../../src/database/models';
 import server from '../../src/index';
 import customMessages from '../../src/utils/customMessages';
 import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
 import loginToken from '../controllers/authentication.test';
+import { INSERT_SAMPLE_REQUEST } from '../data/insert-sample-request';
 
+const { sequelize } = models;
 const {
   oneWayTripRequest,
   oneWayTripRequester,
@@ -22,6 +25,8 @@ const {
   accountNotVerified,
   verifyMessage,
   duplicateTripRequest,
+  noPlacesRetrieved,
+  placesRetrieved, emptyReqId
 } = customMessages;
 const {
   created,
@@ -83,6 +88,20 @@ describe('One way trip request', () => {
       });
   });
 
+  it(`Requesting the most traveled destinations while there is no any yet, should return an object with 404
+  error code, and error message`, (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/most-traveled-destinations')
+      .set('Authorization', authToken)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(statusCodes.notFound);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('error').to.equal(noPlacesRetrieved);
+        done();
+      });
+  });
   it('should create a one way trip request for verified users', (done) => {
     chai
       .request(server)
@@ -213,7 +232,6 @@ describe('One way trip request', () => {
         done();
       });
   });
-
   it('should not create a one way trip request with invalid/expired token', (done) => {
     chai
       .request(server)
@@ -352,6 +370,27 @@ describe('Return trip request', () => {
         expect(error);
         expect(error).to.be.a('string');
         expect(error).to.equal(tokenInvalid);
+        done();
+      });
+  });
+});
+
+describe('Testing most traveled destinations', () => {
+  before('Insert sample request in db', () => {
+    sequelize.query(INSERT_SAMPLE_REQUEST);
+  });
+  it(`Requesting the most traveled destinations, should return an object with 200 
+  status code, and array containing data`, (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/most-traveled-destinations')
+      .set('Authorization', authToken)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(ok);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('message').to.equal(placesRetrieved);
+        expect(res.body).to.have.property('data').to.be.an('array');
         done();
       });
   });

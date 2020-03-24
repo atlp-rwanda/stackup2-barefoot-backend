@@ -4,12 +4,12 @@ import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
 import RequestService from '../services/request.service';
 
-const { handleTripRequest, } = RequestService;
+const { handleTripRequest, getMostTraveledDestinations, acceptRequest } = RequestService;
 const {
-  oneWayTripRequestCreated, 
-  duplicateTripRequest,
+  oneWayTripRequestCreated, emptyReqId,
+  duplicateTripRequest, placesRetrieved, noPlacesRetrieved
  } = customMessages;
-const { created, badRequest, } = statusCodes;
+const { created, badRequest, ok, notFound } = statusCodes;
 const { successResponse, errorResponse, } = responseHandlers;
 
 /**
@@ -29,6 +29,24 @@ export default class RequestController {
       return successResponse(res, created, oneWayTripRequestCreated, undefined, newTrip);
     } catch (dbError) {
       return errorResponse(res, badRequest, duplicateTripRequest);
+    }
+  }
+
+  /**
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} sends response to user
+   */
+  static placesAndVisitTimes = async (req, res) => {
+    const visitTimes = await getMostTraveledDestinations();
+    if (visitTimes[0].length !== 0) {
+      const destinations = visitTimes[0];
+      const destinationCount = destinations.map(dest => ({ Destination: dest.travelTo,
+        timeVisited: dest.count
+      }));
+      successResponse(res, ok, placesRetrieved, null, destinationCount);
+    } else {
+      errorResponse(res, notFound, noPlacesRetrieved);
     }
   }
 }

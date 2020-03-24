@@ -55,6 +55,8 @@ const messages = {
   tokenMissing: 'Authentication failed. Token is missing',
   userLogoutSuccess: 'Log out successful',
   invalidReturnDate: 'The return date should not be empty, should be greater than travel date and look like 2001-01-01',
+  placesRetrieved: 'Successfully retrieved destinations and their visit times',
+  noPlacesRetrieved: 'Data not available for now, because there is no any trip yet, please try again later'
 };
 
 export default messages;
