@@ -152,6 +152,28 @@ export default {
     password: 'Onewaytripreq123@',
     gender: 'Male',
   },
+  tripRequesterNoCommentYet: {
+    firstName: 'John',
+    lastName: 'Doe',
+    username: 'onewaytripreqrnocommentyet',
+    email: 'onewaytripreqrnocommentyet@example.com',
+    address: 'Kigali',
+    password: 'Onewaytripreq123@',
+    gender: 'Male',
+  },
+  tripRequesterManagerNoRquestYet: {
+    firstName: 'John',
+    lastName: 'Doe',
+    username: 'tripRequesterManagerNoRquestYet',
+    email: 'tripRequesterManagerNoRquestYet@example.com',
+    address: 'Kigali',
+    password: 'Onewaytripreq123@',
+    gender: 'Male',
+  },
+  managerLoginValidData: {
+    email: 'tripRequesterManagerNoRquestYet@example.com',
+    password: 'Onewaytripreq123@'
+  },
   oneWayTripRequest: {
     travelFrom: 'kigali',
     travelTo: 'Butare',
@@ -337,6 +359,10 @@ export default {
   loginAdminUser: {
     email: 'admin1@admin.com',
     password: 'Helloworld3@'
+  },
+  postCommentWithValidData: {
+    requestId: 1,
+    comment: 'That is nice'
   }
 
 };

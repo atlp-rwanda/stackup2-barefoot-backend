@@ -695,6 +695,145 @@
         }
       }
     },
+    "/api/trips/:requestId/comment": {
+      "post": {
+        "summary": "Post comment on a travel-request",
+        "tags": [
+          "Trips"
+        ],
+        "description": "This end point, helps to post comments on a trip request",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Currently logged in user token",
+            "in": "headers",
+            "description": "Currently logged in user token is required to be sent as a bearer token",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/currLoggedInToken"
+            }
+          }
+          ,{
+            "name":"comment body",
+            "in":"formData",
+            "required":true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/responses/commentAdded"
+            }
+          }
+        }
+      }
+    },
+    "/api/trips/comment?requestId=reqId": {
+      "get": {
+        "summary": "Get comments on a travel-request",
+        "tags": [
+          "Trips"
+        ],
+        "description": "This end point, helps to get all comments on a trip-request, you can also retrieve in pages in this format /api/trips/comment?requestId=reqId&page=pageNumber",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Currently logged in user token",
+            "in": "headers",
+            "description": "Currently logged in user token is required to be sent as a bearer token",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/currLoggedInToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/responses/commentRetrievedSuccessfully"
+            }
+          }
+        }
+      }
+    },
+    
+    "/api/trips/comment/:commentId": {
+      "patch": {
+        "summary": "Update a comments",
+        "tags": [
+          "Trips"
+        ],
+        "description": "This end point, helps to update comments on the request",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Currently logged in user token",
+            "in": "headers",
+            "description": "Currently logged in user token is required to be sent as a bearer token",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/currLoggedInToken"
+            }
+          },
+          {
+            "name": "Comment",
+            "in": "formData",
+            "description": "Currently logged in user token is required to be sent as a bearer token",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/currLoggedInToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/responses/commentUpdated"
+            }
+          }
+        }
+      }
+    },
+    "/api/trips/comment/:commentId": {
+      "delete": {
+        "summary": "Delete a comment on a travel-request",
+        "tags": [
+          "Trips"
+        ],
+        "description": "This endpoint, helps to delete a comment from a request",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Currently logged in user token",
+            "in": "headers",
+            "description": "Currently logged in user token is required to be sent as a bearer token",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/currLoggedInToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/responses/commentDeleted"
+            }
+          }
+        }
+      }
+    },
     "/roles/assign-role": {
       "patch": {
         "summary": "assign role",
@@ -1083,6 +1222,58 @@
         },
         "data":{
           "type":"array",
+          "example":{
+          }
+        }
+      }
+    },
+    "commentAdded": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Your comment is added successfully"
+        },
+        "data":{
+          "type":"object",
+          "example":{
+          }
+        }
+      }
+    },
+    "commentRetrievedSuccessfully": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Comment retrieved successfully"
+        },
+        "data":{
+          "type":"object",
+          "example":{
+          }
+        }
+      }
+    },
+    "commentUpdated": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Comment updated successfully"
+        },
+        "data":{
+          "type":"object",
+          "example":{
+          }
+        }
+      }
+    },
+    "commentDeleted": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Comment Deleted successfully"
+        },
+        "data":{
+          "type":"object",
           "example":{
           }
         }

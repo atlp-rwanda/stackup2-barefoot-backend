@@ -61,7 +61,25 @@ const messages = {
   invalidRole: 'The role must be Super Administrator, Travel Administrator, Travel Team Member, Manager or Requester',
   existingRole: 'That is the existing role for this user',
   superUser: 'You can not change the role for the super user',
-  noTwoSuperUser: 'You can not'
+  noTwoSuperUser: 'You can not',
+  commentAdded: 'Your comment is added successfully',
+  commentOnOthersReqNotAdmin: 'You cannot comment on a request which is not yours',
+  requestAndCommentsRetrieved: 'We got you some requests and some comments',
+  requestButNoCommentYet: 'We got you some requests but it seems that you don\'t have any comment yet',
+  noRequestYet: 'We did not find any request, which means there is no comment yet',
+  isNotMyComment: 'You cannot update comment which is not yours',
+  emptyCommentId: 'Please select the comment you want to update',
+  commentUpdatedSuccess: 'Your comment has been updated successfully',
+  requestNotExists: 'That travel-request doesn\'t exist, create some or try existing one',
+  commentDeleted: 'Your comment has been deleted successfully',
+  commentNoFound: 'The comment you want to update or delete doesn\'t exist',
+  noCommentYet: 'This request doesn\'t have any comment yet',
+  commentsRetrieved: 'Comments retrieved successfully',
+  emptyCommentBody: 'You cannot update nor create comment with an empty message body, please type some comment',
+  requestIdMustBeANumber: 'requestId, should be a number, not mixed with characters, and not empty',
+  pageMustBeANumber: 'Page number, should be a number, not mixed with characters, and not empty',
+  noCommentOnThisPage: 'No comment found on this page',
+  viewCmtNotMineReq: 'You cannot view comments on request which is not yours'
 };
 
 export default messages;
