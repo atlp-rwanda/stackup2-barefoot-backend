@@ -38,4 +38,25 @@ export default class RequestService {
     
     return placeAndTheirVisitTimes;
   }
+
+ /**
+   *@description Saves trip request details in database
+   * @returns {Object} all pending requests
+    */
+  static findAllTrips() {
+    return request.findAll({
+      where: { status: 'pending' }
+    });
+  }
+
+    /**
+   *@description Saves trip request details in database
+   * @param {string} id of a trip
+   * @returns {Object} all pending requests
+    */
+  static findtrip(id) {
+    return request.findOne({
+      where: { id }
+    });
+  }
 }

@@ -5,7 +5,7 @@ import findUser from '../utils/identifyUser';
 const { user } = models;
 const sequelize = Sequelize;
 /**
- * @param {string} email
+ * @param {string} value
  * @returns {object} Object of messages
  * @description Class to handle users
  */
@@ -18,12 +18,14 @@ export default class UserService {
   static handleSignUp = async (data) => {
     const role = 'requester';
     const isVerified = false;
+    const emailNotification = true;
     const provider = 'Barefootnomad';
     const newData = {
       ...data,
       provider,
       role,
       isVerified,
+      emailNotification,
     };
     const { dataValues } = await user.create(
       newData,
@@ -39,6 +41,7 @@ export default class UserService {
           'address',
           'role',
           'isVerified',
+          'emailNotification',
         ],
       },
     );
@@ -71,10 +74,26 @@ export default class UserService {
       where: { email: value },
       });
     }
-   
     return currUser;
-       }
-  ;
+  }
+
+  static updateIsVerifiedOrDisableNotification = async (value) => {
+    let update;
+    if (isNaN(value)) {
+      if (value.includes('@')) {
+        update = await user.update(
+          { isVerified: true },
+          { where: { email: value } }
+        );
+      }
+    } else {
+      update = await user.update(
+       { emailNotification: false },
+       { where: { id: value } }
+      );
+    }
+    return update;
+  }
 
   /**
    * function findOne() returns all users in db
@@ -105,13 +124,5 @@ export default class UserService {
       }
     );
     return updatedUser;
-  }
-
-  static updateIsVerified = async (email) => {
-    const update = await user.update(
-      { isVerified: true },
-      { where: { email } }
-    );
-    return update;
   }
 }

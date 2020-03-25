@@ -37,6 +37,9 @@ export default {
     isVerified: {
       type: Sequelize.BOOLEAN
     },
+    emailNotification: {
+      type: Sequelize.BOOLEAN
+    },
     username: {
       type: Sequelize.STRING
     },

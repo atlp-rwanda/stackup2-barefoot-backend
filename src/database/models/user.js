@@ -12,6 +12,7 @@ export default (sequelize, DataTypes) => {
     address: DataTypes.STRING,
     role: DataTypes.STRING,
     isVerified: DataTypes.BOOLEAN,
+    emailNotification: DataTypes.BOOLEAN,
     birthDate: DataTypes.DATE,
     preferredLanguage: DataTypes.STRING,
     preferredCurrency: DataTypes.STRING,

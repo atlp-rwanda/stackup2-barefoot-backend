@@ -12,10 +12,11 @@ const {
   sendResetEmail,
   updatePassword,
   verify,
-  userLogout
+  userLogout,
+  disableEmailNotification
 } = AuthenticationController;
 const {
-  isUserLoggedInAndVerified
+  isUserLoggedInAndVerified,
 } = Authentication;
 
 const authenticationRouter = express.Router();
@@ -26,6 +27,7 @@ authenticationRouter.post('/resetpassword', validateResetEmail, sendResetEmail);
 authenticationRouter.post('/resetpassword/:token', passwordValidation, verifyToken, updatePassword);
 authenticationRouter.get('/verify', verify);
 authenticationRouter.get('/logout', isUserLoggedInAndVerified, userLogout);
+authenticationRouter.get('/email/disable/', isUserLoggedInAndVerified, disableEmailNotification);
 
 authenticationRouter.get('/facebook', passport.authenticate('facebook'));
 authenticationRouter.get('/facebook/callback', passport.authenticate('facebook', { session: false }), AuthenticationController.facebookLogin);

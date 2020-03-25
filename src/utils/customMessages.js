@@ -52,11 +52,10 @@ const messages = {
   passwordChangeSuccess: 'Your password has been changed, login with new password',
   changeEmailNotAllowed: 'You cannot change your email, unselect it if you want to continue updating your profile, otherwise you will not be able to continue',
   tokenInvalid: 'Authentication failed. Token is invalid',
-  tokenMissing: 'Authentication failed. Token is missing',
-  userLogoutSuccess: 'Log out successful',
-  invalidReturnDate: 'The return date should not be empty, should be greater than travel date and look like 2001-01-01',
-  placesRetrieved: 'Successfully retrieved destinations and their visit times',
-  noPlacesRetrieved: 'Data not available for now, because there is no any trip yet, please try again later'
+  emailNotificationDisabled: 'Email notification disabled successfully!',
+  allPendingTrip: 'Here are all pending trips',
+  forbiddenAccess: 'You are not allowed to access this data',
+  tripFound: 'Here is your Trip request details',
 };
 
 export default messages;
