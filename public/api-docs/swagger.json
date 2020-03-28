@@ -762,6 +762,43 @@
         }
       }
     },
+    "/api/trips?page=pageNumber": {
+      "get": {
+        "summary": "Gets a list of all requests a user have submitted to barefootnomad so far",
+        "tags": [
+          "Trips"
+        ],
+        "description": "This end point, helps to get all requests, you can also retrieve in pages in this format /api/trips/comment?requestId=reqId&page=pageNumber",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Currently logged in user token",
+            "in": "headers",
+            "description": "Currently logged in user token is required to be sent as a bearer token",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/currLoggedInToken"
+            }
+          },
+          {
+            "name": "Page number",
+            "in": "query",
+            "description": "If you want to get requests in pages, when you pass page number, you will get 10 requests per page",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/responses/requestRetrievedSuccessfully"
+            }
+          }
+        }
+      }
+    },
     
     "/api/trips/comment/:commentId": {
       "patch": {
@@ -1245,6 +1282,19 @@
         "message": {
           "type": "string",
           "example": "Comment retrieved successfully"
+        },
+        "data":{
+          "type":"object",
+          "example":{
+          }
+        }
+      }
+    },
+    "requestRetrievedSuccessfully": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Requests have been retrieved successfully"
         },
         "data":{
           "type":"object",

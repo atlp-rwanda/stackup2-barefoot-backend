@@ -60,6 +60,20 @@ const joiValidateCmtRetrieval = (commentData) => {
     abortEarly: false,
   });
 };
+/**
+ * 
+ * @param {object} reqData 
+ * @param {bool} isUpdate 
+ * @returns {object} validation
+ * @description it returns validations of commentData
+ */
+const joiValidateRequestRetrieval = (reqData) => {
+  const schema = Joi.object({
+      page: Joi.number().integer().optional().messages(createValidationErrors('number', pageMustBeANumber)) });
+  return schema.validate(reqData, {
+    abortEarly: false,
+  });
+};
 
 /**
  * @param {object} req 
@@ -89,7 +103,7 @@ const isItemExists = async (req) => {
 };
 
 /**
- * @param{string} role
+ *@param{string} role
  *@param{integer} id
  *@param{object} travelReq
  *@param{array} result
@@ -241,10 +255,27 @@ const validateCommentDelete = async (req, res, next) => {
   }     
 };
 
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns {*} next 
+ * @description it validate retrieve of requests
+ */
+const validateReqRetrieve = (req, res, next) => {
+  const { error } = joiValidateRequestRetrieval(req.query);
+  if (error) {
+    displayErrorMessages(error, res, next);
+  } else {
+    next();
+  }
+};
+
 export {
   validateCommentPost,
   validateCommentUpdate,
   validateCommentDelete,
   isItemExists,
-  validateCommentRetrieval
+  validateCommentRetrieval, validateReqRetrieve
 };

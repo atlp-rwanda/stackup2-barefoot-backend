@@ -39,5 +39,12 @@ export default (sequelize, DataTypes) => {
     profileImage: DataTypes.STRING
   }, {});
 
+  user.associate = (models) => {
+    user.hasMany(models.request, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    });
+  };
   return user;
 };

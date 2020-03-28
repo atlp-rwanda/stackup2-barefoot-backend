@@ -4,6 +4,7 @@ import findUser from '../utils/identifyUser';
 
 const { user } = models;
 const sequelize = Sequelize;
+
 /**
  * @param {string} email
  * @returns {object} Object of messages
@@ -64,12 +65,10 @@ export default class UserService {
    */
   static findUserByEmailOrUsername = async (value) => {
     let currUser = await user.findOne({
-      where: { username: value },
+      where: { username: value }
     });
     if (!currUser) {
-      currUser = await user.findOne({
-      where: { email: value },
-      });
+      currUser = await user.findOne({ where: { email: value } });
     }
    
     return currUser;

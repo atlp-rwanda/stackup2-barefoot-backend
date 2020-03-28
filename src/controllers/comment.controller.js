@@ -2,7 +2,7 @@ import CommentService from '../services/comment.service';
 import responseHandlers from '../utils/responseHandlers';
 import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
-import { dbPage } from '../utils/comment.utils';
+import { offsetAndLimit } from '../utils/comment.utils';
 
 const { saveNewComment, getAllCommentOfSpecificReq, updateComment, deleteComment } = CommentService;
 const { successResponse, errorResponse } = responseHandlers;
@@ -55,7 +55,7 @@ export default class CommentController {
      */
     static getCommentSpecificReq = async (req, res) => {
         const { requestId, page } = req.query;
-        const { limit, offset } = dbPage(page);
+        const { limit, offset } = offsetAndLimit(page);
         const { foundComments, count } = await getAllCommentOfSpecificReq({
             requestId, offset, limit
         });
