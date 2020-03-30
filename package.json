@@ -7,6 +7,7 @@
     "lint": "eslint ./src",
     "start": "cross-env NODE_ENV=development && babel-node ./src/index.js",
     "dev": "cross-env NODE_ENV=development && nodemon --exec babel-node ./src/index.js",
+    "admin": "babel-node ./src/database/scripts/insertAdmin.js",
     "create-db": "npx sequelize-cli db:create",
     "drop-db": "npx sequelize-cli db:drop",
     "migrations": "npx sequelize-cli db:migrate",
@@ -14,7 +15,7 @@
     "seed": "npx sequelize-cli db:seed:all",
     "undo-seed": "npx sequelize-cli db:seed:undo",
     "test": "cross-env NODE_ENV=test && nyc mocha --require @babel/register ./tests/**/*.js  --timeout 30000 --exit",
-    "pretest": "npm run drop-db && npm run create-db && npm run migrations && npm run seed",
+    "pretest": "npm run drop-db && npm run create-db && npm run migrations && npm run seed && npm run admin",
     "posttest": "npm run undo-seed && npm run undo",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "db:connect": "babel-node ./src/database/models/ connect"

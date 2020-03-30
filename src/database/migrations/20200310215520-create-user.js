@@ -1,3 +1,14 @@
+
+import roles from '../../utils/userRoles.utils';
+
+const {
+  MANAGER,
+  REQUESTER,
+  SUPER_USER,
+  SUPER_ADMIN,
+  TRAVEL_ADMIN,
+  TRAVEL_TEAM_MEMBER,
+ } = roles;
 export default {
   up: (queryInterface, Sequelize) => queryInterface.createTable('users', {
     id: {
@@ -32,7 +43,8 @@ export default {
       type: Sequelize.STRING
     },
     role: {
-      type: Sequelize.STRING
+      type: Sequelize.ENUM,
+      values: [SUPER_USER, SUPER_ADMIN, TRAVEL_ADMIN, TRAVEL_TEAM_MEMBER, MANAGER, REQUESTER]
     },
     isVerified: {
       type: Sequelize.BOOLEAN

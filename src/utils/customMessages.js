@@ -1,4 +1,3 @@
-
 const messages = {
   userSignupSuccess: 'Your account has been created successfully! \n\n\n\n Please click on the button sent to your email to comfirm your account.',
   userSignupFailed: 'Sign up failed! Please try again later',
@@ -56,7 +55,13 @@ const messages = {
   userLogoutSuccess: 'Log out successful',
   invalidReturnDate: 'The return date should not be empty, should be greater than travel date and look like 2001-01-01',
   placesRetrieved: 'Successfully retrieved destinations and their visit times',
-  noPlacesRetrieved: 'Data not available for now, because there is no any trip yet, please try again later'
+  noPlacesRetrieved: 'Data not available for now, because there is no any trip yet, please try again later',
+  userNotAllowedForAction: 'You are not allowed to perform this action',
+  roleAssigned: 'Role assigned to user successfully',
+  invalidRole: 'The role must be Super Administrator, Travel Administrator, Travel Team Member, Manager or Requester',
+  existingRole: 'That is the existing role for this user',
+  superUser: 'You can not change the role for the super user',
+  noTwoSuperUser: 'You can not'
 };
 
 export default messages;

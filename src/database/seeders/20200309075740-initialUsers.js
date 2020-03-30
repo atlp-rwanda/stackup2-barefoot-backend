@@ -11,7 +11,7 @@ export default {
     password: await passwordHasher('barefootnomad2'),
     gender: 'Male',
     address: 'Butare',
-    role: 'user',
+    role: 'requester',
     isVerified: false,
     createdAt: new Date(),
     updatedAt: new Date()

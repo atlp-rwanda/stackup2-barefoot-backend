@@ -5,6 +5,7 @@ import statusCodes from '../utils/statusCodes';
 import UserService from '../services/authentication.service';
 import responseHandlers from '../utils/responseHandlers';
 import redisClient from '../database/redis.config';
+import userRoles from '../utils/userRoles.utils';
 
 const { errorResponse } = responseHandlers;
 const { unAuthorized, badRequest } = statusCodes;
@@ -12,9 +13,10 @@ const {
   tokenVerifyFailed,
   accountNotVerified,
   tokenInvalid,
-  tokenMissing
+  tokenMissing,
+  userNotAllowedForAction, 
 } = customMessages;
-
+const { SUPER_ADMIN, SUPER_USER } = userRoles;
 /**
  * @description Verifies authenticity of current user
  */
@@ -51,5 +53,23 @@ export default class Authentication {
     } catch (error) {
       return errorResponse(res, badRequest, tokenInvalid);
     }
+  }
+
+   /**
+   * @param {Request} req Node/Express Request object
+   * @param {Response} res Node/Express Response object
+   * @param {NextFunction} next Node/Express Next callback function
+   * @returns {NextFunction | Object} Node/Express Next callback function or an error response
+   * @description Checks the user type,
+   * decodes it, checks if the user is super admin or not
+   */
+  static async isUserSuperAdmin(req, res, next) {
+    const tokenDecoded = req.sessionUser;
+    if (tokenDecoded.role === SUPER_ADMIN || tokenDecoded.role === SUPER_USER) {
+      req.body.email = req.body.email.toLowerCase();
+      req.body.role = req.body.role.toLowerCase();
+      return next();
+    }
+    return responseHandlers.errorResponse(res, unAuthorized, userNotAllowedForAction);
   }
 }
