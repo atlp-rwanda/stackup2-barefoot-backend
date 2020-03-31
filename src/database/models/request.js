@@ -11,5 +11,11 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.STRING,
     accommodation: DataTypes.BOOLEAN
   });
+  request.associate = (models) => {
+    request.hasMany(models.comment, {
+      foreignKey: 'requestId',
+      onDelete: 'CASCADE',
+    });
+  };
   return request;
 };

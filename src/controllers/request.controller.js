@@ -4,7 +4,7 @@ import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
 import RequestService from '../services/request.service';
 
-const { handleTripRequest, getMostTraveledDestinations, acceptRequest } = RequestService;
+const { handleTripRequest, getMostTraveledDestinations } = RequestService;
 const {
   oneWayTripRequestCreated, emptyReqId,
   duplicateTripRequest, placesRetrieved, noPlacesRetrieved

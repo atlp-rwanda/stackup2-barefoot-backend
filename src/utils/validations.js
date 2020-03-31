@@ -5,10 +5,14 @@ import responseHandlers from './responseHandlers';
 import statusCodes from './statusCodes';
 import Validators from './validators';
 import utils from './authentication.utils';
+import userRoles from './userRoles.utils';
 
 const { errorResponse } = responseHandlers;
 const { badRequest } = statusCodes;
-const { invalidTravelType, invalidReturnDate } = customMessages;
+const {
+  invalidTravelType,
+  invalidReturnDate,
+} = customMessages;
 const { decodeToken } = utils;
 const { validateOneWayTripRequest, validateReturnDate } = Validators;
 
@@ -188,9 +192,11 @@ const validateTripRequest = async (req, res, next) => {
   }
 };
 
-export { validateSignup, 
+export {
+  validateSignup, 
   validateTripRequest, 
   validatePassword,
   displayErrorMessages,
-  validateRole
+  validateRole,
+  validationMethods
 };
