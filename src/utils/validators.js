@@ -85,6 +85,7 @@ static async validateOneWayTripRequest(tripRequestData) {
 */
 static async validateReturnDate(tripRequest) {
   const { createValidationErrors } = Validators;
+
   const schema = Joi.object({
     returnDate: Joi.date().required().min(new Date()).iso()
 .min(Joi.ref('travelDate'))

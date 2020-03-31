@@ -152,14 +152,14 @@ const returnTripHandler = async (tripRequestInfo, req, res, next) => {
   let errors = '';
    try {
     const commonInfo = _.omit(tripRequestInfo, 'returnDate');
-     await validateOneWayTripRequest(commonInfo);
+     req.body = await validateOneWayTripRequest(commonInfo);
    } catch (err) {
     errorMessage.push(err.message);
    }
     try {
       const validRequest = await validateReturnDate(tripRequestInfo);
-      validRequest.userId = req.sessionUser.id;
-      req.body = validRequest;
+      req.body.userId = req.sessionUser.id;
+      req.body.returnDate = validRequest.returnDate;
     } catch (err) {
       errorMessage.push(invalidReturnDate);
 }

@@ -101,4 +101,37 @@ export default class RequestService {
       },
     });
   }
+
+     /**
+   *@description update open trip request details in database
+   * @param {Object} tripRequestData trip request new data
+   * @param {Integer} requestId trip request id
+   * @returns {Object} updated trip request details
+    */
+   static updateTripRequest(tripRequestData, requestId) {
+    if (tripRequestData.travelType === 'one-way') {
+      tripRequestData.returnDate = null;
+    }
+    const {
+     travelTo,
+     travelFrom,
+     travelReason,
+     travelType,
+     travelDate,
+     returnDate,
+     accommodation
+    } = tripRequestData;
+   return request.update(
+     {
+         travelTo,
+         travelFrom,
+         travelReason,
+         travelType,
+         travelDate,
+         returnDate,
+         accommodation
+     },
+     { where: { id: requestId } }
+   );
+}
 }

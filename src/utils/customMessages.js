@@ -31,7 +31,7 @@ const messages = {
   endpointNotFound: 'The requested resource was not found',
   duplicateTripRequest: 'Request failed, attempting to submit the same trip request twice',
   accountNotVerified: 'Sorry, we were unable to verify your identity, please verify your account',
-  invalidTravelType: 'Please specify the type of your trip',
+  invalidTravelType: 'Please specify the type of your trip, should be one-way or return-trip',
   invalidTravelFrom: 'Please specify where you are travelling from',
   invalidTravelTo: 'Please provide where you are travelling to',
   invalidTravelReason: 'Please provide the reason for the trip',
@@ -58,7 +58,7 @@ const messages = {
   noPlacesRetrieved: 'Data not available for now, because there is no any trip yet, please try again later',
   userNotAllowedForAction: 'You are not allowed to perform this action',
   roleAssigned: 'Role assigned to user successfully',
-  invalidRole: 'The role must be Super Administrator, Travel Administrator, Travel Team Member, Manager or Requester',
+  invalidRole: 'You entered an invalid role',
   existingRole: 'That is the existing role for this user',
   superUser: 'You cannot change the role for the super user',
   commentAdded: 'Your comment is added successfully',
@@ -99,6 +99,11 @@ const messages = {
   requesterNotRegistered: 'Sorry, we could not find a user account associated with that requesterId',
   emptyRole: 'role is not allowed to be empty',
   emptyEmail: 'email is not allowed to be empty',
+  requestUpdated: 'The request is updated successfully',
+  notOpenRequest: 'You are not allowed to update a rejected or an approved travel request',
+  emptyUpdate: 'You have to provide at least one new information',
+  notExistRequest: 'You can not update a request which does not exist',
+  notYourRequest: 'You can only update your request',
 };
 
 export default messages;

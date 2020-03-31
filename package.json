@@ -15,7 +15,7 @@
     "seed": "npx sequelize-cli db:seed:all",
     "undo-seed": "npx sequelize-cli db:seed:undo",
     "test": "cross-env NODE_ENV=test && nyc mocha --require @babel/register ./tests/**/*.js  --timeout 30000 --exit",
-    "pretest": "npm run drop-db && npm run create-db && npm run migrations && npm run seed && npm run admin",
+    "pretest": "npm run drop-db && npm run create-db && npm run migrations && npm run admin && npm run seed ",
     "posttest": "npm run undo-seed && npm run undo",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "db:connect": "babel-node ./src/database/models/ connect"
