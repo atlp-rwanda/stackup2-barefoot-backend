@@ -49,6 +49,14 @@ module.exports = {
       allowNull: false,
       type: Sequelize.BOOLEAN,
     },
+    handledBy: {
+      allowNull: true,
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE

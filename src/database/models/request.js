@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     travelReason: DataTypes.STRING,
     travelType: DataTypes.STRING,
     status: DataTypes.STRING,
-    accommodation: DataTypes.BOOLEAN
+    accommodation: DataTypes.BOOLEAN,
+    handledBy: DataTypes.INTEGER
   });
   request.associate = (models) => {
     request.hasMany(models.comment, {
@@ -18,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
     });
       request.belongsTo(models.user, {
       foreignKey: 'userId'
+    });
+      request.belongsTo(models.user, {
+      foreignKey: 'handledBy'
     });
   };
   return request;

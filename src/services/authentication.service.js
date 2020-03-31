@@ -70,10 +70,9 @@ export default class UserService {
     if (!currUser) {
       currUser = await user.findOne({ where: { email: value } });
     }
-   
+
     return currUser;
-       }
-  ;
+  };
 
   /**
    * function findOne() returns all users in db
@@ -84,8 +83,8 @@ export default class UserService {
     const currUser = await user.findOne({
       where: {
         email: sequelize.where(sequelize.fn('LOWER', sequelize.col('email')), 'LIKE', `%${email}%`)
-    }
-  });
+      }
+    });
     return currUser;
   };
 

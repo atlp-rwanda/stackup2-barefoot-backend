@@ -12,7 +12,8 @@ const {
   sendResetEmail,
   updatePassword,
   verify,
-  userLogout
+  userLogout,
+  assignRoleToUser
 } = AuthenticationController;
 const {
   isUserLoggedInAndVerified
