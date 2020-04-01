@@ -1,10 +1,12 @@
 /**
  * 
  * @param {object} page 
- * @returns {object} offset and limit 
- * @description it returns offset and limit when it is passed a page
+ * @returns {object} offset and limit
+ * @description it returns offset and limit which are the variables to be used 
+ * to know the delimitations of data to retrieve from the database when a user wants 
+ * to retrieve requests or comments
  */
-export const dbPage = (page) => {
+export const offsetAndLimit = (page) => {
     let result, offset;
     let limit = 10;
     if (page) {

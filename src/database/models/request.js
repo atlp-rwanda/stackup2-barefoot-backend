@@ -14,7 +14,10 @@ module.exports = (sequelize, DataTypes) => {
   request.associate = (models) => {
     request.hasMany(models.comment, {
       foreignKey: 'requestId',
-      onDelete: 'CASCADE',
+      onDelete: 'CASCADE'
+    });
+      request.belongsTo(models.user, {
+      foreignKey: 'userId'
     });
   };
   return request;

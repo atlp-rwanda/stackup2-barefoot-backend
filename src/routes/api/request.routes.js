@@ -7,9 +7,9 @@ import {
     validateCommentPost,
     validateCommentUpdate,
     validateCommentDelete,
-    validateCommentRetrieval } from '../../utils/comment.validations';
+    validateCommentRetrieval, validateReqRetrieve } from '../../utils/comment.validations';
 
-const { createTripRequest, placesAndVisitTimes } = RequestController;
+const { createTripRequest, placesAndVisitTimes, getListOfMyRequests } = RequestController;
 const {
     isUserLoggedInAndVerified
 } = Authentication;
@@ -28,5 +28,6 @@ router.post('/:requestId/comment', isUserLoggedInAndVerified, validateCommentPos
 router.get('/comment', isUserLoggedInAndVerified, validateCommentRetrieval, getCommentSpecificReq);
 router.patch('/comment/:commentId', isUserLoggedInAndVerified, validateCommentUpdate, updateComments);
 router.delete('/comment/:commentId', isUserLoggedInAndVerified, validateCommentDelete, deleteComment);
+router.get('/', isUserLoggedInAndVerified, validateReqRetrieve, getListOfMyRequests);
 
 export default router;

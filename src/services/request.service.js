@@ -1,12 +1,8 @@
 import models from '../database/models';
 
-const { request, sequelize } = models;
-const commentInclusion = [{
-  model: models.comment,
-  limit: 2,
-  offset: 2,
-  attributes: ['id', 'requestId', 'comment', 'createdAt', 'updatedAt']
-}];
+const { request, sequelize, Sequelize } = models;
+
+const { Op } = Sequelize;
 
 /**
  * @description Trip requests service
@@ -46,16 +42,24 @@ export default class RequestService {
   }
   
   /**
-   * @param {Integer} id
    * @param {Integer} userId
    * @returns {object} foundReq
    * @description it returns a one request of a specific user if it is passed userId
    *  otherwise it returns any request
    */
-  static getOneRequestFromDb = async (id) => {
-    const foundReq = await request.findOne({
-      where: { id }
-    });
+  static getOneRequestFromDb = async (userId) => {
+    const foundReq = await request.findOne({ where: { id: { [Op.eq]: userId } } });
     return foundReq;
+  }
+
+  /**
+   *@param {object} reqOptions
+   *@returns {object} reqs
+   *@description it returns a list of all request
+   */
+  static getAllRequests = async (reqOptions) => {
+    const { userId, offset, limit } = reqOptions;
+    const reqs = await request.findAndCountAll({ where: { userId }, offset, limit, order: [['createdAt', 'DESC']] });
+    return reqs;
   }
 }
