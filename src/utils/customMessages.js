@@ -81,7 +81,17 @@ const messages = {
   viewCmtNotMineReq: 'You cannot view comments on request which is not yours',
   requestsRetrieved: 'Requests have been retrieved successfully',
   noRequestsYet: 'You do not have any request, you can create some',
-  noRequestsFoundOnThisPage: 'There is no requests found on this page'
+  noRequestsFoundOnThisPage: 'There is no requests found on this page',
+  invalidTripRequestsSearchTerm: 'Please specify a valid search term, it must not be empty',
+  invalidTripRequestsSearchField: 'Please specify a valid field to perform a search on, it must be one of id, status, travelTo, travelFrom, travelDate, returnDate, travelType or travelReason',
+  invalidTripRequestsSearchLimit: 'Please specify a valid limit to the returned data, it must be a non-zero positive number(e.g 10)',
+  invalidTripRequestsSearchOffset: 'Please specify a valid offset to the returned data, it must be a positive number(e.g 0)',
+  invalidTripRequestsSearchFieldId: 'Please specify a valid number for the id search field',
+  invalidTripRequestsSearchFieldTravelDate: 'Please specify a valid date for the travelDate search field(e.g 2020-03-25)',
+  invalidTripRequestsSearchFieldReturnDate: 'Please specify a valid date for the returnDate search field(e.g 2020-03-25)',
+  invalidTripRequestsSearchFieldStatus: 'Please specify a valid value for the status search field, possible values are pending, accepted and rejected',
+  invalidTripRequestsSearchFieldTravelType: 'Please specify a valid value for the travelType search field, possible values are one-way, return-trip and multi-city',
+  emptySearchResult: 'Sorry, we could not find anything matching your search criteria',
 };
 
 export default messages;

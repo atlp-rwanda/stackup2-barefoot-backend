@@ -798,8 +798,7 @@
           }
         }
       }
-    },
-    
+    },    
     "/api/trips/comment/:commentId": {
       "patch": {
         "summary": "Update a comments",
@@ -923,6 +922,75 @@
             "description": "This is how the response looks like when a user is not allowed to assign role",
             "schema": {
               "$ref": "#/responses/assign-role-not-authorized"
+            }
+          }
+        }
+      }
+    },
+    "/trips/search": {
+      "get": {
+        "summary": "Searches a user(requester)'s trip requests",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "field",
+            "in": "query",
+            "description": "a preferred field/column to perform search against",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SearchTripRequests"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "a term to search for on the selected field",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SearchTripRequests"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "a positive number representing how many results to return as a response",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SearchTripRequests"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "a positive number used for paging(server side) results",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SearchTripRequests"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved trips stats",
+            "schema": {
+              "$ref": "#/responses/view-trips-stats-success"
+            }
+          },
+          "400": {
+            "description": "Failed to retrieve trips stats due to bad user input",
+            "schema": {
+              "$ref": "#/responses/view-trips-stats-fail"
+            }
+          },
+          "401": {
+            "description": "access denied to protected resource",
+            "schema": {
+              "$ref": "#/responses/trip-request-unauthorized"
             }
           }
         }
@@ -1067,7 +1135,28 @@
         "required": true,
         "example": "manager"
       }
-
+    },
+    "SearchTripRequests": {
+      "field": {
+        "type": "string",
+        "required": true,
+        "example": "travelDate"
+      },
+      "search": {
+        "type": "string",
+        "required": true,
+        "example": "2020-01-01"
+      },
+      "limit": {
+        "type": "integer",
+        "required": true,
+        "example": "30"
+      },
+      "offset": {
+        "type": "integer",
+        "required": true,
+        "example": "0"
+      }
     }
   },
   "responses": {
@@ -1123,126 +1212,123 @@
         }
       }
     },
-          "update-password-success": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "Your password has been changed, login with new password"
-              }
-            }
-          },
-          "old-password-required": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "enter your old password"
-              }
-            }
-          },
-          "incorrect-old-password": {
-            "properties": {
-              "error": {
-                "type": "string",
-                "example": "You have entered incorrect old password, if you have forgotten your password, logout and reset your password."
-              }
-            }
-          },
-          "profileRetrievalSuccess": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "You profile is successfully retrieved"
-              },
-              "data": {
-                "type": "object",
-                "example": {
-                  "firstName": "John",
-                  "lastName": "Doe"
-                }
-              }
-            }
-          },
-          "profileNotFound": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "The user you are trying ton search doesn't exist on our system"
-              }
-            }
-          },
-          "verifyYourAccount": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "You need to verify your account, before getting to profiles"
-              }
-            }
-          },
-          "trip-request-success": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "trip request successfuly created and waiting for manager approval"
-              }
-            }
-          },
-          "trip-request-fail": {
-            "properties": {
-              "error": {
-                "type": "string",
-                "example": "The travel date must be in future, not more than 6 months from now and look like 2001-01-01"
-              }
-            }
-          },
-          "trip-request-unauthorized": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "access denied, you must login to use this resource"
-              }
-            }
-          }
-        ,
-        "login-definition": {
-          "login-response-real-data": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "successfully logged in"
-              },
-              "token": {
-                "type": "string",
-                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-              }
-            }
-          },
-          "login-response-wrong-data": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "unknown credentials"
-              }
-            }
-          },
-          "login-response-empty-data": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "enter your email or password"
-              }
-            }
-          },
-          "notLoggedInUser": {
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "You are not allowed to access this resources, login or signup first"
-              }
-            }
+    "update-password-success": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Your password has been changed, login with new password"
+        }
+      }
+    },
+    "old-password-required": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "enter your old password"
+        }
+      }
+    },
+    "incorrect-old-password": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "You have entered incorrect old password, if you have forgotten your password, logout and reset your password."
+        }
+      }
+    },
+    "profileRetrievalSuccess": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "You profile is successfully retrieved"
+        },
+        "data": {
+          "type": "object",
+          "example": {
+            "firstName": "John",
+            "lastName": "Doe"
           }
         }
-      
-    ,
+      }
+    },
+    "profileNotFound": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "The user you are trying ton search doesn't exist on our system"
+        }
+      }
+    },
+    "verifyYourAccount": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "You need to verify your account, before getting to profiles"
+        }
+      }
+    },
+    "trip-request-success": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "trip request successfuly created and waiting for manager approval"
+        }
+      }
+    },
+    "trip-request-fail": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "The travel date must be in future, not more than 6 months from now and look like 2001-01-01"
+        }
+      }
+    },
+    "trip-request-unauthorized": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "access denied, you must login to use this resource"
+        }
+      }
+    },
+    "login-definition": {
+      "login-response-real-data": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "successfully logged in"
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        }
+      },
+      "login-response-wrong-data": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "unknown credentials"
+          }
+        }
+      },
+      "login-response-empty-data": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "enter your email or password"
+          }
+        }
+      },
+      "notLoggedInUser": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "You are not allowed to access this resources, login or signup first"
+          }
+        }
+      }
+    },
     "logout-success": {
       "properties": {
         "message": {
@@ -1382,6 +1468,14 @@
         "error": {
           "type": "string",
           "example": "You can not change the role for the super user"
+        }
+      } 
+    },
+    "search-trip-requests-empty-search-term": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "Please specify a valid search term, it must not be empty"
         }
       } 
     }

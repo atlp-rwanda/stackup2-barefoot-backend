@@ -363,6 +363,11 @@ export default {
   postCommentWithValidData: {
     requestId: 1,
     comment: 'That is nice'
-  }
-
+  },
+  searchTripRequests: {
+    field: 'travelDate',
+    search: '2020-01-01',
+    limit: 5,
+    offset: 0,
+  },
 };

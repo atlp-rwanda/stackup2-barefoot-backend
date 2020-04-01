@@ -4,6 +4,7 @@ import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
 import RequestService from '../services/request.service';
 import { offsetAndLimit } from '../utils/comment.utils';
+import userRoles from '../utils/userRoles.utils';
 
 const { handleTripRequest, getMostTraveledDestinations, getAllRequests } = RequestService;
 const {
@@ -12,6 +13,11 @@ const {
  } = customMessages;
 const { created, badRequest, ok, notFound } = statusCodes;
 const { successResponse, errorResponse, } = responseHandlers;
+const { REQUESTER } = userRoles;
+const { 
+  handleSearchTripRequests,
+} = RequestService;
+const { emptySearchResult } = customMessages;
 
 /**
    * @description Trip requests controller class
@@ -78,5 +84,28 @@ export default class RequestController {
     } else {
       errorResponse(res, notFound, noRequestsYet);
     }
+  }
+
+  /**
+   * @param {Request} req Node/express request
+   * @param {Response} res Node/express response
+   * @returns {Object} Custom response with trip requests that matches the search criteria/pattern
+   * @description searches trip requests
+   */
+  static async searchTripRequests(req, res) {
+    const { id, role } = req.sessionUser;
+    const { field, search, limit, offset } = req.query;
+    const searchCriteria = {
+      field,
+      search,
+      limit,
+      offset,
+      userId: role === REQUESTER ? id : undefined,
+    };
+    const tripRequests = await handleSearchTripRequests(searchCriteria);
+    if (tripRequests.length === 0) {
+      return successResponse(res, ok, emptySearchResult, undefined, tripRequests);
+    }
+    return successResponse(res, ok, undefined, undefined, tripRequests);
   }
 }

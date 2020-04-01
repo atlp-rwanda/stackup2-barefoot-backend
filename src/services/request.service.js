@@ -1,7 +1,6 @@
 import models from '../database/models';
 
 const { request, sequelize, Sequelize } = models;
-
 const { Op } = Sequelize;
 
 /**
@@ -61,5 +60,24 @@ export default class RequestService {
     const { userId, offset, limit } = reqOptions;
     const reqs = await request.findAndCountAll({ where: { userId }, offset, limit, order: [['createdAt', 'DESC']] });
     return reqs;
+  }
+
+  /**
+   *@description Saves trip request details in database
+   * @param {Object} searchCriteria an object of different search options
+   * @returns {Object} fields that matches the search keyword 
+  */
+  static handleSearchTripRequests(searchCriteria) {
+    const { field, search, limit, offset, userId } = searchCriteria;
+    if (['id', 'travelDate', 'returnDate', 'travelType', 'status'].includes(field)) {
+      if (userId) {
+        return request.findAll({ where: { userId, [field]: { [Op.eq]: search } }, limit, offset, });
+      }
+      return request.findAll({ where: { [field]: { [Op.eq]: search } }, limit, offset, });
+    }
+    if (userId) {
+      return request.findAll({ where: { userId, [field]: { [Op.iLike]: `%${search}%` } }, limit, offset, });
+    }
+    return request.findAll({ where: { [field]: { [Op.iLike]: `%${search}%` } }, limit, offset, });
   }
 }
