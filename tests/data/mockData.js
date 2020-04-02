@@ -370,4 +370,12 @@ export default {
     limit: 5,
     offset: 0,
   },
+  tripsStatsValidTimeframe: {
+    startDate: '2020-01-01',
+    endDate: '2020-01-08',
+  },
+  tripsStatsInvalidTimeframe: {
+    startDate: '2020-01-08',
+    endDate: '2020-01-01',
+  },
 };

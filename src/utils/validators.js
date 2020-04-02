@@ -8,7 +8,7 @@ const {
   invalidTravelDate,
   invalidTravelType,
   invalidTravelAccomodation,
- } = customMessages;
+} = customMessages;
 
  const {
   invalidTripRequestsSearchTerm,
@@ -21,6 +21,12 @@ const {
   invalidTripRequestsSearchFieldStatus,
   invalidTripRequestsSearchFieldTravelType,
  } = customMessages;
+
+ const {
+  invalidTripsStatsStartDate,
+  invalidTripsStatsEndDate,
+  viewStatsNoRequesterId,
+} = customMessages;
 
 /**
 * @description {object} defines custom validators for different kind of API requests
@@ -38,6 +44,8 @@ static createValidationErrors(fieldDataType, errorMessage) {
     [`${fieldDataType}.min`]: errorMessage,
     [`${fieldDataType}.max`]: errorMessage,
     [`${fieldDataType}.format`]: errorMessage,
+    [`${fieldDataType}.less`]: errorMessage,
+    [`${fieldDataType}.greater`]: errorMessage,
     'any.required': errorMessage,
     'any.only': errorMessage,
   };
@@ -156,4 +164,40 @@ static async validateTripRequestsSearchField(searchField, searchFieldValue) {
   };
   return schema().validateAsync(searchFieldValue);
 }
+
+  /**
+  * @param {Date} tripsStatsTimeframe a timeframe for trip requests stats(start date & end date)
+  * @returns {Promise<any>} validation output
+  */
+  static async validateTripsStatsTimeframe(tripsStatsTimeframe) {
+    const { createValidationErrors } = Validators;
+    const maxDate = new Date();
+    const validDate = Joi.date().required().iso().less(maxDate);
+    const schema = Joi.object({
+        startDate: validDate
+        .messages(createValidationErrors('date', invalidTripsStatsStartDate)),
+        endDate: validDate.greater(Joi.ref('startDate'))
+        .messages(createValidationErrors('date', invalidTripsStatsEndDate)),
+    });
+    return schema.validateAsync(tripsStatsTimeframe, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+  }
+
+  /**
+  * @param {Object} requester contains requester's unique id
+  * @returns {Promise<any>} validation output
+  */
+  static async validateRequesterInfo(requester) {
+    const { createValidationErrors } = Validators;
+    const schema = Joi.object({
+      requesterId: Joi.number().required()
+        .messages(createValidationErrors('number', viewStatsNoRequesterId)),
+    });
+    return schema.validateAsync(requester, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+  }
 }

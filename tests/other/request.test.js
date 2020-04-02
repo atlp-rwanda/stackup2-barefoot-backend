@@ -19,6 +19,8 @@ const {
   tripRequesterManagerNoRquestYet,
   managerLoginValidData,
   searchTripRequests,
+  tripsStatsValidTimeframe,
+  tripsStatsInvalidTimeframe,
 } = mockData;
 const {
   invalidTravelType,
@@ -50,7 +52,9 @@ const {
   invalidTripRequestsSearchFieldStatus,
   invalidTripRequestsSearchFieldTravelType,
   emptySearchResult,
-  loginSuccess,
+  invalidTripsStatsEndDate,
+  viewStatsUnauthorized,
+  requesterNotRegistered,
 } = customMessages;
 const {
   created,
@@ -67,6 +71,8 @@ let authTokenNoCommentYet = '';
 let authTokenManagerToVerify = '';
 let authTokenManager = '';
 let authTokenRequesterNoReqYet = '';
+let requesterProfile = {};
+let managerProfile = {};
 
 describe('One way trip request', () => {
   it('should create a trip requester(new user)', (done) => {
@@ -1173,6 +1179,193 @@ describe('Search trip requests', () => {
         expect(error);
         expect(error).to.be.a('string');
         expect(error).to.equal(invalidTripRequestsSearchTerm);
+        done();
+      });
+  });
+});
+
+describe('Trips stats', () => {
+  it('should retrieve trips stats of current user(requester)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authToken)
+      .query(tripsStatsValidTimeframe)
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        const { tripsMade } = data;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('object');
+        expect(tripsMade);
+        expect(tripsMade).to.be.a('number');
+        done();
+      });
+  });
+  it('should retrieve trips stats of current user(manager)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authTokenManager)
+      .query(tripsStatsValidTimeframe)
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        const { tripsMade } = data;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('object');
+        expect(tripsMade);
+        expect(tripsMade).to.be.a('number');
+        done();
+      });
+  });
+  it('should retrieve requester profile information', (done) => {
+    chai
+      .request(server)
+      .get('/api/profile')
+      .set('authorization', authToken)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(ok);
+        const { data } = res.body;
+        expect(data);
+        expect(data).to.be.an('object');
+        requesterProfile = data;
+        done();
+      });
+  });
+  it('should retrieve manager profile information', (done) => {
+    chai
+      .request(server)
+      .get('/api/profile')
+      .set('authorization', authTokenManager)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(ok);
+        const { data } = res.body;
+        expect(data);
+        expect(data).to.be.an('object');
+        managerProfile = data;
+        done();
+      });
+  });
+  it('should retrieve trips stats of current user using their id(requester)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authToken)
+      .query({ ...tripsStatsValidTimeframe, requesterId: requesterProfile.id })
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        const { tripsMade } = data;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('object');
+        expect(tripsMade);
+        expect(tripsMade).to.be.a('number');
+        done();
+      });
+  });
+  it('should retrieve trips stats of current user using their id(manager)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authTokenManager)
+      .query({ ...tripsStatsValidTimeframe, requesterId: managerProfile.id })
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        const { tripsMade } = data;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('object');
+        expect(tripsMade);
+        expect(tripsMade).to.be.a('number');
+        done();
+      });
+  });
+  it('should not retrieve trips stats of another user(requester)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authToken)
+      .query({ ...tripsStatsValidTimeframe, requesterId: requesterProfile.id + 1 })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(unAuthorized);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(viewStatsUnauthorized);
+        done();
+      });
+  });
+  it('should not retrieve trips stats due to invalid timeframe{requester}', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authToken)
+      .query(tripsStatsInvalidTimeframe)
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripsStatsEndDate);
+        done();
+      });
+  });
+  it('should retrieve trips stats of another user(manager)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authTokenManager)
+      .query({ ...tripsStatsValidTimeframe, requesterId: 1 })
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res.status).to.equal(ok);
+        const { data } = res.body;
+        expect(data);
+        expect(data).to.be.an('object');
+        const { tripsMade } = data;
+        expect(tripsMade);
+        expect(tripsMade).to.be.a('number');
+        done();
+      });
+  });
+  it('should retrieve trips stats of a non-registered user(manager)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authTokenManager)
+      .query({ ...tripsStatsValidTimeframe, requesterId: 15531 })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(requesterNotRegistered);
+        done();
+      });
+  });
+  it('should not retrieve trips stats due to invalid timeframe(manager)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/stats')
+      .set('Authorization', authTokenManager)
+      .query({ ...tripsStatsInvalidTimeframe, requesterId: 1 })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripsStatsEndDate);
         done();
       });
   });

@@ -995,6 +995,37 @@
           }
         }
       }
+    },
+    "/trips/stats": {
+      "get": {
+        "summary": "Retrieves users' trips stats",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Start date",
+            "in": "query",
+            "description": "a preferred start date for stats",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TripsStats"
+            }
+          },
+          {
+            "name": "End date",
+            "in": "query",
+            "description": "a preferred end date for stats",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TripsStats"
+            }
+          }
+        ]
+      }
     }
   },
   "definitions": {
@@ -1156,6 +1187,18 @@
         "type": "integer",
         "required": true,
         "example": "0"
+      }
+    },
+    "ViewTripsStats": {
+      "startDate": {
+        "type": "date",
+        "required": true,
+        "example": "2020-01-01"
+      },
+      "endDate": {
+        "type": "date",
+        "required": true,
+        "example": "2020-01-08"
       }
     }
   },
@@ -1478,6 +1521,30 @@
           "example": "Please specify a valid search term, it must not be empty"
         }
       } 
+    },
+    "view-trips-stats-success": {
+      "properties": {
+        "data": {
+          "type": "object",
+          "example": {
+            "data": {
+              "startDate": "2020-01-01T00:00:00.000Z",
+              "endDate": "2020-02-23T00:00:00.000Z",
+              "tripsMade": 0
+            }
+          }
+        }
+      }
+    },
+    "view-trips-stats-fail": {
+      "properties": {
+        "error": {
+          "type": "object",
+          "example": {
+            "error": "Please provide an end date for the stats, ..."
+          }
+        }
+      }
     }
   }
 }

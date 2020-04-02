@@ -1,7 +1,9 @@
 import models from '../database/models';
+import tripRequestsStatus from '../utils/tripRequestsStatus.util';
 
 const { request, sequelize, Sequelize } = models;
 const { Op } = Sequelize;
+const { ACCEPTED, } = tripRequestsStatus;
 
 /**
  * @description Trip requests service
@@ -79,5 +81,24 @@ export default class RequestService {
       return request.findAll({ where: { userId, [field]: { [Op.iLike]: `%${search}%` } }, limit, offset, });
     }
     return request.findAll({ where: { [field]: { [Op.iLike]: `%${search}%` } }, limit, offset, });
+  }
+
+  /**
+  *@description Retrieves trips stats from database
+  * @param {Number} userId current user's database id
+  * @param {Date} startDate start date for stats
+  * @param {Date} endDate end date for stats
+  * @returns {Object} trips stats
+   */
+  static getTripsStats(userId, startDate, endDate) {
+    return request.count({
+      where: {
+        userId,
+        status: ACCEPTED,
+        travelDate: {
+          [Op.between]: [startDate, endDate]
+        },
+      },
+    });
   }
 }
