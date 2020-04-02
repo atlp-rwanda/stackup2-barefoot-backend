@@ -17,7 +17,8 @@ const {
   returnTripInvalidType,
   invalidReturnDate,
   tripRequesterManagerNoRquestYet,
-  managerLoginValidData
+  managerLoginValidData,
+  searchTripRequests,
 } = mockData;
 const {
   invalidTravelType,
@@ -38,7 +39,18 @@ const {
   commentOnOthersReqNotAdmin,
   requestNotExists,
   commentDeleted, commentsRetrieved, noCommentYet, noCommentOnThisPage, viewCmtNotMineReq,
-  requestsRetrieved, noRequestsYet, noRequestsFoundOnThisPage, pageMustBeANumber
+  requestsRetrieved, noRequestsYet, noRequestsFoundOnThisPage, pageMustBeANumber,
+  invalidTripRequestsSearchTerm,
+  invalidTripRequestsSearchField,
+  invalidTripRequestsSearchLimit,
+  invalidTripRequestsSearchOffset,
+  invalidTripRequestsSearchFieldId,
+  invalidTripRequestsSearchFieldTravelDate,
+  invalidTripRequestsSearchFieldReturnDate,
+  invalidTripRequestsSearchFieldStatus,
+  invalidTripRequestsSearchFieldTravelType,
+  emptySearchResult,
+  loginSuccess,
 } = customMessages;
 const {
   created,
@@ -925,3 +937,243 @@ describe('Return trip request', () => {
           });
       });
     });
+
+describe('Search trip requests', () => {
+  it('should retrieve trip requests with valid search criteria 1', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query(searchTripRequests)
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('array');
+        done();
+      });
+  });
+  it('should retrieve trip requests with valid search criteria 2', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, field: 'travelTo', search: 'a' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('array');
+        done();
+      });
+  });
+  it('should retrieve trip requests(more than 0) with valid search criteria', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, field: 'travelFrom', search: 'Kigali' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('array');
+        done();
+      });
+  });
+  it('should retrieve trip requests with valid search criteria(manager)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authTokenManager)
+      .query(searchTripRequests)
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('array');
+        done();
+      });
+  });
+  it('should retrieve trip requests with valid search criteria(manager)', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authTokenManager)
+      .query({ ...searchTripRequests, field: 'travelFrom', search: 'k' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('array');
+        done();
+      });
+  });
+  it('should not retrieve trip requests with invalid search field travelType', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, field: 'travelType', search: 'invalidTravelType' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripRequestsSearchFieldTravelType);
+        done();
+      });
+  });
+  it('should not retrieve trip requests with invalid search field status', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, field: 'status', search: 'invalidStatus' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripRequestsSearchFieldStatus);
+        done();
+      });
+  });
+  it('should not retrieve trip requests with invalid search field returnDate', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, field: 'returnDate', search: 'invalidReturnDate' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripRequestsSearchFieldReturnDate);
+        done();
+      });
+  });
+  it('should not retrieve trip requests with invalid search field travelDate', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, field: 'travelDate', search: 'invalidTravelDate' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripRequestsSearchFieldTravelDate);
+        done();
+      });
+  });
+  it('should not retrieve trip requests with invalid search field id', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, field: 'id', search: 'invalidId' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripRequestsSearchFieldId);
+        done();
+      });
+  });
+  it('should not retrieve trip requests with invalid search offset', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, offset: 'invalidOffset' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripRequestsSearchOffset);
+        done();
+      });
+  });
+  it('should not retrieve trip requests with invalid search limit', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, limit: 'invalidLimit' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripRequestsSearchLimit);
+        done();
+      });
+  });
+  it('should not retrieve trip requests with invalid search field', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, field: 'InvalidField' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripRequestsSearchField);
+        done();
+      });
+  });
+  it('should retrieve no trip requests', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, search: '2019-01-01' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { data, message } = res.body;
+        expect(res.status).to.equal(ok);
+        expect(data);
+        expect(data).to.be.an('array');
+        expect(message);
+        expect(message).to.be.a('string');
+        expect(message).to.equal(emptySearchResult);
+        done();
+      });
+  });
+  it('should not retrieve trip requests with invalid search term', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', authToken)
+      .query({ ...searchTripRequests, search: '' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(badRequest);
+        expect(error);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(invalidTripRequestsSearchTerm);
+        done();
+      });
+  });
+});

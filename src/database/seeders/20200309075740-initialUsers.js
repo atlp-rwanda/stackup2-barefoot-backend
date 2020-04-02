@@ -1,6 +1,9 @@
 import utils from '../../utils/authentication.utils';
+import userRoles from '../../utils/userRoles.utils';
 
 const { passwordHasher } = utils;
+const { MANAGER } = userRoles;
+
 export default {
   up: async (queryInterface, Sequelize) => queryInterface.bulkInsert('users', [
     {

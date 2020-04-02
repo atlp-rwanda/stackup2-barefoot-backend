@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi';
 import customMessages from './customMessages';
 
-const { 
+const {
   invalidTravelFrom,
   invalidTravelTo,
   invalidTravelReason,
@@ -10,8 +10,20 @@ const {
   invalidTravelAccomodation,
  } = customMessages;
 
+ const {
+  invalidTripRequestsSearchTerm,
+  invalidTripRequestsSearchField,
+  invalidTripRequestsSearchLimit,
+  invalidTripRequestsSearchOffset,
+  invalidTripRequestsSearchFieldId,
+  invalidTripRequestsSearchFieldTravelDate,
+  invalidTripRequestsSearchFieldReturnDate,
+  invalidTripRequestsSearchFieldStatus,
+  invalidTripRequestsSearchFieldTravelType,
+ } = customMessages;
+
 /**
-* @returns {object} defines custom validators for different kind of API requests
+* @description {object} defines custom validators for different kind of API requests
 */
 export default class Validators {
 /**
@@ -20,13 +32,14 @@ export default class Validators {
 * @returns {object} an object of validation error messages
 */
 static createValidationErrors(fieldDataType, errorMessage) {
-   return {
+  return {
     [`${fieldDataType}.base`]: errorMessage,
     [`${fieldDataType}.empty`]: errorMessage,
     [`${fieldDataType}.min`]: errorMessage,
     [`${fieldDataType}.max`]: errorMessage,
     [`${fieldDataType}.format`]: errorMessage,
     'any.required': errorMessage,
+    'any.only': errorMessage,
   };
 }
 
@@ -60,7 +73,7 @@ static async validateOneWayTripRequest(tripRequestData) {
 
 /**
 * @param {object} tripRequest return trip request data
-* @returns {Promise<any>} a Promise of validation output
+* @returns {Promise<any>} validation output
 */
 static async validateReturnDate(tripRequest) {
   const { createValidationErrors } = Validators;
@@ -71,5 +84,76 @@ static async validateReturnDate(tripRequest) {
 });
 return schema.validateAsync(tripRequest, { abortEarly: false, 
   allowUnknown: true });
+}
+
+/**
+* @param {object} searchCriteria the search object containing different search criteria
+* @returns {Promise<any>} validation output
+*/
+static async validateTripRequestsSearch(searchCriteria) {
+  const { createValidationErrors } = Validators;
+  const schema = Joi.object({
+    search: Joi.string().required()
+      .messages(createValidationErrors('string', invalidTripRequestsSearchTerm)),
+    field: Joi.string().required()
+      .valid(
+        'id',
+        'status',
+        'travelTo',
+        'travelFrom',
+        'travelDate',
+        'returnDate',
+        'travelType',
+        'travelReason'
+      )
+      .messages(createValidationErrors('string', invalidTripRequestsSearchField)),
+    limit: Joi.number().min(1).required()
+      .messages(createValidationErrors('number', invalidTripRequestsSearchLimit)),
+    offset: Joi.number().min(0).required()
+      .messages(createValidationErrors('number', invalidTripRequestsSearchOffset)),
+  });
+  return schema.validateAsync(searchCriteria, {
+    abortEarly: false,
+    allowUnknown: true,
+  });
+}
+
+/**
+* @param {object} searchField the search field to validate
+* @param {object} searchFieldValue the value of search field to validate
+* @returns {Promise<any>} a Promise of validation output
+*/
+static async validateTripRequestsSearchField(searchField, searchFieldValue) {
+  const { createValidationErrors } = Validators;
+  /**
+  * @description generates a validation schema for a particalar search field
+  * @returns {Joi.Schema} Joi validation schema
+  */
+  const schema = () => {
+    switch (searchField) {
+      case 'id':
+        return Joi.number().required()
+        .messages(createValidationErrors('number', invalidTripRequestsSearchFieldId));
+
+      case 'travelDate':
+        return Joi.date().iso().required()
+        .messages(createValidationErrors('date', invalidTripRequestsSearchFieldTravelDate));
+
+      case 'returnDate':
+        return Joi.date().iso().required()
+        .messages(createValidationErrors('date', invalidTripRequestsSearchFieldReturnDate));
+
+      case 'status':
+        return Joi.string().required()
+        .valid('accepted', 'rejected', 'pending')
+        .messages(createValidationErrors('string', invalidTripRequestsSearchFieldStatus));
+
+      default:
+        return Joi.string().required()
+        .valid('one-way', 'One-way', 'return-trip', 'multi-city')
+        .messages(createValidationErrors('string', invalidTripRequestsSearchFieldTravelType));
+    }
+  };
+  return schema().validateAsync(searchFieldValue);
 }
 }

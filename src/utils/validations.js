@@ -14,7 +14,12 @@ const {
   invalidReturnDate,
 } = customMessages;
 const { decodeToken } = utils;
-const { validateOneWayTripRequest, validateReturnDate } = Validators;
+const {
+  validateOneWayTripRequest,
+  validateReturnDate,
+  validateTripRequestsSearch,
+  validateTripRequestsSearchField,
+} = Validators;
 
 /**
 * @param {string} pattern
@@ -174,7 +179,7 @@ const returnTripHandler = async (tripRequestInfo, req, res, next) => {
  * @returns {Object} Custom response with created trip details
  * @description validates all trip requests
  */
-const validateTripRequest = async (req, res, next) => {
+const isTripRequestValid = async (req, res, next) => {
   const tripRequestInfo = req.body;
   let { travelType } = tripRequestInfo;
   if (!travelType) {
@@ -192,11 +197,41 @@ const validateTripRequest = async (req, res, next) => {
   }
 };
 
+/**
+ * @param {Request} req Node/express request
+ * @param {Response} res Node/express response
+ * @param {NextFunction} next Node/Express Next callback function
+ * @returns {Object} nex function
+ * @description validates search fields
+ */
+const isTripRequestsSearchValid = async (req, res, next) => {
+  try {
+    const { field, search, limit, offset } = req.query;
+    const whiteSpaces = /\s+/g;
+    const validSearchTerm = String(search).replace(whiteSpaces, ' ').trim();
+    const validSearch = await validateTripRequestsSearch({
+      field,
+      search: validSearchTerm,
+      limit,
+      offset,
+    });
+    const { field: searchField, search: searchFieldValue } = validSearch;
+    if (['id', 'travelDate', 'returnDate', 'status', 'travelType'].includes(searchField)) {
+      await validateTripRequestsSearchField(searchField, searchFieldValue);
+    }
+    req.query = validSearch;
+    return next();
+  } catch (validationError) {
+      return errorResponse(res, badRequest, validationError.message);
+  }
+};
+
 export {
   validateSignup, 
-  validateTripRequest, 
+  isTripRequestValid, 
   validatePassword,
   displayErrorMessages,
   validateRole,
-  validationMethods
+  validationMethods,
+  isTripRequestsSearchValid,
 };
