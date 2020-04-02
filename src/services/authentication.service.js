@@ -113,4 +113,10 @@ export default class UserService {
     );
     return update;
   }
+
+  /**
+   * @param {Number} userId a user id to look for in database
+   * @returns {object} returns a user account information
+   */
+  static getUserById = (userId) => user.findOne({ where: { id: userId } });
 }

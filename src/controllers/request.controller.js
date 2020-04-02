@@ -1,23 +1,37 @@
 import { Request, Response } from 'express';
+import { omit } from 'lodash';
 import responseHandlers from '../utils/responseHandlers';
 import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
 import RequestService from '../services/request.service';
 import { offsetAndLimit } from '../utils/comment.utils';
 import userRoles from '../utils/userRoles.utils';
+import Validators from '../utils/validators';
+import UserService from '../services/authentication.service';
 
-const { handleTripRequest, getMostTraveledDestinations, getAllRequests } = RequestService;
+const {
+  handleTripRequest,
+  getMostTraveledDestinations,
+  getAllRequests,
+} = RequestService;
 const {
   oneWayTripRequestCreated, requestsRetrieved, noRequestsYet, noRequestsFoundOnThisPage,
   duplicateTripRequest, placesRetrieved, noPlacesRetrieved
  } = customMessages;
+const { viewStatsUnauthorized, requesterNotRegistered, emptySearchResult, } = customMessages;
 const { created, badRequest, ok, notFound } = statusCodes;
 const { successResponse, errorResponse, } = responseHandlers;
-const { REQUESTER } = userRoles;
+const { REQUESTER, MANAGER } = userRoles;
 const { 
   handleSearchTripRequests,
+  getTripsStats,
 } = RequestService;
-const { emptySearchResult } = customMessages;
+const {
+  validateTripsStatsTimeframe,
+  validateRequesterInfo,
+} = Validators;
+const { unAuthorized } = statusCodes;
+const { getUserById } = UserService;
 
 /**
    * @description Trip requests controller class
@@ -107,5 +121,85 @@ export default class RequestController {
       return successResponse(res, ok, emptySearchResult, undefined, tripRequests);
     }
     return successResponse(res, ok, undefined, undefined, tripRequests);
+  }
+  
+  /**
+  * @param {Request} req Node/express request
+  * @param {Response} res Node/express response
+  * @returns {Object} trips stats of current user
+  * @description retrieves trip requests' stats in a particular timeframe for the current user
+  */
+  static async getUserTripsStats(req, res) {
+    const { role } = req.sessionUser;
+    const { requesterId } = req.query;
+    const { getCurrentUserTripsStats, getAnyUserTripsStats, } = RequestController;
+    if (role === REQUESTER || ((role === MANAGER) && !requesterId)) {
+      return getCurrentUserTripsStats(req, res);
+    } else {
+      return getAnyUserTripsStats(req, res);
+    }
+  }
+
+  /**
+  * @param {Request} req Node/express request
+  * @param {Response} res Node/express response
+  * @returns {Object} trips stats of current user(requester)
+  * @description retrieves trip requests' stats in a particular timeframe for the current user
+  */
+  static async getCurrentUserTripsStats(req, res) {
+    try {
+      const { id } = req.sessionUser;
+      const { requesterId } = req.query;
+      if (requesterId) {
+        const {
+          requesterId: validRequesterId
+        } = await validateRequesterInfo({ requesterId });
+        if (validRequesterId !== id) {
+          return errorResponse(res, unAuthorized, viewStatsUnauthorized);
+        }
+      }
+      const timeframe = omit(req.query, ['requesterId']);
+      const { startDate, endDate, } = await validateTripsStatsTimeframe(timeframe);
+      const tripsMade = await getTripsStats(id, startDate, endDate);
+      return successResponse(res, ok, undefined, undefined, { 
+        startDate,
+        endDate,
+        requesterId: id,
+        tripsMade,
+      });
+    } catch (error) {
+      return errorResponse(res, badRequest, error.message);
+    }
+  }
+
+  /**
+  * @param {Request} req Node/express request
+  * @param {Response} res Node/express response
+  * @returns {Object} trips stats of any user
+  * @description retrieves trip requests' stats in a particular timeframe for any user
+  */
+  static async getAnyUserTripsStats(req, res) {
+    try {
+      const reqParams = req.query;
+      const { requesterId } = await validateRequesterInfo(reqParams);
+      const timeframe = omit(reqParams, ['requesterId']);
+      const {
+        startDate,
+        endDate,
+      } = await validateTripsStatsTimeframe(timeframe);
+      const isUserRegistered = !!await getUserById(requesterId);
+      if (!isUserRegistered) {
+        return errorResponse(res, badRequest, requesterNotRegistered);
+      }
+      const tripsMade = await getTripsStats(requesterId, startDate, endDate);
+      return successResponse(res, ok, undefined, undefined, {
+        startDate,
+        endDate,
+        requesterId,
+        tripsMade,
+      });
+    } catch (error) {
+      return errorResponse(res, badRequest, error.message);
+    }
   }
 }

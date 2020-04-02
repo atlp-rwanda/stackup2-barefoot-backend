@@ -92,6 +92,11 @@ const messages = {
   invalidTripRequestsSearchFieldStatus: 'Please specify a valid value for the status search field, possible values are pending, accepted and rejected',
   invalidTripRequestsSearchFieldTravelType: 'Please specify a valid value for the travelType search field, possible values are one-way, return-trip and multi-city',
   emptySearchResult: 'Sorry, we could not find anything matching your search criteria',
+  invalidTripsStatsStartDate: 'Please specify a correct value for start date, it must be a correct date in the past(e.g 2020-02-22), and less than the end date',
+  invalidTripsStatsEndDate: 'Please specify a correct value for end date, it must be a correct date in the past(e.g 2020-02-29), and greater than the start date',
+  viewStatsUnauthorized: 'Permission denied trying to view trips stats of another user, you must be the owner to view the stats',
+  viewStatsNoRequesterId: 'Please specify a valid value for the requester id, it must be a positive number',
+  requesterNotRegistered: 'Sorry, we could not find a user account associated with that requesterId',
 };
 
 export default messages;

@@ -13,8 +13,10 @@ import {
 } from '../../utils/validations';
     
 const { createTripRequest, placesAndVisitTimes, getListOfMyRequests } = RequestController;
+
 const {
     searchTripRequests,
+    getUserTripsStats,
 } = RequestController;
 const {
     isUserLoggedInAndVerified
@@ -36,5 +38,6 @@ router.patch('/comment/:commentId', isUserLoggedInAndVerified, validateCommentUp
 router.delete('/comment/:commentId', isUserLoggedInAndVerified, validateCommentDelete, deleteComment);
 router.get('/', isUserLoggedInAndVerified, validateReqRetrieve, getListOfMyRequests);
 router.get('/search', [isUserLoggedInAndVerified, isTripRequestsSearchValid], searchTripRequests);
+router.get('/stats', [isUserLoggedInAndVerified], getUserTripsStats);
 
 export default router;
