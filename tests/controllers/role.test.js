@@ -17,7 +17,9 @@ const {
     adminUser,
     changeSuperUser,
     assignExistingRole,
-    loginAdminUser
+    loginAdminUser,
+    assignEmptyEmail,
+    assignEmptyRole
 } = mockData;
 chai.use(chaiHttp);
 chai.should();
@@ -224,6 +226,36 @@ describe('Assigning role to user', () => {
                 expect(res).to.have.status(statusCodes.badRequest);
                 expect(res.body).to.be.an('object');
                 expect(res.body).to.have.property('error').to.equal(customMessages.invalidEmail);
+                done();
+            });
+    });
+    it('Super admin should not assign role with empty role', done => {
+        chai
+            .request(server)
+            .patch('/api/roles/assign-role')
+            .set('Accept', 'Application/json')
+            .set('authorization', generatedToken)
+            .send(assignEmptyRole)
+            .end((err, res) => {
+                if (err) done(err);
+                expect(res).to.have.status(statusCodes.badRequest);
+                expect(res.body).to.be.an('object');
+                expect(res.body).to.have.property('error').to.equal(customMessages.emptyRole);
+                done();
+            });
+    });
+    it('Super admin should not assign role with empty email', done => {
+        chai
+            .request(server)
+            .patch('/api/roles/assign-role')
+            .set('Accept', 'Application/json')
+            .set('authorization', generatedToken)
+            .send(assignEmptyEmail)
+            .end((err, res) => {
+                if (err) done(err);
+                expect(res).to.have.status(statusCodes.badRequest);
+                expect(res.body).to.be.an('object');
+                expect(res.body).to.have.property('error').to.equal(customMessages.emptyEmail);
                 done();
             });
     });
