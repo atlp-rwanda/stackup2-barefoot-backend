@@ -5,7 +5,7 @@ import messages from '../utils/customMessages';
 import statusCodes from '../utils/statusCodes';
 import utils from '../utils/authentication.utils';
 import AuthenticationService from '../services/authentication.service';
-import uploadProfilePic from '../utils/profile.utils';
+import uploadImg from '../utils/profile.utils';
 
 const { successResponse, errorResponse } = responseHandlers;
 const { passwordHasher, isPasswordTrue } = utils;
@@ -43,7 +43,7 @@ export default class ProfileController {
    * @returns{object} returns object containing new updated user profile data
    */
   static updateUserProfile = async (req, res) => {
-    await uploadProfilePic(req, res);
+    await uploadImg(req, res);
     const newProfileDataFromUi = req.body;
 
     if (newProfileDataFromUi.username) {

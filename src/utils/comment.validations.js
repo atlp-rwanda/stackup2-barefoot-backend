@@ -13,17 +13,6 @@ const { createValidationErrors } = Validators;
 const { errorResponse } = responseHandlers;
 const { unAuthorized, notFound } = statusCodes;
 
-const {
-  commentOnOthersReqNotAdmin,
-  isNotMyComment,
-  commentNoFound,
-  requestNotExists,
-  emptyCommentBody,
-  requestIdMustBeANumber,
-  viewCmtNotMineReq,
-  pageMustBeANumber
-} = customMessages;
-
 const { getCommentByPk } = CommentService;
 const { getOneRequestFromDb } = RequestService;
 /**
@@ -35,10 +24,10 @@ const { getOneRequestFromDb } = RequestService;
  */
 const validateCmtData = (commentData, isUpdate) => {
   const submittedCmt = Joi.string().regex(/^(?!\s*$).+/).trim().required();
-  const schema = isUpdate ? Joi.object({ comment: submittedCmt.messages(createValidationErrors('string', emptyCommentBody)) })
+  const schema = isUpdate ? Joi.object({ comment: submittedCmt.messages(createValidationErrors('string', customMessages.emptyCommentBody)) })
     : Joi.object({
-    comment: submittedCmt.messages(createValidationErrors('string', emptyCommentBody)),
-    requestId: Joi.number().integer().required().messages(createValidationErrors('number', requestIdMustBeANumber))
+    comment: submittedCmt.messages(createValidationErrors('string', customMessages.emptyCommentBody)),
+    requestId: Joi.number().integer().required().messages(createValidationErrors('number', customMessages.requestIdMustBeANumber))
     });
   return schema.validate(commentData, {
     abortEarly: false,
@@ -53,8 +42,8 @@ const validateCmtData = (commentData, isUpdate) => {
  */
 const joiValidateCmtRetrieval = (commentData) => {
   const schema = Joi.object({
-      page: Joi.number().integer().optional().messages(createValidationErrors('number', pageMustBeANumber)),
-      requestId: Joi.number().integer().required().messages(createValidationErrors('number', requestIdMustBeANumber))
+      page: Joi.number().integer().optional().messages(createValidationErrors('number', customMessages.pageMustBeANumber)),
+      requestId: Joi.number().integer().required().messages(createValidationErrors('number', customMessages.requestIdMustBeANumber))
     });
   return schema.validate(commentData, {
     abortEarly: false,
@@ -69,7 +58,7 @@ const joiValidateCmtRetrieval = (commentData) => {
  */
 const joiValidateRequestRetrieval = (reqData) => {
   const schema = Joi.object({
-      page: Joi.number().integer().optional().messages(createValidationErrors('number', pageMustBeANumber)) });
+      page: Joi.number().integer().optional().messages(createValidationErrors('number', customMessages.pageMustBeANumber)) });
   return schema.validate(reqData, {
     abortEarly: false,
   });
@@ -113,7 +102,7 @@ const yesTravelExists = (role, id, travelReq, result) => {
   if (role !== MANAGER) {
       if (id === travelReq.userId) {
           result = [true];
-      } else { result = [false, viewCmtNotMineReq, unAuthorized]; }
+      } else { result = [false, customMessages.viewCmtNotMineReq, unAuthorized]; }
     } else {
       result = [true];
   }
@@ -134,7 +123,7 @@ const isReqExistsAndPermitted = async (req) => {
   if (travelReq) {
     result = yesTravelExists(role, id, travelReq, result);
   } else {
-    result = [false, requestNotExists, notFound];
+    result = [false, customMessages.requestNotExists, notFound];
   }
   return result;
 };
@@ -154,7 +143,7 @@ const midMethod = (req, res, next) => {
    req.body.comment = req.body.comment.replace(/\s+/g, ' ');
             next();
           } else {
-           errorResponse(res, unAuthorized, commentOnOthersReqNotAdmin);
+           errorResponse(res, unAuthorized, customMessages.commentOnOthersReqNotAdmin);
           }
   } else {
     req.body.comment = req.body.comment.replace(/\s+/g, ' ');
@@ -201,7 +190,7 @@ const validateCommentPost = async (req, res, next) => {
     if (isReqExist) {
       midMethod(req, res, next);
     } else {
-      errorResponse(res, notFound, requestNotExists);
+      errorResponse(res, notFound, customMessages.requestNotExists);
     }
   } else {
     displayErrorMessages(error, res, next);
@@ -225,10 +214,10 @@ const validateCommentUpdate = async (req, res, next) => {
           const { error } = validateCmtData(req.body, true);
           displayErrorMessages(error, res, next);
         } else {
-          errorResponse(res, unAuthorized, isNotMyComment);
+          errorResponse(res, unAuthorized, customMessages.isNotMyComment);
               }   
         } else {
-          errorResponse(res, notFound, commentNoFound);
+          errorResponse(res, notFound, customMessages.commentNoFound);
   }     
 };
 /**
@@ -248,10 +237,10 @@ const validateCommentDelete = async (req, res, next) => {
     if (currUserId === commentFromDb.userId) {
       next();
         } else {
-      errorResponse(res, unAuthorized, isNotMyComment);
+      errorResponse(res, unAuthorized, customMessages.isNotMyComment);
               }   
         } else {
-          errorResponse(res, notFound, commentNoFound);
+          errorResponse(res, notFound, customMessages.commentNoFound);
   }     
 };
 

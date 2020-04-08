@@ -27,13 +27,8 @@ const {
   validateTripRequestsSearch,
   validateTripRequestsSearchField,
   validateBookAccommodation,
-  validateRequestId,
-  validateUserId
+  validateRequestId
 } = Validators;
-
-const {
-  getAccommodationById,
-} = AccommodationService;
 
 const {
   getTripRequestById,
@@ -86,7 +81,7 @@ const validateSignup = (user) => {
 const validateRole = (data) => {
   const schema = Joi.object({
     role: validationMethods(
-      /^super administrator$|^travel administrator$|^travel team member$|^requester$|^manager$/,
+      /^super administrator$|^travel administrator$|^travel team member$|^requester$|^manager|^accommodation supplier$/,
       { 'string.pattern.base': `${customMessages.invalidRole}` }
     ),
     email: validationMethods(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, { 'string.pattern.base': `${customMessages.invalidEmail}` })
@@ -258,7 +253,7 @@ const checkAccommodationBookingInfo = async (req, res, next) => {
       accommodationId,
       tripRequestId,
     } = validBookingInfo;
-    const accommodationExists = !!await getAccommodationById(accommodationId);
+    const accommodationExists = !!await AccommodationService.getOneBy({ id: accommodationId });
     const tripRequestExists = !!await getTripRequestById(tripRequestId);
     if (!accommodationExists) {
       return errorResponse(res, badRequest, accommodationNotExist);
@@ -294,6 +289,27 @@ const handleRequestStatusUpdate = async (req, res, next) => {
     errors += `${element.message}.`;
   });
   return errorResponse(res, badRequest, errors);
+};
+
+/**
+* @param {object} req Trip request status
+* @returns {Object} response message
+* @description validates the user email
+*/
+const validateUserId = async (req) => {
+  const data = {
+    tripRequestId: req.params.tripRequestId,
+    userId: req.body.userId
+  };
+  const { createValidationErrors } = Validators;
+  const schema = Joi.object({
+    tripRequestId: Joi.number().integer().required()
+      .messages(createValidationErrors('number', customMessages.invalidTripRequestId)),
+    userId: validationMethods(/^([0-9])+$/, { 'string.pattern.base': `${customMessages.invalidUserId}` }),
+  });
+  return schema.validate(data, {
+    abortEarly: false,
+  });
 };
 
 /** 

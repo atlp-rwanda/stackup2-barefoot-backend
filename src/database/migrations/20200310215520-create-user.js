@@ -8,8 +8,9 @@ const {
   SUPER_ADMIN,
   TRAVEL_ADMIN,
   TRAVEL_TEAM_MEMBER,
- } = roles;
- 
+  ACCOMMODATION_SUPPLIER
+} = roles;
+
 export default {
   up: (queryInterface, Sequelize) => queryInterface.createTable('users', {
     id: {
@@ -45,7 +46,8 @@ export default {
     },
     role: {
       type: Sequelize.ENUM,
-      values: [SUPER_USER, SUPER_ADMIN, TRAVEL_ADMIN, TRAVEL_TEAM_MEMBER, MANAGER, REQUESTER]
+      values: [SUPER_USER, SUPER_ADMIN, TRAVEL_ADMIN, TRAVEL_TEAM_MEMBER,
+        MANAGER, REQUESTER, ACCOMMODATION_SUPPLIER]
     },
     isVerified: {
       type: Sequelize.BOOLEAN

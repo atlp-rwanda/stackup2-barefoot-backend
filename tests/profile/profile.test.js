@@ -193,7 +193,7 @@ describe('Profile tests', () => {
       .request(server)
       .patch('/api/profile')
       .set('authorization', `Bearer ${authTokenOfVerifiedUser}`)
-      .attach('profilePic', `${__dirname}/assets/img/react-logo.png`)
+      .attach('myImg', `${__dirname}/assets/img/react-logo.png`)
       .end((err, res) => {
         if (err) done(err);
         expect(res).to.have.status(statusCodes.ok);
@@ -209,12 +209,13 @@ describe('Profile tests', () => {
       .request(server)
       .patch('/api/profile')
       .set('authorization', `Bearer ${authTokenOfVerifiedUser}`)
-      .attach('profilePic', `${__dirname}/assets/img/welcometothenewworld.txt`)
+      .attach('myImg', `${__dirname}/assets/img/welcometothenewworld.txt`)
       .end((err, res) => {
         if (err) done(err);
+        console.log('This is the unsupported mediatype msg', res.body);
         expect(res).to.have.status(statusCodes.unsupportedMediaType);
         expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('error').to.equal(customMessages.invalidProfilePicExt);
+        expect(res.body).to.have.property('error').to.equal(customMessages.invalidPictureExt);
         done();
       });
   });

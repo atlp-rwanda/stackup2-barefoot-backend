@@ -182,6 +182,14 @@ export default {
     travelType: 'One-way',
     accommodation: true,
   },
+  oneWayTripRequestForAccommodationBooking: {
+    travelFrom: 'pyongyang',
+    travelTo: 'seoul',
+    travelDate: new Date(),
+    travelReason: 'business meeting',
+    travelType: 'One-way',
+    accommodation: true,
+  },
   realLoginDataFromDbVerifiedUser: {
     email: 'john@doe.com',
     password: 'Markjoe45@'
@@ -486,4 +494,5 @@ export default {
     gender: 'Female',
   },
   unexistantLineManager: 1000,
+
 };

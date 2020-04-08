@@ -1,18 +1,27 @@
 import models from '../database/models';
+import CrudRepository from '../repository/crudRepo';
 
-const { booking, accommodation } = models;
+const { booking, accommodation, accommodationRoom } = models;
 
 /**
- * @description Trip requests service
+ * @description class AccommodationService handles everything regarding to accommodations
  */
-export default class RequestService {
-  /**
+class AccommodationService extends CrudRepository {
+    /**
+     * @constructor
+     */
+    constructor() {
+        super();
+        this.model = accommodation;
+        this.associateTable = accommodationRoom;
+    }
+
+    /**
    *@description Saves booking information in database
    * @param {Object} bookingInfo trip request data
    * @returns {Object} Saved booking information
     */
-  static handleBookAccommodation(bookingInfo) {
-    return booking.create(
+  handleBookAccommodation=(bookingInfo) => booking.create(
       bookingInfo,
       {
         fields: [
@@ -22,19 +31,7 @@ export default class RequestService {
           'departureDate',
         ]
       }
-    );
-  }
-
-  /**
-   *@description retrives accommodation details by id
-   * @param {Object} id unique accommodation id
-   * @returns {Object} accommodation facility details
-    */
-  static getAccommodationById(id) {
-    return accommodation.findOne({
-      where: {
-        id,
-      }
-    });
-  }
+    )
 }
+
+export default new AccommodationService();

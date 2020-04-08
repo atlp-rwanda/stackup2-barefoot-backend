@@ -21,7 +21,7 @@ const uploadImage = async (image, req) => {
         api_secret: process.env.CLOUDINARY_API_SECRET
     });
      await v2.uploader.upload(image.tempFilePath, (err, uploadResult) => {        
-        req.body.profileImage = uploadResult.url;
+        req.body.myImage = uploadResult.url;
      });
 };
 
@@ -32,23 +32,23 @@ const uploadImage = async (image, req) => {
  * then it adds it on request body
  */
 const profilePicPassed = (req) => {
-  if (req.files && req.files.profilePic) {
-    const { profilePic } = req.files;
-    req.newProfilePic = profilePic;
+  if (req.files && req.files.myImg) {
+    const { myImg } = req.files;
+    req.newImgToUpload = myImg;
   }
 };
 
 
 /**
- * @param {file} newProfilePic 
+ * @param {file} newImgToUpload 
  * @returns {object} next is
  * @description this function isProfilePicExtValid evaluate the extensions of profile picture
  */
-const isProfilePicExtValid = (newProfilePic) => {
+const isProfilePicExtValid = (newImgToUpload) => {
   const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
     let isFound = false;
     for (let i = 0; i < allowedExtensions.length; i += 1) {
-      if (newProfilePic.name.includes(allowedExtensions[i])) {
+      if (newImgToUpload.name.includes(allowedExtensions[i])) {
         isFound = true;
         break;
       } 
@@ -62,15 +62,15 @@ const isProfilePicExtValid = (newProfilePic) => {
  * @param {*} res 
  * @returns{object} it uploads a profile pic if it is there
  */
-const uploadProfilePic = async (req, res) => {
+const uploadImg = async (req, res) => {
   profilePicPassed(req);
-  if (req.newProfilePic) {
-    const { newProfilePic } = req;
-    if (isProfilePicExtValid(newProfilePic)) {
-      await uploadImage(newProfilePic, req);
+  if (req.newImgToUpload) {
+    const { newImgToUpload } = req;
+    if (isProfilePicExtValid(newImgToUpload)) {
+      await uploadImage(newImgToUpload, req);
     } else {
-      errorResponse(res, statusCodes.unsupportedMediaType, messages.invalidProfilePicExt);
+      errorResponse(res, statusCodes.unsupportedMediaType, messages.invalidPictureExt);
     }
   }
 };
-export default uploadProfilePic;
+export default uploadImg;

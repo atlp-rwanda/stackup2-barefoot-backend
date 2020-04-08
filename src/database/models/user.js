@@ -8,6 +8,7 @@ const {
   SUPER_ADMIN,
   TRAVEL_ADMIN,
   TRAVEL_TEAM_MEMBER,
+  ACCOMMODATION_SUPPLIER
  } = roles;
 export default (sequelize, DataTypes) => {
   const user = sequelize.define('user', {
@@ -26,7 +27,8 @@ export default (sequelize, DataTypes) => {
       TRAVEL_ADMIN, 
       TRAVEL_TEAM_MEMBER, 
       MANAGER, 
-      REQUESTER
+      REQUESTER,
+      ACCOMMODATION_SUPPLIER
       ),
     isVerified: DataTypes.BOOLEAN,
     birthDate: DataTypes.DATE,
@@ -36,13 +38,17 @@ export default (sequelize, DataTypes) => {
     lineManager: DataTypes.INTEGER,
     idCardNumber: DataTypes.STRING,
     phoneNumber: DataTypes.STRING,
-    profileImage: DataTypes.STRING
+    myImage: DataTypes.STRING
   }, {});
 
   user.associate = (models) => {
     user.hasMany(models.request, {
       foreignKey: 'userId',
       onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    });
+    user.hasMany(models.accommodation, {
+      foreignKey: 'createdBy',
       onUpdate: 'CASCADE'
     });
   };

@@ -1,6 +1,5 @@
 import Joi from '@hapi/joi';
 import customMessages from './customMessages';
-import { validationMethods } from './validations';
 
 const {
   invalidTravelFrom,
@@ -247,27 +246,6 @@ export default class Validators {
     return schema.validateAsync(tripRequestId, {
       abortEarly: false,
       allowUnknown: true
-    });
-  }
-
-  /**
-  * @param {object} req Trip request status
-  * @returns {Object} response message
-  * @description validates the user email
-  */
-  static async validateUserId(req) {
-    const data = {
-      tripRequestId: req.params.tripRequestId,
-      userId: req.body.userId
-    };
-    const { createValidationErrors } = Validators;
-    const schema = Joi.object({
-      tripRequestId: Joi.number().integer().required()
-        .messages(createValidationErrors('number', customMessages.invalidTripRequestId)),
-      userId: validationMethods(/^([0-9])+$/, { 'string.pattern.base': `${customMessages.invalidUserId}` }),
-    });
-    return schema.validate(data, {
-      abortEarly: false,
     });
   }
 }
