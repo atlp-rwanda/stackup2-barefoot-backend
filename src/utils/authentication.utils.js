@@ -78,10 +78,22 @@ const decodeToken = async (token) => {
   return data;
 };
 
+   /**
+   * @param {String} text it is the word that need to be converted
+   * @returns {String} it is the word in small letters
+   * @description Converts any word into small letter
+   */
+  const convertToLowerCase = (text) => {
+    if (text) {
+      return text.toLowerCase();
+    }
+    return '';
+  };
 export default {
   getFormData,
   passwordHasher,
   isPasswordTrue,
   generateToken,
-  decodeToken
+  decodeToken,
+  convertToLowerCase
 };

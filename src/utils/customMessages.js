@@ -97,6 +97,8 @@ const messages = {
   viewStatsUnauthorized: 'Permission denied trying to view trips stats of another user, you must be the owner to view the stats',
   viewStatsNoRequesterId: 'Please specify a valid value for the requester id, it must be a positive number',
   requesterNotRegistered: 'Sorry, we could not find a user account associated with that requesterId',
+  emptyRole: 'role is not allowed to be empty',
+  emptyEmail: 'email is not allowed to be empty',
 };
 
 export default messages;

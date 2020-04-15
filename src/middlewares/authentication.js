@@ -6,6 +6,7 @@ import UserService from '../services/authentication.service';
 import responseHandlers from '../utils/responseHandlers';
 import redisClient from '../database/redis.config';
 import userRoles from '../utils/userRoles.utils';
+import utils from '../utils/authentication.utils';
 
 const { errorResponse } = responseHandlers;
 const { unAuthorized, badRequest } = statusCodes;
@@ -17,6 +18,7 @@ const {
   userNotAllowedForAction, 
 } = customMessages;
 const { SUPER_ADMIN, SUPER_USER } = userRoles;
+const { convertToLowerCase } = utils;
 /**
  * @description Verifies authenticity of current user
  */
@@ -55,6 +57,7 @@ export default class Authentication {
     }
   }
 
+
    /**
    * @param {Request} req Node/Express Request object
    * @param {Response} res Node/Express Response object
@@ -66,8 +69,8 @@ export default class Authentication {
   static async isUserSuperAdmin(req, res, next) {
     const tokenDecoded = req.sessionUser;
     if (tokenDecoded.role === SUPER_ADMIN || tokenDecoded.role === SUPER_USER) {
-      req.body.email = req.body.email.toLowerCase();
-      req.body.role = req.body.role.toLowerCase();
+      req.body.email = convertToLowerCase(req.body.email);
+      req.body.role = convertToLowerCase(req.body.role);
       return next();
     }
     return responseHandlers.errorResponse(res, unAuthorized, userNotAllowedForAction);

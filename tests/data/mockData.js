@@ -98,7 +98,7 @@ export default {
   },
   emptyLoginEmail: {
     email: '',
-    password: 'hheerr'
+    password: 'hheerrr'
   },
   userServiceData: {
     firstName: 'Jane',
@@ -377,5 +377,11 @@ export default {
   tripsStatsInvalidTimeframe: {
     startDate: '2020-01-08',
     endDate: '2020-01-01',
+  },
+  assignEmptyRole: {
+    email: 'barefootnomad2@gmail.com'
+  },
+  assignEmptyEmail: {
+    role: 'Manager'
   },
 };
