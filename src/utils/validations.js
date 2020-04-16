@@ -5,21 +5,37 @@ import responseHandlers from './responseHandlers';
 import statusCodes from './statusCodes';
 import Validators from './validators';
 import utils from './authentication.utils';
-import userRoles from './userRoles.utils';
+import AccommodationService from '../services/accommodation.service';
+import tripRequestsService from '../services/request.service';
 
 const { errorResponse } = responseHandlers;
+
 const { badRequest } = statusCodes;
+
 const {
   invalidTravelType,
   invalidReturnDate,
+  accommodationNotExist,
+  tripRequestNotExist,
 } = customMessages;
+
 const { decodeToken } = utils;
+
 const {
   validateOneWayTripRequest,
   validateReturnDate,
   validateTripRequestsSearch,
   validateTripRequestsSearchField,
+  validateBookAccommodation,
 } = Validators;
+
+const {
+  getAccommodationById,
+} = AccommodationService;
+
+const {
+  getTripRequestById,
+} = tripRequestsService;
 
 /**
 * @param {string} pattern
@@ -226,6 +242,34 @@ const isTripRequestsSearchValid = async (req, res, next) => {
   }
 };
 
+/**
+* @param {Request} req Node/express request
+* @param {Response} res Node/express response
+* @param {NextFunction} next Node/Express Next callback function
+* @returns {NextFunction} next Node/Express Next function
+*/
+const checkAccommodationBookingInfo = async (req, res, next) => {
+  try {
+    const bookingInfo = req.body;
+    const validBookingInfo = await validateBookAccommodation(bookingInfo);
+    const {
+      accommodationId,
+      tripRequestId,
+    } = validBookingInfo;
+    const accommodationExists = !!await getAccommodationById(accommodationId);
+    const tripRequestExists = !!await getTripRequestById(tripRequestId);
+    if (!accommodationExists) {
+      return errorResponse(res, badRequest, accommodationNotExist);
+    }
+    if (!tripRequestExists) {
+      return errorResponse(res, badRequest, tripRequestNotExist);
+    }
+    return next();
+  } catch (validationError) {
+    return errorResponse(res, badRequest, validationError.message);
+  }
+};
+
 export {
   validateSignup, 
   isTripRequestValid, 
@@ -234,4 +278,5 @@ export {
   validateRole,
   validationMethods,
   isTripRequestsSearchValid,
+  checkAccommodationBookingInfo,
 };

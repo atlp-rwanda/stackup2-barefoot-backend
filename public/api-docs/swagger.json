@@ -837,9 +837,7 @@
             }
           }
         }
-      }
-    },
-    "/api/trips/comment/:commentId": {
+      },
       "delete": {
         "summary": "Delete a comment on a travel-request",
         "tags": [
@@ -1121,7 +1119,57 @@
             }
           }
         }
-      }}
+      }
+    },
+    "/accommodations/book": {
+      "post": {
+        "summary": "book an accommodation facility",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "arrivalDate",
+            "in": "body",
+            "description": "Date of arrival to the premise",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BookAccommodation"
+            }
+          },
+          {
+            "name": "arrivalDate",
+            "in": "body",
+            "description": "Date of departure from the premise",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BookAccommodation"
+            }
+          },
+          {
+            "name": "tripRequestId",
+            "in": "body",
+            "description": "A unique id of a trip request from which to book accommodation",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BookAccommodation"
+            }
+          },
+          {
+            "name": "accommodationId",
+            "in": "body",
+            "description": "A unique id of an accommodation facility to book",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BookAccommodation"
+            }
+          }
+        ]
+      }
+    }
   },
   "definitions": {
     "signup": {
@@ -1294,6 +1342,28 @@
         "type": "date",
         "required": true,
         "example": "2020-01-08"
+      }
+    },
+    "BookAccommodation": {
+      "arrivalDate": {
+        "type": "date",
+        "required": true,
+        "example": "2020-01-01"
+      },
+      "departureDate": {
+        "type": "date",
+        "required": true,
+        "example": "2020-01-01"
+      },
+      "tripRequestId": {
+        "type": "number",
+        "required": true,
+        "example": 1
+      },
+      "accommodationId": {
+        "type": "number",
+        "required": true,
+        "example": 1
       }
     }
   },

@@ -104,6 +104,14 @@ const messages = {
   emptyUpdate: 'You have to provide at least one new information',
   notExistRequest: 'You can not update a request which does not exist',
   notYourRequest: 'You can only update your request',
+  invalidBookAccommodationTripRequestId: 'Please specify a valid tripRequestId, it must be a positive number',
+  invalidBookAccommodationAccommodationId: 'Please specify a valid accommodationId, it must be a positive number',
+  invalidBookAccommodationArrivalDate: 'Please specify when you will be arriving at the premise, it must be a correct date in the future(e.g 2020-07-21), and less than the date when you will be leaving',
+  invalidBookAccommodationDepartureDate: 'Please specify when you will be leaving the premise, it must be a correct date in the future(e.g 2020-07-21), and greater than the date when you will arrive',
+  accommodationNotExist: 'No such accommodation facility found',
+  tripRequestNotExist: 'No such trip request found',
+  bookedAccommodation: 'You have successfuly booked an accomodation facility',
+  duplicateAccommodationBookings: 'Sorry, but it seems you have already booked accommodation for that trip',
 };
 
 export default messages;
