@@ -15,6 +15,15 @@ export default {
     password: 'Helloworld3@',
     gender: 'Male',
   },
+  signupData2: {
+    firstName: 'Aria',
+    lastName: 'Stark',
+    username: 'HouseStark',
+    email: 'aria@gmail.com',
+    address: 'Kigali',
+    password: 'Helloworld3@',
+    gender: 'Male',
+  },
   invalidFirstname: {
     firstName: 'Jo 3hn',
     lastName: 'Doe',
@@ -217,11 +226,11 @@ export default {
   emailGeneratorUtil: {
     email: 'andela@user.com'
   },
-  oneWayTripRequester: {
-    firstName: 'John',
-    lastName: 'Doe',
-    username: 'onewaytripreqr',
-    email: 'onewaytripreqr@example.com',
+  commentsUser: {
+    firstName: 'user',
+    lastName: 'commenter',
+    username: 'userCommenter',
+    email: 'user01@example.com',
     address: 'Kigali',
     password: 'Onewaytripreq123@',
     gender: 'Male',
@@ -240,6 +249,15 @@ export default {
     lastName: 'Doe',
     username: 'onewaytripreqrnocommentyet',
     email: 'onewaytripreqrnocommentyet@example.com',
+    address: 'Kigali',
+    password: 'Onewaytripreq123@',
+    gender: 'Male',
+  },
+  oneWayTripRequester: {
+    firstName: 'John',
+    lastName: 'Doe',
+    username: 'onewaytripreqr',
+    email: 'onewaytripreqr@example.com',
     address: 'Kigali',
     password: 'Onewaytripreq123@',
     gender: 'Male',
@@ -265,6 +283,22 @@ export default {
     travelType: 'one-way',
     accommodation: true,
   },
+  oneWayTripRequest2: {
+    travelFrom: 'Nyanza',
+    travelTo: 'Kigali',
+    travelDate: '2020-08-01',
+    travelReason: 'Business meeting',
+    travelType: 'one-way',
+    accommodation: true
+  },
+  oneWayTripRequest3: {
+    travelFrom: 'Nyanza',
+    travelTo: 'Kigali',
+    travelDate: '2020-08-04',
+    travelReason: 'Business meeting',
+    travelType: 'one-way',
+    accommodation: true
+  },
   oneWayTripRequestForAccommodationBooking: {
     travelFrom: 'pyongyang',
     travelTo: 'seoul',
@@ -272,14 +306,6 @@ export default {
     travelReason: 'business meeting',
     travelType: 'one-way',
     accommodation: true,
-  },
-  oneWayTripRequest2: {
-    travelFrom: 'Nyanza',
-    travelTo: 'Butare',
-    travelDate: '2020-05-01',
-    travelReason: 'vaccations',
-    travelType: 'one-way',
-    accommodation: true
   },
   realLoginDataFromDbVerifiedUser: {
     email: 'john@doe.com',
@@ -409,6 +435,10 @@ export default {
     email: process.env.SUPER_ADMIN_EMAIL,
     password: process.env.SUPER_ADMIN_PASSWORD
   },
+  loginManager: {
+    email: 'jonsnow@gmail.com',
+    password: 'commentManager@1'
+  },
   assignRole: {
     email: 'barefootnomad2@gmail.com',
     role: 'Manager'
@@ -491,7 +521,7 @@ export default {
     accommodation: true
   },
   duplicateUpdate: {
-    travelDate: '2020-06-01',
+    travelDate: new Date(Date.now() + 732000000),
   },
   updateUser: {
     firstName: 'Peter',

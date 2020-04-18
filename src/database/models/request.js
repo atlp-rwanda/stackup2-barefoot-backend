@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, DataTypes) => {
   const request = sequelize.define('request', {
     userId: DataTypes.INTEGER,

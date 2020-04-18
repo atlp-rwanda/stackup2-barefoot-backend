@@ -19,12 +19,19 @@ export default (sequelize, DataTypes) => {
     });
     accommodation.belongsTo(models.user, {
       foreignKey: 'createdBy',
-      timestamp: true
+      timestamp: true,
+      name: DataTypes.STRING
     });
     accommodation.hasMany(models.rating, {
       foreignKey: 'accommodationId',
       onUpdate: 'CASCADE'
     });
+      accommodation.hasMany(models.booking, {
+        as: 'bookings',
+        foreignKey: 'accommodationId',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
   };
   return accommodation;
 };

@@ -8,10 +8,11 @@ import objectFormatter from '../utils/objectFormatter';
 import passportResponse from '../utils/passportResponse';
 import UserService from '../services/user.service';
 import sendMail from '../utils/email.util';
-import { resetMessage, changedMessage } from '../utils/emailMessages';
 import sendEmail from '../utils/sendEmail.util';
 import redisClient from '../database/redis.config';
 import userRole from '../utils/userRoles.utils';
+import { resetMessage, changedMessage, verifyMessage } from '../utils/emailMessages';
+import disableNotification from '../utils/disableNotification.util';
 
 const { REQUESTER } = userRole;
 const {
@@ -55,18 +56,28 @@ export default class AuthenticationController {
 
     const role = REQUESTER;
     const isVerified = false;
+    const inAppNotification = true;
+    const emailNotification = true;
     const provider = 'Barefootnomad';
     const newData = {
       ...userData,
       provider,
       role,
       isVerified,
+      inAppNotification,
+      emailNotification,
     };
 
     const { dataValues } = await UserService.saveAll(newData);
     const savedUserObject = _.omit(dataValues, 'password');
     const token = await generateToken(savedUserObject);
-    await sendEmail.sendSignUpVerificationLink(req.body.email, `${process.env.APP_URL}/api/auth/verify?token=${token}`, req.body.firstName);
+    await sendEmail.sendNotificationEmail(
+      req.body.email,
+      req.body.firstName,
+      `${process.env.APP_URL}/api/auth/verify?token=${token}`,
+      verifyMessage,
+      'Verification email'
+);
     return successResponse(res, statusCodes.created, customMessages.userSignupSuccess, token);
   }
 
@@ -130,7 +141,7 @@ export default class AuthenticationController {
     const { token } = req.query;
     const decoded = jwtDecode(token);
     const { email } = decoded;
-    await UserService.updateBy({ isVerified: true }, { email });
+    await UserService.updateIsVerifiedOrUpdateNotification(email);
     return successResponse(res, statusCodes.ok, customMessages.verifyMessage);
   }
 
@@ -182,4 +193,23 @@ export default class AuthenticationController {
     redisClient.sadd('token', token);
     return successResponse(res, statusCodes.ok, customMessages.userLogoutSuccess);
   };
+
+ /**
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} sends response to the user
+   * @description Enables and disables notifications
+   */
+  static async updateNotificationStatus(req, res) {
+    const { id } = req.sessionUser;
+    const { mode } = req.query;
+    const result = await disableNotification(mode, id);
+    if (result === null) {
+      return errorResponse(res, statusCodes.forbidden, customMessages.invalidMode);
+    }
+    return updatedResponse(
+      res,
+      statusCodes.ok, customMessages.NotificationDisabled,
+    );
+  }
 }

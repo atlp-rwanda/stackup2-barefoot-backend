@@ -12,7 +12,8 @@ const {
   sendResetEmail,
   updatePassword,
   verify,
-  userLogout
+  userLogout,
+  updateNotificationStatus,
 } = AuthenticationController;
 const {
   isUserLoggedInAndVerified
@@ -26,7 +27,7 @@ authenticationRouter.post('/resetpassword', validateResetEmail, sendResetEmail);
 authenticationRouter.post('/resetpassword/:token', passwordValidation, verifyToken, updatePassword);
 authenticationRouter.get('/verify', verify);
 authenticationRouter.get('/logout', isUserLoggedInAndVerified, userLogout);
-
+authenticationRouter.patch('/disableOrEnable/', isUserLoggedInAndVerified, updateNotificationStatus);
 authenticationRouter.get('/facebook', passport.authenticate('facebook'));
 authenticationRouter.get('/facebook/callback', passport.authenticate('facebook', { session: false }), AuthenticationController.facebookLogin);
 authenticationRouter.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }));

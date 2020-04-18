@@ -30,7 +30,6 @@ const {
   invalidBookAccommodationDepartureDate
 } = customMessages;
 
-//  const { findDate, findUser } = RequestService;
  const maxDate = new Date().setHours(0, 0, 0, 0) + 15811200000;
  const minDate = new Date().setHours(0, 0, 0, 0) - 86400000;
  const joiTType = Joi.string()

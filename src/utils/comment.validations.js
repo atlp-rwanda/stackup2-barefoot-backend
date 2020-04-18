@@ -13,6 +13,21 @@ const { createValidationErrors } = Validators;
 const { errorResponse } = responseHandlers;
 const { unAuthorized, notFound } = statusCodes;
 
+const {
+  emptyCommentBody,
+  requestIdMustBeANumber,
+  viewCmtNotMineReq,
+  pageMustBeANumber
+} = customMessages;
+const {
+  commentOnOthersReqNotAdmin,
+  isNotMyComment,
+  commentNoFound,
+  requestNotExists
+} = customMessages;
+
+const { getCommentByPk } = CommentService;
+const { getOneRequestFromDb } = RequestService;
 /**
  * 
  * @param {object} commentData 

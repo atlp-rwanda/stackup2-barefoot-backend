@@ -1,4 +1,3 @@
-
 import roles from '../../utils/userRoles.utils';
 
 const {
@@ -16,6 +15,8 @@ export default (sequelize, DataTypes) => {
     lastName: DataTypes.STRING,
     username: DataTypes.STRING,
     email: DataTypes.STRING,
+    emailNotification: DataTypes.BOOLEAN,
+    inAppNotification: DataTypes.BOOLEAN,
     password: DataTypes.STRING,
     socialMediaId: DataTypes.STRING,
     provider: DataTypes.STRING,

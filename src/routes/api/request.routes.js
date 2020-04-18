@@ -2,7 +2,10 @@ import express from 'express';
 import RequestController from '../../controllers/request.controller';
 import Authentication from '../../middlewares/authentication';
 import requestCheck from '../../middlewares/requestChecker';
+import validateNotification from '../../middlewares/validateNotification.middleware';
+import validateLineManager from '../../middlewares/validateLineManager';
 import controllers from '../../controllers';
+import notificationController from '../../controllers/notification.controller';
 import {
   validateCommentPost,
   validateCommentUpdate,
@@ -16,14 +19,15 @@ import {
   handleRequestReassignment,
 } from '../../utils/validations';
 
-const {
-  createTripRequest,
-  placesAndVisitTimes,
-  getListOfMyRequests,
-  updateTripRequest,
-  searchTripRequests,
-  getUserTripsStats,
-  getListOfAllRequests
+  
+  const { 
+    getListOfAllRequests,
+    createTripRequest, 
+    placesAndVisitTimes, 
+    getListOfMyRequests, 
+    updateTripRequest,
+    searchTripRequests,
+    getUserTripsStats, 
 } = RequestController;
 const {
   isUserLoggedInAndVerified,
@@ -44,9 +48,12 @@ const {
   deleteComment
 } = controllers.CommentController;
 
-const router = express.Router();
+const { inAppNotifications, getTrip } = notificationController;
 
-router.post('/', [isUserLoggedInAndVerified, isTripRequestValid], createTripRequest);
+const router = express.Router();
+const { validateNotificationStatus, validateNotificationTypeId } = validateNotification;
+
+router.post('/', [isUserLoggedInAndVerified, isTripRequestValid], validateLineManager, createTripRequest);
 router.get('/most-traveled-destinations', isUserLoggedInAndVerified, placesAndVisitTimes);
 router.post('/:requestId/comment', isUserLoggedInAndVerified, validateCommentPost, addNewComment);
 router.get('/comment', isUserLoggedInAndVerified, validateCommentRetrieval, getCommentSpecificReq);
@@ -56,7 +63,7 @@ router.get('/', isUserLoggedInAndVerified, validateReqRetrieve, getListOfMyReque
 router.get('/requests', isUserLoggedInAndVerified, isUserSuperAdmin, validateReqRetrieve, getListOfAllRequests);
 router.get('/search', [isUserLoggedInAndVerified, isTripRequestsSearchValid], searchTripRequests);
 router.get('/stats', [isUserLoggedInAndVerified], getUserTripsStats);
-router.patch('/:requestId', isUserLoggedInAndVerified, isRequestValid, isRequestOpenIsRequestYours, isTripRequestValid, updateTripRequest);
+router.patch('/:requestId', isUserLoggedInAndVerified, isRequestValid, isRequestOpenIsRequestYours, isTripRequestValid, validateLineManager, updateTripRequest);
 router.patch(
   '/:tripRequestId/approve',
   isUserLoggedInAndVerified,
@@ -64,6 +71,7 @@ router.patch(
   handleRequestStatusUpdate,
   checkTripRequest,
   checkRequesterManager,
+  validateLineManager,
   RequestController.approveTripRequest
 );
 router.patch(
@@ -73,6 +81,7 @@ router.patch(
   handleRequestStatusUpdate,
   checkTripRequest,
   checkRequesterManager,
+  validateLineManager,
   RequestController.rejectTripRequest
 );
 router.patch(
@@ -83,7 +92,10 @@ router.patch(
   checkTripRequest,
   isNewUserAManager,
   checkRequesterManager,
+  validateLineManager,
   RequestController.assignTripRequest
 );
+router.get('/inapp/notification/', isUserLoggedInAndVerified, validateNotificationStatus, validateNotificationTypeId, inAppNotifications);
+router.get('/:id', getTrip);
 
 export default router;
