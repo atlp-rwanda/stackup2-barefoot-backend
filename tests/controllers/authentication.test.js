@@ -25,7 +25,7 @@ const {
   invalidPassword,
   invalidAddress,
   signupDataNotVerified,
-  testingTokens
+  testingTokens,
 } = mockData;
 
 const { expiredTokenCleanUp } = BackgroundTasks;

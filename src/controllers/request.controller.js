@@ -13,14 +13,11 @@ const {
   handleTripRequest,
   getMostTraveledDestinations,
   getAllRequests,
+  updateTripRequest,
 } = RequestService;
-const {
-  oneWayTripRequestCreated, requestsRetrieved, noRequestsYet, noRequestsFoundOnThisPage,
-  duplicateTripRequest, placesRetrieved, noPlacesRetrieved
- } = customMessages;
 const { viewStatsUnauthorized, requesterNotRegistered, emptySearchResult, } = customMessages;
 const { created, badRequest, ok, notFound } = statusCodes;
-const { successResponse, errorResponse, } = responseHandlers;
+const { successResponse, errorResponse, updatedResponse } = responseHandlers;
 const { REQUESTER, MANAGER } = userRoles;
 const { 
   handleSearchTripRequests,
@@ -47,9 +44,15 @@ export default class RequestController {
     try {
       const requestData = req.body;
       const newTrip = await handleTripRequest(requestData);
-      return successResponse(res, created, oneWayTripRequestCreated, undefined, newTrip);
+      return successResponse(
+        res, 
+        created, 
+        customMessages.oneWayTripRequestCreated, 
+        undefined, 
+        newTrip
+        );
     } catch (dbError) {
-      return errorResponse(res, badRequest, duplicateTripRequest);
+      return errorResponse(res, badRequest, customMessages.duplicateTripRequest);
     }
   }
 
@@ -65,9 +68,9 @@ export default class RequestController {
       const destinationCount = destinations.map(dest => ({ Destination: dest.travelTo,
         timeVisited: dest.count
       }));
-      successResponse(res, ok, placesRetrieved, null, destinationCount);
+      successResponse(res, ok, customMessages.placesRetrieved, null, destinationCount);
     } else {
-      errorResponse(res, notFound, noPlacesRetrieved);
+      errorResponse(res, notFound, customMessages.noPlacesRetrieved);
     }
   }
 
@@ -87,17 +90,34 @@ export default class RequestController {
     if (reqNum !== 0) {
       const foundReqs = requests.rows;
       if (foundReqs.length === 0) {
-        errorResponse(res, notFound, noRequestsFoundOnThisPage);
+        errorResponse(res, notFound, customMessages.noRequestsFoundOnThisPage);
       } else {
         const resultToSend = {
           totalRequests: reqNum,
           foundRequests: foundReqs
         };
-        successResponse(res, ok, requestsRetrieved, null, resultToSend);
+        successResponse(res, ok, customMessages.requestsRetrieved, null, resultToSend);
       }
     } else {
-      errorResponse(res, notFound, noRequestsYet);
-    }
+      errorResponse(res, notFound, customMessages.noRequestsYet);
+    } 
+}
+
+    /**
+   * @param {Request} req Node/express request
+   * @param {Response} res Node/express response
+   * @returns {Object} Custom response with the updated trip request details
+   * @description update open trip request
+   */
+  static async updateTripRequest(req, res) {
+      const requestData = req.body;
+      const { requestId } = req.params;
+      try {
+        await updateTripRequest(requestData, requestId);
+        return updatedResponse(res, ok, customMessages.requestUpdated); 
+      } catch (err) {
+        return errorResponse(res, badRequest, customMessages.duplicateTripRequest);
+      }
   }
 
   /**

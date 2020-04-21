@@ -6,7 +6,7 @@ import customMessages from '../../src/utils/customMessages';
 import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
 import loginToken from '../controllers/authentication.test';
-import { INSERT_SAMPLE_REQUEST, UPDATE_USER_8_TO_MANAGER } from '../data/insert-sample-data-in_db';
+import { INSERT_SAMPLE_REQUEST, UPDATE_USER_8_TO_MANAGER, INSERT_REQUEST, INSERT_USER, SELECT_REQUEST } from '../data/insert-sample-data-in_db';
 
 const { sequelize } = models;
 const {
@@ -21,6 +21,13 @@ const {
   searchTripRequests,
   tripsStatsValidTimeframe,
   tripsStatsInvalidTimeframe,
+  testingTokens,
+  travelUpdated,
+  duplicateUpdate,
+  updateUser,
+  updator,
+  loginSuperUser
+ 
 } = mockData;
 const {
   invalidTravelType,
@@ -55,6 +62,11 @@ const {
   invalidTripsStatsEndDate,
   viewStatsUnauthorized,
   requesterNotRegistered,
+  requestUpdated,
+  notOpenRequest,
+  emptyUpdate,
+  notExistRequest,
+  notYourRequest,
 } = customMessages;
 const {
   created,
@@ -62,7 +74,7 @@ const {
   unAuthorized,
   ok, notFound
 } = statusCodes;
-
+const { wrongToken } = testingTokens;
 chai.use(chaiHttp);
 chai.should();
 
@@ -73,7 +85,10 @@ let authTokenManager = '';
 let authTokenRequesterNoReqYet = '';
 let requesterProfile = {};
 let managerProfile = {};
-
+let requestId = '';
+let requestId2 = '';
+let authUpdator = '';
+let authApproved = '';
 describe('One way trip request', () => {
   it('should create a trip requester(new user)', (done) => {
     chai
@@ -236,6 +251,7 @@ describe('One way trip request', () => {
         .end((err, res) => {
           if (err) done(err);
           const { message, data } = res.body;
+          requestId2 = data.id;
           expect(res.status).to.equal(created);
           expect(message);
           expect(data);
@@ -254,6 +270,7 @@ describe('One way trip request', () => {
         .end((err, res) => {
           if (err) done(err);
           const { message, data } = res.body;
+          requestId = data.id;
           expect(res.status).to.equal(created);
           expect(message);
           expect(data);
@@ -1366,6 +1383,171 @@ describe('Trips stats', () => {
         expect(error);
         expect(error).to.be.a('string');
         expect(error).to.equal(invalidTripsStatsEndDate);
+        done();
+  }); 
+}); 
+});
+describe('update open travel request', () => {
+  let notOpenId;
+  before('Insert sample request in db', () => {
+    sequelize.query(INSERT_REQUEST)
+    .then(() => {
+      sequelize.query(SELECT_REQUEST)
+      .then((request) => {
+        [notOpenId] = request;
+      });
+    });
+  });
+  it('should not update open travel request when token is missing', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/trips/${requestId}`)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(badRequest);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('error').to.equal(tokenMissing);
+        done();
+      });
+  });
+  it('should not update open travel request when token is invalid', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/trips/${requestId}`)
+      .set('Authorization', `Bearer ${wrongToken}`)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(badRequest);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('error').to.equal(tokenInvalid);
+        done();
+      });
+  });
+  it('should not update open travel request when there is a request on that new travel date provided ', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/trips/${requestId}`)
+      .set('Authorization', authToken)
+      .send(travelUpdated)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(badRequest);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('error').to.equal(duplicateTripRequest);
+        done();
+      });
+  });
+  it('should update open travel request', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/trips/${requestId2}`)
+      .set('Authorization', authToken)
+      .send(duplicateUpdate)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(ok);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('message').to.equal(requestUpdated);
+        done();
+      });
+  });
+  it('should login the owner of approved request', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/login')
+      .set('Accept', 'Application/json')
+      .send(loginSuperUser)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('message').to.equal('Successfully logged in');
+        expect(res.body).to.have.property('token');
+        authApproved = `Bearer ${res.body.token}`;
+        done();
+      });
+  });
+  it('should not update approved or rejected travel request', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/trips/${notOpenId[1].id}`)
+      .set('Authorization', authApproved)
+      .send(travelUpdated)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(badRequest);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('error').to.equal(notOpenRequest);
+        done();
+      });
+  });
+  it('should not update open travel request with empty information', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/trips/${requestId}`)
+      .set('Authorization', authToken)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(badRequest);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('error').to.equal(emptyUpdate);
+        done();
+      });
+  });
+  it('should not update open travel request which does not exist', (done) => {
+    chai
+      .request(server)
+      .patch('/api/trips/5000')
+      .set('Authorization', authToken)
+      .send(travelUpdated)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(badRequest);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('error').to.equal(notExistRequest);
+        done();
+      });
+  });
+  
+  it('should create an updator', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(updateUser)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message, token } = res.body;
+        expect(res.status).to.equal(statusCodes.created);
+        expect(message);
+        expect(message).to.equal(userSignupSuccess);
+        expect(token);
+        authUpdator = `Bearer ${token}`;
+        done();
+      });
+  });
+  it('Should verify requester account', (done) => {
+    chai.request(server)
+      .get(`/api/auth/verify?token=${authUpdator.split(' ').pop()}`)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message } = res.body;
+        expect(res.status).to.equal(ok);
+        expect(message).to.be.a('string');
+        expect(message).to.equal(verifyMessage);
+        done();
+      });
+  });
+  it('should not update open travel request which is not yours', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/trips/${requestId}`)
+      .set('Authorization', authUpdator)
+      .send(travelUpdated)
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(badRequest);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('error').to.equal(notYourRequest);
         done();
       });
   });

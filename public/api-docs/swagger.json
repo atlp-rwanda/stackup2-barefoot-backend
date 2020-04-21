@@ -1026,7 +1026,102 @@
           }
         ]
       }
-    }
+    },
+    "/trips/update/:requestId": {
+      "patch": {
+        "summary": "edit travel request",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {"name": "Travel from",
+            "in": "body",
+            "description": "a place where requester travels from",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Travel to",
+            "in": "body",
+            "description": "a place where requester wishes to travel to",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Travel reason",
+            "in": "body",
+            "description": "the reason for the trip",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Travel date",
+            "in": "body",
+            "description": "date requester wishes to take the trip",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Return date",
+            "in": "body",
+            "description": "date requester wishes to return from the trip",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          
+          {
+            "name": "Travel type",
+            "in": "body",
+            "description": "the type of trip the requester wishes to make",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          },
+          {
+            "name": "Accommodation",
+            "in": "body",
+            "description": "wether requester wants accommodation",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/OneWaytripRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "This is how the response looks like when request is updated",
+            "schema": {
+              "$ref": "#/responses/trip-request-update"
+            }
+          },
+          "400": {
+            "description": "failed to create a trip request due to invalid input",
+            "schema": {
+              "$ref": "#/responses/trip-request-fail"
+            }
+          },
+          "401": {
+            "description": "access denied to protected resource",
+            "schema": {
+              "$ref": "#/responses/trip-request-unauthorized"
+            }
+          }
+        }
+      }}
   },
   "definitions": {
     "signup": {
@@ -1542,6 +1637,16 @@
           "type": "object",
           "example": {
             "error": "Please provide an end date for the stats, ..."
+          }
+        }
+      }
+    },
+    "trip-request-update": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": {
+          "message":"The request is updated successfully"
           }
         }
       }

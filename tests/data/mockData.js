@@ -384,4 +384,27 @@ export default {
   assignEmptyEmail: {
     role: 'Manager'
   },
+  travelUpdated: {
+    travelFrom: 'california',
+    travelTo: 'kibuye',
+    travelDate: new Date(),
+    travelReason: 'business meeting',
+    accommodation: true
+  },
+  duplicateUpdate: {
+    travelDate: new Date()
+  },
+  updateUser: {
+    firstName: 'Peter',
+    lastName: 'Kamanzi',
+    username: 'pepe',
+    email: 'peter@gmail.com',
+    address: 'Kigali',
+    password: 'Helloworld3@',
+    gender: 'Male',
+  },
+  updator: {
+    email: 'updator@gmail.com',
+    password: 'Updator@0000'
+  }
 };
