@@ -406,5 +406,28 @@ export default {
   updator: {
     email: 'updator@gmail.com',
     password: 'Updator@0000'
+  },
+  bookAccommodation: {
+    accommodationId: 1,
+    arrivalDate: new Date(Date.now() + 432000000),
+    departureDate: new Date(Date.now() + 518400000),
+  },
+  AccommodationBooker: {
+    firstName: 'Accommodation',
+    lastName: 'Booker',
+    username: 'AccommodationBooker',
+    email: 'accommodationbooker@example.com',
+    address: 'Kigali',
+    password: 'Onewaytripreq123@',
+    gender: 'Female',
+  },
+  bookerReturnTripRequest: {
+    travelFrom: 'Butare',
+    travelTo: 'kigali',
+    travelDate: new Date(Date.now() + 259200000),
+    returnDate: new Date(Date.now() + 432000000),
+    travelReason: 'personal reasons',
+    travelType: 'return-trip',
+    accommodation: true,
   }
 };

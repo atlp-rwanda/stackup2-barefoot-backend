@@ -134,4 +134,17 @@ export default class RequestService {
      { where: { id: requestId } }
    );
 }
+
+/**
+  *@description retrieves a trip request matching @id from database
+  * @param {Number} id unique trip request id
+  * @returns {Object} trip request matching @id
+  */
+  static getTripRequestById(id) {
+    return request.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 }

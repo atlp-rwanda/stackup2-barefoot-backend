@@ -26,8 +26,8 @@ const {
   duplicateUpdate,
   updateUser,
   updator,
-  loginSuperUser
- 
+  loginSuperUser, 
+  bookAccommodation,
 } = mockData;
 const {
   invalidTravelType,
@@ -67,6 +67,11 @@ const {
   emptyUpdate,
   notExistRequest,
   notYourRequest,
+  invalidBookAccommodationTripRequestId,
+  accommodationNotExist,
+  tripRequestNotExist,
+  bookedAccommodation,
+  duplicateAccommodationBookings,
 } = customMessages;
 const {
   created,
@@ -89,6 +94,8 @@ let requestId = '';
 let requestId2 = '';
 let authUpdator = '';
 let authApproved = '';
+const requesterTripRequests = [];
+
 describe('One way trip request', () => {
   it('should create a trip requester(new user)', (done) => {
     chai
@@ -258,6 +265,7 @@ describe('One way trip request', () => {
           expect(data).to.be.an('object');
           expect(message).to.be.a('string');
           expect(message).to.equal(oneWayTripRequestCreated);
+          requesterTripRequests.push(data);
           done();
         });
     });
@@ -1550,5 +1558,97 @@ describe('update open travel request', () => {
         expect(res.body).to.have.property('error').to.equal(notYourRequest);
         done();
       });
+  });
+});
+
+describe('Book Accommodations', () => {
+  it('should not book an accommodation facility due to invalid booking info', (done) => {
+      chai
+          .request(server)
+          .post('/api/accommodations/book')
+          .set('Authorization', authToken)
+          .send(bookAccommodation)
+          .end((err, res) => {
+              if (err) done(err);
+              const { error } = res.body;
+              expect(res.status).to.equal(badRequest);
+              expect(error);
+              expect(error).to.be.a('string');
+              expect(error).to.equal(invalidBookAccommodationTripRequestId);
+              done();
+          });
+  });
+  it('should not book an accommodation facility due to invalid/non-existent trip request', (done) => {
+      chai
+          .request(server)
+          .post('/api/accommodations/book')
+          .set('Authorization', authToken)
+          .send({
+              ...bookAccommodation,
+              tripRequestId: 9999999,
+          })
+          .end((err, res) => {
+              if (err) done(err);
+              const { error } = res.body;
+              expect(res.status).to.equal(badRequest);
+              expect(error);
+              expect(error).to.be.a('string');
+              expect(error).to.equal(tripRequestNotExist);
+              done();
+          });
+  });
+  it('should not book an accommodation facility due to invalid/non-existent accommodation facility', (done) => {
+      chai
+          .request(server)
+          .post('/api/accommodations/book')
+          .set('Authorization', authToken)
+          .send({
+              ...bookAccommodation,
+              tripRequestId: requesterTripRequests[0].id,
+              accommodationId: 9999999,
+          })
+          .end((err, res) => {
+              if (err) done(err);
+              const { error } = res.body;
+              expect(res.status).to.equal(badRequest);
+              expect(error);
+              expect(error).to.be.a('string');
+              expect(error).to.equal(accommodationNotExist);
+              done();
+          });
+  });
+  it('should book an accommodation facility', (done) => {
+      chai
+          .request(server)
+          .post('/api/accommodations/book')
+          .set('Authorization', authToken)
+          .send({ ...bookAccommodation, tripRequestId: requesterTripRequests[0].id })
+          .end((err, res) => {
+              if (err) done(err);
+              const { data, message } = res.body;
+              expect(res.status).to.equal(created);
+              expect(data);
+              expect(data).to.be.an('object');
+              expect(message);
+              expect(message).to.be.a('string');
+              expect(message).to.equal(bookedAccommodation);
+              done();
+          });
+  });
+  it('should not book an accommodation facility twice for the same trip', (done) => {
+      chai
+          .request(server)
+          .post('/api/accommodations/book')
+          .set('Authorization', authToken)
+          .send({ ...bookAccommodation, tripRequestId: requesterTripRequests[0].id })
+          .end((err, res) => {
+              if (err) done(err);
+              const { error } = res.body;
+              expect(res.status).to.equal(badRequest);
+              expect(error);
+              expect(error).to.be.a('string');
+              expect(error).to.equal(duplicateAccommodationBookings);
+              done();
+          });
   });
 });

@@ -8,6 +8,7 @@ const {
   invalidTravelDate,
   invalidTravelType,
   invalidTravelAccomodation,
+  invalidBookAccommodationTripRequestId,
 } = customMessages;
 
  const {
@@ -26,6 +27,9 @@ const {
   invalidTripsStatsStartDate,
   invalidTripsStatsEndDate,
   viewStatsNoRequesterId,
+  invalidBookAccommodationAccommodationId,
+  invalidBookAccommodationArrivalDate,
+  invalidBookAccommodationDepartureDate,
 } = customMessages;
 
 /**
@@ -48,6 +52,7 @@ static createValidationErrors(fieldDataType, errorMessage) {
     [`${fieldDataType}.greater`]: errorMessage,
     'any.required': errorMessage,
     'any.only': errorMessage,
+    'any.ref': errorMessage,
   };
 }
 
@@ -197,6 +202,31 @@ static async validateTripRequestsSearchField(searchField, searchFieldValue) {
         .messages(createValidationErrors('number', viewStatsNoRequesterId)),
     });
     return schema.validateAsync(requester, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+  }
+
+  /**
+  * @param {Object} bookingDetails booking information
+  * @returns {Promise<any>} validation output
+  */
+  static validateBookAccommodation(bookingDetails) {
+    const { createValidationErrors } = Validators;
+    const minDate = new Date();
+    const validDate = Joi.date().required().iso().greater(minDate);
+    const schema = Joi.object({
+      tripRequestId: Joi.number().required()
+        .messages(createValidationErrors('number', invalidBookAccommodationTripRequestId)),
+      accommodationId: Joi.number().required()
+        .messages(createValidationErrors('number', invalidBookAccommodationAccommodationId)),
+      arrivalDate: validDate
+        .messages(createValidationErrors('date', invalidBookAccommodationArrivalDate)),
+      departureDate: validDate
+        .greater(Joi.ref('arrivalDate'))
+        .messages(createValidationErrors('date', invalidBookAccommodationDepartureDate)),
+    });
+    return schema.validateAsync(bookingDetails, {
       abortEarly: false,
       stripUnknown: true,
     });
