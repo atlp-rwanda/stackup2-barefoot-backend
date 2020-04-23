@@ -4,15 +4,9 @@ import server from '../../src/index';
 import customMessages from '../../src/utils/customMessages';
 import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
-import UserService from '../../src/services/authentication.service';
-
-const { requester3Account } = mockData;
-const { findUserByEmailOrUsername } = UserService;
 
 let authTokenOfVerifiedUser;
 let authTokenOfUnVerifiedUser;
-let userToken;
-let managerId;
 
 chai.use(chaiHttp);
 chai.should();
@@ -305,67 +299,6 @@ describe('Profile tests', () => {
         expect(res).to.have.status(statusCodes.badRequest);
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('error').to.equal(customMessages.invalidPassword);
-        done();
-      });
-  });
-});
-
-describe('Update Profile Tests - Line Manager', () => {
-  it('Login a user should return 200', (done) => {
-    chai
-      .request(server)
-      .post('/api/auth/login')
-      .set('Accept', 'Application/json')
-      .send({
-        email: requester3Account.email,
-        password: requester3Account.password,
-      })
-      .end((err, res) => {
-        if (err) done(err);
-        const { token } = res.body;
-        expect(res.status).to.equal(statusCodes.ok);
-        expect(token);
-        userToken = `Bearer ${token}`;
-        done();
-      });
-  });
-  it('Updating user profile with line manager who does not exist should return 404', (done) => {
-    chai
-      .request(server)
-      .patch('/api/profile')
-      .set('authorization', userToken)
-      .send({ lineManager: mockData.unexistantLineManager })
-      .end((err, res) => {
-        if (err) done(err);
-        const { error } = res.body;
-        expect(res.status).to.equal(statusCodes.notFound);
-        expect(error);
-        expect(error).to.equal(customMessages.lineManagerNotFound);
-        done();
-      });
-  });
-  it('Should find a user by email', (done) => {
-    findUserByEmailOrUsername(requester3Account.email)
-      .then(data => {
-        const { id } = data.dataValues;
-        managerId = id;
-        chai.expect(id).to.be.a('number');
-        done();
-      })
-      .catch(error => { console.log(error); done(); });
-  });
-  it('Updating user profile with a user who is not a manager should return 403', (done) => {
-    chai
-      .request(server)
-      .patch('/api/profile')
-      .set('authorization', userToken)
-      .send({ lineManager: managerId })
-      .end((err, res) => {
-        if (err) done(err);
-        const { error } = res.body;
-        expect(res.status).to.equal(statusCodes.forbidden);
-        expect(error);
-        expect(error).to.equal(customMessages.userNotlineManager);
         done();
       });
   });
