@@ -33,7 +33,7 @@ export default (sequelize, DataTypes) => {
     preferredLanguage: DataTypes.STRING,
     preferredCurrency: DataTypes.STRING,
     department: DataTypes.STRING,
-    lineManager: DataTypes.STRING,
+    lineManager: DataTypes.INTEGER,
     idCardNumber: DataTypes.STRING,
     phoneNumber: DataTypes.STRING,
     profileImage: DataTypes.STRING

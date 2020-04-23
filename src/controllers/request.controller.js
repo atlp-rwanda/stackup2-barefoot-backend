@@ -8,6 +8,7 @@ import { offsetAndLimit } from '../utils/comment.utils';
 import userRoles from '../utils/userRoles.utils';
 import Validators from '../utils/validators';
 import UserService from '../services/authentication.service';
+import tripRequestsStatus from '../utils/tripRequestsStatus.util';
 
 const {
   handleTripRequest,
@@ -16,19 +17,21 @@ const {
   updateTripRequest,
 } = RequestService;
 const { viewStatsUnauthorized, requesterNotRegistered, emptySearchResult, } = customMessages;
-const { created, badRequest, ok, notFound } = statusCodes;
+const { created, badRequest, ok, notFound, conflict, unAuthorized, forbidden } = statusCodes;
 const { successResponse, errorResponse, updatedResponse } = responseHandlers;
 const { REQUESTER, MANAGER } = userRoles;
-const { 
+const {
   handleSearchTripRequests,
   getTripsStats,
+  updateTripRequestStatus,
+  reassignTripRequest
 } = RequestService;
 const {
   validateTripsStatsTimeframe,
   validateRequesterInfo,
 } = Validators;
-const { unAuthorized } = statusCodes;
 const { getUserById } = UserService;
+const { ACCEPTED, REJECTED } = tripRequestsStatus;
 
 /**
    * @description Trip requests controller class
@@ -45,12 +48,12 @@ export default class RequestController {
       const requestData = req.body;
       const newTrip = await handleTripRequest(requestData);
       return successResponse(
-        res, 
-        created, 
-        customMessages.oneWayTripRequestCreated, 
-        undefined, 
+        res,
+        created,
+        customMessages.oneWayTripRequestCreated,
+        undefined,
         newTrip
-        );
+      );
     } catch (dbError) {
       return errorResponse(res, badRequest, customMessages.duplicateTripRequest);
     }
@@ -65,7 +68,8 @@ export default class RequestController {
     const visitTimes = await getMostTraveledDestinations();
     if (visitTimes[0].length !== 0) {
       const destinations = visitTimes[0];
-      const destinationCount = destinations.map(dest => ({ Destination: dest.travelTo,
+      const destinationCount = destinations.map(dest => ({
+        Destination: dest.travelTo,
         timeVisited: dest.count
       }));
       successResponse(res, ok, customMessages.placesRetrieved, null, destinationCount);
@@ -100,24 +104,24 @@ export default class RequestController {
       }
     } else {
       errorResponse(res, notFound, customMessages.noRequestsYet);
-    } 
-}
+    }
+  }
 
-    /**
-   * @param {Request} req Node/express request
-   * @param {Response} res Node/express response
-   * @returns {Object} Custom response with the updated trip request details
-   * @description update open trip request
-   */
+  /**
+ * @param {Request} req Node/express request
+ * @param {Response} res Node/express response
+ * @returns {Object} Custom response with the updated trip request details
+ * @description update open trip request
+ */
   static async updateTripRequest(req, res) {
-      const requestData = req.body;
-      const { requestId } = req.params;
-      try {
-        await updateTripRequest(requestData, requestId);
-        return updatedResponse(res, ok, customMessages.requestUpdated); 
-      } catch (err) {
-        return errorResponse(res, badRequest, customMessages.duplicateTripRequest);
-      }
+    const requestData = req.body;
+    const { requestId } = req.params;
+    try {
+      await updateTripRequest(requestData, requestId);
+      return updatedResponse(res, ok, customMessages.requestUpdated);
+    } catch (err) {
+      return errorResponse(res, badRequest, customMessages.duplicateTripRequest);
+    }
   }
 
   /**
@@ -142,7 +146,7 @@ export default class RequestController {
     }
     return successResponse(res, ok, undefined, undefined, tripRequests);
   }
-  
+
   /**
   * @param {Request} req Node/express request
   * @param {Response} res Node/express response
@@ -181,7 +185,7 @@ export default class RequestController {
       const timeframe = omit(req.query, ['requesterId']);
       const { startDate, endDate, } = await validateTripsStatsTimeframe(timeframe);
       const tripsMade = await getTripsStats(id, startDate, endDate);
-      return successResponse(res, ok, undefined, undefined, { 
+      return successResponse(res, ok, undefined, undefined, {
         startDate,
         endDate,
         requesterId: id,
@@ -221,5 +225,61 @@ export default class RequestController {
     } catch (error) {
       return errorResponse(res, badRequest, error.message);
     }
+  }
+
+  /**
+   * @param {Request} req Node/express request
+   * @param {Response} res Node/express response
+   * @returns {Object} Response object with success message
+   * @description approves a trip request
+   */
+  static async approveTripRequest(req, res) {
+    const { tripRequestId } = req.params;
+    if (req.tripRequestCurrentStatus === ACCEPTED) {
+      return errorResponse(res, conflict, customMessages.tripRequestAlreadyApproved);
+    }
+    if (req.tripRequestCurrentStatus === REJECTED) {
+      return errorResponse(res, forbidden, customMessages.tripRequestAlreadyRejected);
+    }
+    const handledBy = req.sessionUser.id;
+    await updateTripRequestStatus(tripRequestId, ACCEPTED, handledBy);
+    return successResponse(res, ok, customMessages.requestApprovalSuccess, undefined, undefined);
+  }
+
+  /**
+   * @param {Request} req Node/express request
+   * @param {Response} res Node/express response
+   * @returns {Object} Response object with success message
+   * @description rejects a trip request
+   */
+  static async rejectTripRequest(req, res) {
+    const { tripRequestId } = req.params;
+    if (req.tripRequestCurrentStatus === REJECTED) {
+      return errorResponse(res, conflict, customMessages.tripRequestAlreadyRejected);
+    }
+    await updateTripRequestStatus(tripRequestId, REJECTED, req.sessionUser.id);
+    return successResponse(res, ok, customMessages.requestRejectionSuccess, undefined, undefined);
+  }
+
+  /**
+   * @param {Request} req Node/express request
+   * @param {Response} res Node/express response
+   * @returns {Object} Response object with success or error message
+   * @description assigns trip request to another manager
+   */
+  static async assignTripRequest(req, res) {
+    const { tripRequestId } = req.params;
+    const newManagerId = req.newManager.id;
+    if (newManagerId === req.tripRequestData.handledBy) {
+      return errorResponse(res, conflict, customMessages.tripRequestReassignConflict);
+    }
+    await reassignTripRequest(tripRequestId, newManagerId);
+    return successResponse(
+      res,
+      ok,
+      customMessages.tripRequestReassignSuccess,
+      undefined,
+      undefined
+    );
   }
 }

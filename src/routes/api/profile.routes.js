@@ -11,12 +11,13 @@ const {
   changeUserPassword
 } = controllers.ProfileController;
 const {
-  isUserLoggedInAndVerified
+  isUserLoggedInAndVerified,
+  validateLineManager
 } = Authentication;
 
 profileRouter.get('/:requestedProfile', isUserLoggedInAndVerified, profileReqCheckpoint, displayUserProfile);
 profileRouter.get('/', isUserLoggedInAndVerified, profileReqCheckpoint, displayUserProfile);
-profileRouter.patch('/', isUserLoggedInAndVerified, validatProfilUpdate, profileReqCheckpoint, signupValidation, updateUserProfile);
+profileRouter.patch('/', isUserLoggedInAndVerified, validatProfilUpdate, profileReqCheckpoint, signupValidation, validateLineManager, updateUserProfile);
 profileRouter.patch('/password', isUserLoggedInAndVerified, profileReqCheckpoint, passwordValidation, changeUserPassword);
 
 export default profileRouter;
