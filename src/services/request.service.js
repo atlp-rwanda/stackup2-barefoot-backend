@@ -38,10 +38,10 @@ export default class RequestService {
    */
   static getMostTraveledDestinations = async () => {
     const placeAndTheirVisitTimes = await sequelize.query('SELECT "travelTo", COUNT(*) FROM requests WHERE status =\'accepted\' OR status=\'Accepted\' GROUP BY "travelTo" ORDER BY count DESC');
-
+    
     return placeAndTheirVisitTimes;
   }
-
+  
   /**
    * @param {Integer} userId
    * @returns {object} foundReq
@@ -102,87 +102,36 @@ export default class RequestService {
     });
   }
 
-  /**
-*@description update open trip request details in database
-* @param {Object} tripRequestData trip request new data
-* @param {Integer} requestId trip request id
-* @returns {Object} updated trip request details
- */
-  static updateTripRequest(tripRequestData, requestId) {
+     /**
+   *@description update open trip request details in database
+   * @param {Object} tripRequestData trip request new data
+   * @param {Integer} requestId trip request id
+   * @returns {Object} updated trip request details
+    */
+   static updateTripRequest(tripRequestData, requestId) {
     if (tripRequestData.travelType === 'one-way') {
       tripRequestData.returnDate = null;
     }
     const {
-      travelTo,
-      travelFrom,
-      travelReason,
-      travelType,
-      travelDate,
-      returnDate,
-      accommodation
+     travelTo,
+     travelFrom,
+     travelReason,
+     travelType,
+     travelDate,
+     returnDate,
+     accommodation
     } = tripRequestData;
-    return request.update(
-      {
-        travelTo,
-        travelFrom,
-        travelReason,
-        travelType,
-        travelDate,
-        returnDate,
-        accommodation
-      },
-      { where: { id: requestId } }
-    );
-  }
-  
-  /**
-   * @description Used to find a trip request by id 
-   * @param {number} tripId Trip request id
-   * @returns {object} returns a trip request object
-   */
-  static findTripRequestById = async (tripId) => {
-    const id = tripId;
-    const tripRequest = await request.findOne({ where: { id } });
-    return tripRequest;
-  };
-
-  /**
-   * @description Used by a manager to approve or reject a trip request
-   * @param {number} id Trip request id
-   * @param {string} status Approval status: accepted
-   * @param {number} handledBy Manager id
-   * @returns {object} returns a trip request with changed status
-   */
-  static updateTripRequestStatus = async (id, status, handledBy) => {
-    const updatedRequest = await request.update(
-      {
-        status,
-        handledBy
-      },
-      {
-        where: { id }
-      }
-    );
-    return updatedRequest;
-  }
-
-  /**
-   * @description Used by a manager to assign a trip request to another manager
-   * @param {number} requestId Trip request id
-   * @param {number} handlerId Manager id
-   * @returns {object} returns a trip request with changed handler
-   */
-  static reassignTripRequest = async (requestId, handlerId) => {
-    const id = requestId;
-    const handledBy = handlerId;
-    const updateHandler = await request.update(
-      {
-        handledBy
-      },
-      {
-        where: { id }
-      }
-    );
-    return updateHandler;
-  }
+   return request.update(
+     {
+         travelTo,
+         travelFrom,
+         travelReason,
+         travelType,
+         travelDate,
+         returnDate,
+         accommodation
+     },
+     { where: { id: requestId } }
+   );
+}
 }

@@ -65,7 +65,7 @@ export default {
       type: Sequelize.STRING
     },
     lineManager: {
-      type: Sequelize.INTEGER
+      type: Sequelize.STRING
     },
     idCardNumber: {
       type: Sequelize.STRING
