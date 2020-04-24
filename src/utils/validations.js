@@ -27,6 +27,8 @@ const {
   validateTripRequestsSearch,
   validateTripRequestsSearchField,
   validateBookAccommodation,
+  validateRequestId,
+  validateUserId
 } = Validators;
 
 const {
@@ -44,14 +46,14 @@ const {
 * @returns {object} a chained validation methods
 */
 const validationMethods = (pattern, messages, isProfileUpdate) => {
-    const methods = isProfileUpdate ? Joi.string()
+  const methods = isProfileUpdate ? Joi.string()
     .regex(pattern)
     .messages(messages) : Joi.string()
-    .regex(pattern)
-    .trim()
-    .required()
-    .messages(messages);
-     return methods;
+      .regex(pattern)
+      .trim()
+      .required()
+      .messages(messages);
+  return methods;
 };
 
 /**
@@ -61,18 +63,18 @@ const validationMethods = (pattern, messages, isProfileUpdate) => {
 */
 const validateSignup = (user) => {
   const { isProfileUpdate } = user;
-    const schema = Joi.object({
-        firstName: validationMethods(/^([a-zA-Z]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidFirstname}` }, isProfileUpdate),
-        lastName: validationMethods(/^([a-zA-Z]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidLastname}` }, isProfileUpdate),
-        username: validationMethods(/^([a-zA-Z0-9@_.-]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidUsername}` }, isProfileUpdate),
-        email: validationMethods(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, { 'string.pattern.base': `${customMessages.invalidEmail}` }, isProfileUpdate),
-        password: validationMethods(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*?])[0-9a-zA-Z!@#$%^&*?]{8,}$/, { 'string.pattern.base': `${customMessages.invalidPassword}` }, isProfileUpdate),
-        gender: validationMethods(/^Male$|^male$|^Female$|^female$/, { 'string.pattern.base': `${customMessages.invalidGender}` }, isProfileUpdate),
-        address: validationMethods(/^(\w)+$/, { 'string.pattern.base': `${customMessages.invalidAddress}` }, isProfileUpdate),
-});
-    return schema.validate(user, {
-      abortEarly: false,
-      allowUnknown: true
+  const schema = Joi.object({
+    firstName: validationMethods(/^([a-zA-Z]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidFirstname}` }, isProfileUpdate),
+    lastName: validationMethods(/^([a-zA-Z]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidLastname}` }, isProfileUpdate),
+    username: validationMethods(/^([a-zA-Z0-9@_.-]{3,})+$/, { 'string.pattern.base': `${customMessages.invalidUsername}` }, isProfileUpdate),
+    email: validationMethods(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, { 'string.pattern.base': `${customMessages.invalidEmail}` }, isProfileUpdate),
+    password: validationMethods(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*?])[0-9a-zA-Z!@#$%^&*?]{8,}$/, { 'string.pattern.base': `${customMessages.invalidPassword}` }, isProfileUpdate),
+    gender: validationMethods(/^Male$|^male$|^Female$|^female$/, { 'string.pattern.base': `${customMessages.invalidGender}` }, isProfileUpdate),
+    address: validationMethods(/^(\w)+$/, { 'string.pattern.base': `${customMessages.invalidAddress}` }, isProfileUpdate),
+  });
+  return schema.validate(user, {
+    abortEarly: false,
+    allowUnknown: true
   });
 };
 
@@ -84,9 +86,9 @@ const validateSignup = (user) => {
 const validateRole = (data) => {
   const schema = Joi.object({
     role: validationMethods(
-      /^super administrator$|^travel administrator$|^travel team member$|^requester$|^manager$/, 
+      /^super administrator$|^travel administrator$|^travel team member$|^requester$|^manager$/,
       { 'string.pattern.base': `${customMessages.invalidRole}` }
-),
+    ),
     email: validationMethods(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, { 'string.pattern.base': `${customMessages.invalidEmail}` })
   });
   return schema.validate(data, {
@@ -104,7 +106,7 @@ const validatePassword = password => {
   return schema.validate(password, {
     abortEarly: false,
     allowUnknown: true
-});
+  });
 };
 
 /**
@@ -130,21 +132,21 @@ const displayErrorMessages = (error, res, next) => {
 */
 export const verifyToken = async (req, res, next) => {
   try {
-      const { token } = req.params;
-      await decodeToken(token);
-      next();
+    const { token } = req.params;
+    await decodeToken(token);
+    next();
   } catch (error) {
     return errorResponse(res, statusCodes.badRequest, customMessages.tokenInvalid);
   }
 };
- /** 
- * @param {object}tripRequestInfo Node/express request
- * @param {object} req Node/express request
- * @param {object} res Node/express response
- * @param {object} next Node/Express Next callback function
- * @returns {Object} Custom response with created trip details
- * @description validates all trip requests
- */
+/** 
+* @param {object}tripRequestInfo Node/express request
+* @param {object} req Node/express request
+* @param {object} res Node/express response
+* @param {object} next Node/Express Next callback function
+* @returns {Object} Custom response with created trip details
+* @description validates all trip requests
+*/
 const oneWayHandler = async (tripRequestInfo, req, res, next) => {
   try {
     const validationOutput = await validateOneWayTripRequest(tripRequestInfo);
@@ -155,37 +157,37 @@ const oneWayHandler = async (tripRequestInfo, req, res, next) => {
     return errorResponse(res, badRequest, validationError.message);
   }
 };
- /** 
- * @param {object}tripRequestInfo Node/express request
- * @param {object} req Node/express request
- * @param {object} res Node/express response
- * @param {object} next Node/Express Next callback function
- * @returns {Object} Custom response with created trip details
- * @description validates all trip requests
- */
+/** 
+* @param {object}tripRequestInfo Node/express request
+* @param {object} req Node/express request
+* @param {object} res Node/express response
+* @param {object} next Node/Express Next callback function
+* @returns {Object} Custom response with created trip details
+* @description validates all trip requests
+*/
 const returnTripHandler = async (tripRequestInfo, req, res, next) => {
   const errorMessage = [];
   let errors = '';
-   try {
+  try {
     const commonInfo = _.omit(tripRequestInfo, 'returnDate');
-     req.body = await validateOneWayTripRequest(commonInfo);
-   } catch (err) {
+    req.body = await validateOneWayTripRequest(commonInfo);
+  } catch (err) {
     errorMessage.push(err.message);
-   }
-    try {
-      const validRequest = await validateReturnDate(tripRequestInfo);
-      req.body.userId = req.sessionUser.id;
-      req.body.returnDate = validRequest.returnDate;
-    } catch (err) {
-      errorMessage.push(invalidReturnDate);
-}
-        if (errorMessage.length === 0) {
-          return next(); 
-    }
-    errorMessage.forEach((element) => {
-      errors += `${element}.`;
-     });
-      return errorResponse(res, badRequest, errors);
+  }
+  try {
+    const validRequest = await validateReturnDate(tripRequestInfo);
+    req.body.userId = req.sessionUser.id;
+    req.body.returnDate = validRequest.returnDate;
+  } catch (err) {
+    errorMessage.push(invalidReturnDate);
+  }
+  if (errorMessage.length === 0) {
+    return next();
+  }
+  errorMessage.forEach((element) => {
+    errors += `${element}.`;
+  });
+  return errorResponse(res, badRequest, errors);
 };
 
 /**
@@ -238,7 +240,7 @@ const isTripRequestsSearchValid = async (req, res, next) => {
     req.query = validSearch;
     return next();
   } catch (validationError) {
-      return errorResponse(res, badRequest, validationError.message);
+    return errorResponse(res, badRequest, validationError.message);
   }
 };
 
@@ -270,13 +272,52 @@ const checkAccommodationBookingInfo = async (req, res, next) => {
   }
 };
 
+/** 
+* @param {object} req Node/express request
+* @param {object} res Node/express response
+* @param {object} next Node/Express Next callback function
+* @returns {Object} Custom response with created trip details
+* @description validates trip request id
+*/
+const handleRequestStatusUpdate = async (req, res, next) => {
+  const errorMessage = [];
+  let errors = '';
+  try {
+    await validateRequestId(req.params.tripRequestId);
+  } catch (err) {
+    errorMessage.push(err);
+  }
+  if (errorMessage.length === 0) {
+    return next();
+  }
+  errorMessage.forEach((element) => {
+    errors += `${element.message}.`;
+  });
+  return errorResponse(res, badRequest, errors);
+};
+
+/** 
+* @param {object} req Node/express request
+* @param {object} res Node/express response
+* @param {object} next Node/Express Next callback function
+* @returns {Object} response error object
+* @description validates trip request reassignment
+*/
+const handleRequestReassignment = async (req, res, next) => {
+  const validator = await validateUserId(req);
+  const { error } = validator;
+  displayErrorMessages(error, res, next);
+};
+
 export {
-  validateSignup, 
-  isTripRequestValid, 
+  validateSignup,
+  isTripRequestValid,
   validatePassword,
   displayErrorMessages,
   validateRole,
   validationMethods,
   isTripRequestsSearchValid,
   checkAccommodationBookingInfo,
+  handleRequestStatusUpdate,
+  handleRequestReassignment,
 };

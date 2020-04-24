@@ -9,15 +9,19 @@ module.exports = (sequelize, DataTypes) => {
     travelReason: DataTypes.STRING,
     travelType: DataTypes.STRING,
     status: DataTypes.STRING,
-    accommodation: DataTypes.BOOLEAN
+    accommodation: DataTypes.BOOLEAN,
+    handledBy: DataTypes.INTEGER
   });
   request.associate = (models) => {
     request.hasMany(models.comment, {
       foreignKey: 'requestId',
       onDelete: 'CASCADE'
     });
-      request.belongsTo(models.user, {
+    request.belongsTo(models.user, {
       foreignKey: 'userId'
+    });
+    request.belongsTo(models.user, {
+      foreignKey: 'handledBy'
     });
   };
   return request;

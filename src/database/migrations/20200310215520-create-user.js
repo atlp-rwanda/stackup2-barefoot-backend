@@ -9,6 +9,7 @@ const {
   TRAVEL_ADMIN,
   TRAVEL_TEAM_MEMBER,
  } = roles;
+ 
 export default {
   up: (queryInterface, Sequelize) => queryInterface.createTable('users', {
     id: {
