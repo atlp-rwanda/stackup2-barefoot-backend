@@ -10,10 +10,6 @@ import UserService from '../services/authentication.service';
 const { getOneRequestFromDb, findTripRequestById } = requestService;
 const { errorResponse } = responseHandler;
 const {
-  notExistRequest,
-  notYourRequest,
-  notOpenRequest,
-  emptyUpdate,
   tripRequestNotFound,
   notExistUser,
   cannotAssignApproved,
@@ -48,10 +44,10 @@ const isRequestValid = async (req, res, next) => {
   const { requestId } = req.params;
   const result = await getOneRequestFromDb(requestId);
   if (Object.keys(req.body).length === 0) {
-    return errorResponse(res, badRequest, emptyUpdate);
+    return errorResponse(res, badRequest, customMessages.emptyUpdate);
   }
   if (!result) {
-    return errorResponse(res, badRequest, notExistRequest);
+    return errorResponse(res, badRequest, customMessages.notExistRequest);
   }
   const { dataValues } = result;
   req.requestOwner = dataValues.userId;
@@ -81,10 +77,10 @@ const isRequestOpenIsRequestYours = async (req, res, next) => {
   const owner = req.requestOwner;
   const status = req.requestStatus;
   if (tokenDecoded.id !== owner) {
-    return errorResponse(res, badRequest, notYourRequest);
+    return errorResponse(res, badRequest, customMessages.notYourRequest);
   }
   if (status !== PENDING) {
-    return errorResponse(res, badRequest, notOpenRequest);
+    return errorResponse(res, badRequest, customMessages.notOpenRequest);
   }
   if (!req.body.returnDate) {
     req.body = _.omit(req.body, 'returnDate');

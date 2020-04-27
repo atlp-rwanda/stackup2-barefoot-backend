@@ -21,6 +21,10 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'createdBy',
       timestamp: true
     });
+    accommodation.hasMany(models.rating, {
+      foreignKey: 'accommodationId',
+      onUpdate: 'CASCADE'
+    });
   };
   return accommodation;
 };

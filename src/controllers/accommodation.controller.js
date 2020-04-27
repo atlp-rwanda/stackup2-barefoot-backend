@@ -6,6 +6,7 @@ import statusCodes from '../utils/statusCodes';
 import AccommodationRoomService from '../services/accommodationRoom.service';
 import uploadImg from '../utils/profile.utils';
 import { offsetAndLimit } from '../utils/comment.utils';
+import RatingService from '../services/rating.service';
 
 const {
     successResponse,
@@ -16,6 +17,10 @@ const {
     badRequest,
     created, ok, notFound
 } = statusCodes;
+const {
+successRating,
+failedRating,
+} = customMsg;
 
 const {
     handleBookAccommodation,
@@ -175,5 +180,31 @@ export default class AccommodationController {
      */
     static deleteAccommodationRoom = async (req, res) => {
         deletion(req, AccommodationRoomService, res, customMsg.roomDeleted);
+    }
+
+            /**
+     * @param {Request} req Node/express requesT
+     * @param {Response} res Node/express response
+     * @returns {Object} Custom response with accommodation facility details
+     * @description Use this method to book an accommodation facility
+     */
+    static async rateAccommodation(req, res) {
+        try {
+            const ratingInfo = { ...req.body };
+            const ratingDetail = await RatingService.saveAll(ratingInfo);
+            return successResponse(
+                res, 
+                created, 
+                successRating, 
+                undefined, 
+                ratingDetail
+            );    
+        } catch (error) {
+            return errorResponse(
+                res, 
+                badRequest, 
+                failedRating
+            );
+        }
     }
 }

@@ -71,7 +71,6 @@ export default {
         roomType: 'QueenRoom'
 },
   bookAccommodation: {
-    accommodationId: 1,
     arrivalDate: new Date(Date.now() + 432000000),
     departureDate: new Date(Date.now() + 518400000),
   }

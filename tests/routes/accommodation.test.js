@@ -55,6 +55,8 @@ const {
 } = accommodationMockData;
 import mockData from '../data/mockData';
 
+let accommodationId;
+
 chai.use(chaiHttp);
 let authTokenTravelAdmin, authTokenSupplier, authTokenRequester, superUserToken, requestId2 = '';
 const requesterTripRequests = [];
@@ -176,6 +178,45 @@ describe('Accommodation tests', () => {
         done();
       });
   });
+  it('Will delete accommodation, expect it to return an object with message and and data as properties', (done) => {
+    chai
+        .request(server)
+        .delete('/api/accommodations/1')
+        .set('Authorization', authTokenTravelAdmin)
+        .end((err, res) => {
+            if (err) done(err);
+            expect(res).to.have.status(ok);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.property('message').to.be.a('string').to.equal(accommodationDeleted);
+            done();
+        });
+});
+it('Will delete accommodation, expect it to return an object with message and and data as properties', (done) => {
+    chai
+        .request(server)
+        .delete('/api/accommodations/2')
+        .set('Authorization', authTokenTravelAdmin)
+        .end((err, res) => {
+            if (err) done(err);
+            expect(res).to.have.status(ok);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.property('message').to.be.a('string').to.equal(accommodationDeleted);
+            done();
+        });
+});
+it('Will delete accommodation, expect it to return an object with message and and data as properties', (done) => {
+    chai
+        .request(server)
+        .delete('/api/accommodations/3')
+        .set('Authorization', authTokenTravelAdmin)
+        .end((err, res) => {
+            if (err) done(err);
+            expect(res).to.have.status(ok);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.property('message').to.be.a('string').to.equal(accommodationDeleted);
+            done();
+        });
+});
     it('Will not retrieve any accommodation, expect it to return an object with error message', (done) => {
         chai
             .request(server)
@@ -197,6 +238,7 @@ describe('Accommodation tests', () => {
             .send(accommodationValidData)
             .end((err, res) => {
                 if (err) done(err);
+                accommodationId = res.body.data.id;
                 expect(res).to.have.status(created);
                 expect(res.body).to.be.an('object');
                 expect(res.body).to.have.property('message').to.equal(accommodationCreated);
@@ -250,7 +292,7 @@ describe('Accommodation tests', () => {
     it('Will create accommodation room, expect it to return an object with message and and data as properties', (done) => {
         chai
             .request(server)
-            .post('/api/accommodations/1/rooms')
+            .post(`/api/accommodations/${accommodationId}/rooms`)
             .set('Authorization', authTokenTravelAdmin)
             .send(accommodationRoomValidData)
             .end((err, res) => {
@@ -265,7 +307,7 @@ describe('Accommodation tests', () => {
         it('Will not create room because is not travel admin, expect it to return an object with error as property', (done) => {
         chai
             .request(server)
-            .post('/api/accommodations/1/rooms')
+            .post(`/api/accommodations/${accommodationId}/rooms`)
             .set('Authorization', authTokenRequester)
             .send(accommodationRoomValidData)
             .end((err, res) => {
@@ -279,7 +321,7 @@ describe('Accommodation tests', () => {
     it('Will not create room because it is already exists, expect it to return an object with error as property', (done) => {
         chai
             .request(server)
-            .post('/api/accommodations/1/rooms')
+            .post(`/api/accommodations/${accommodationId}/rooms`)
             .set('Authorization', authTokenTravelAdmin)
             .send(accommodationRoomValidData)
             .end((err, res) => {
@@ -293,7 +335,7 @@ describe('Accommodation tests', () => {
     it('Will not create room because there is no data sent, expect it to return an object with error as property', (done) => {
         chai
             .request(server)
-            .post('/api/accommodations/1/rooms')
+            .post(`/api/accommodations/${accommodationId}/rooms`)
             .set('Authorization', authTokenTravelAdmin)
             .send({})
             .end((err, res) => {
@@ -376,12 +418,11 @@ describe('Accommodation tests', () => {
     it('Will update accommodations, expect it to return an object with data as property', (done) => {
         chai
             .request(server)
-            .patch('/api/accommodations/1')
+            .patch(`/api/accommodations/${accommodationId}`)
             .set('Authorization', authTokenTravelAdmin)
             .send(updateAccommodationValidData)
             .end((err, res) => {
                 if (err) done(err);
-                console.log(res.body);
                 expect(res).to.have.status(ok);
                 expect(res.body).to.be.an('object');
                 expect(res.body).to.have.property('data').to.be.an('object');
@@ -393,12 +434,11 @@ describe('Accommodation tests', () => {
     and an object containing  error message`, (done) => {
     chai
       .request(server)
-      .patch('/api/accommodations/1')
+      .patch(`/api/accommodations/${accommodationId}`)
       .set('Authorization', authTokenTravelAdmin)
       .attach('accommodationImage', `${__dirname}/img/q-icon.png`)
       .end((err, res) => {
         if (err) done(err);
-        console.log(res.body);
         expect(res).to.have.status(ok);
         expect(res.body).to.be.an('object');
         done();
@@ -524,7 +564,7 @@ describe('Accommodation tests', () => {
           .request(server)
           .post('/api/accommodations/book')
           .set('Authorization', authTokenRequester)
-          .send(bookAccommodation)
+          .send({ ...bookAccommodation, accommodationId })
           .end((err, res) => {
               if (err) done(err);
               const { error } = res.body;
@@ -542,6 +582,7 @@ describe('Accommodation tests', () => {
           .set('Authorization', authTokenRequester)
           .send({
               ...bookAccommodation,
+              accommodationId,
               tripRequestId: 9999999,
           })
           .end((err, res) => {
@@ -579,7 +620,11 @@ describe('Accommodation tests', () => {
           .request(server)
           .post('/api/accommodations/book')
           .set('Authorization', authTokenRequester)
-          .send({ ...bookAccommodation, tripRequestId: requesterTripRequests[0].id })
+          .send({ 
+               ...bookAccommodation, 
+               accommodationId, 
+               tripRequestId: requesterTripRequests[0].id 
+            })
           .end((err, res) => {
               if (err) done(err);
               const { data, message } = res.body;
@@ -597,7 +642,11 @@ describe('Accommodation tests', () => {
           .request(server)
           .post('/api/accommodations/book')
           .set('Authorization', authTokenRequester)
-          .send({ ...bookAccommodation, tripRequestId: requesterTripRequests[0].id })
+          .send({ 
+              ...bookAccommodation, 
+              accommodationId, 
+              tripRequestId: requesterTripRequests[0].id 
+            })
           .end((err, res) => {
               if (err) done(err);
               const { error } = res.body;
@@ -612,7 +661,7 @@ describe('Accommodation tests', () => {
   it('Will delete not delete accommodation because it has some rooms, expect it to return an object with error as property', (done) => {
     chai
         .request(server)
-        .delete('/api/accommodations/1')
+        .delete(`/api/accommodations/${accommodationId}`)
         .set('Authorization', authTokenTravelAdmin)
         .end((err, res) => {
             if (err) done(err);
@@ -639,7 +688,7 @@ describe('Accommodation tests', () => {
     it('Will delete accommodation, expect it to return an object with message and and data as properties', (done) => {
         chai
             .request(server)
-            .delete('/api/accommodations/1')
+            .delete(`/api/accommodations/${accommodationId}`)
             .set('Authorization', authTokenTravelAdmin)
             .end((err, res) => {
                 if (err) done(err);

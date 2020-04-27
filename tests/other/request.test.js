@@ -26,7 +26,9 @@ const {
   duplicateUpdate,
   updateUser,
   updator,
-  loginSuperUser,
+  loginSuperUser, 
+  bookAccommodation,
+  managerCommentLogin
 } = mockData;
 const {
   invalidTravelType,
@@ -144,7 +146,7 @@ describe('One way trip request', () => {
       .send(tripRequesterManagerNoRquestYet)
       .end((err, res) => {
         if (err) done(err);
-        sequelize.query(UPDATE_USER_8_TO_MANAGER);
+        // sequelize.query(UPDATE_USER_8_TO_MANAGER);
         const { message, token } = res.body;
         expect(res.status).to.equal(statusCodes.created);
         expect(message);
@@ -186,7 +188,7 @@ describe('One way trip request', () => {
       .request(server)
       .post('/api/auth/login')
       .set('Accept', 'Application/json')
-      .send(managerLoginValidData)
+      .send(managerCommentLogin)
       .end((err, res) => {
         if (err) done(err);
         expect(res).to.have.status(200);
@@ -558,9 +560,9 @@ describe('Return trip request', () => {
   code and message and data as properties`, (done) => {
       chai
         .request(server)
-        .post('/api/trips/1/comment')
+        .post(`/api/trips/${requestId2}/comment`)
         .set('Authorization', authToken)
-        .send({ requestId: 1, comment: 'Comment with valid data on my request which is supposed to be inserted' })
+        .send({ requestId: requestId2, comment: 'Comment with valid data on my request which is supposed to be inserted' })
         .end((err, res) => {
           if (err) done(err);
           expect(res).to.have.status(created);
@@ -589,7 +591,7 @@ describe('Return trip request', () => {
     with 404 status code`, (done) => {
       chai
         .request(server)
-        .get('/api/trips/comment?requestId=1&page=10000')
+        .get(`/api/trips/comment?requestId=${requestId2}&page=10000`)
         .set('Authorization', authToken)
         .end((err, res) => {
           if (err) done(err);
@@ -603,8 +605,8 @@ describe('Return trip request', () => {
   return an object with message and data properties with 200 status code`, (done) => {
       chai
         .request(server)
-        .get('/api/trips/comment?requestId=5&page=1')
-        .set('Authorization', authTokenNoCommentYet)
+        .get(`/api/trips/comment?requestId=${requestId}&page=1`)
+        .set('Authorization', authToken)
         .end((err, res) => {
           if (err) done(err);
           expect(res).to.have.status(notFound);
@@ -680,8 +682,8 @@ describe('Return trip request', () => {
   401 status code and an object containing error message`, (done) => {
       chai
         .request(server)
-        .post('/api/trips/5/comment')
-        .set('Authorization', authToken)
+        .post(`/api/trips/${requestId}/comment`)
+        .set('Authorization', authTokenNoCommentYet)
         .send({ comment: 'Comment on other users while I am bot a manager' })
         .end((err, res) => {
           if (err) done(err);
@@ -712,7 +714,7 @@ describe('Return trip request', () => {
   and an object with message and data properties`, (done) => {
       chai
         .request(server)
-        .post('/api/trips/1/comment')
+        .post(`/api/trips/${requestId2}/comment`)
         .set('Authorization', authTokenManager)
         .send({ comment: 'Comment with valid data as a manager which is supposed to be inserted' })
         .end((err, res) => {
@@ -727,7 +729,7 @@ describe('Return trip request', () => {
 
     it('Will read all comments any comment as a manager', (done) => {
       chai.request(server)
-        .get('/api/trips/comment?requestId=1&page=1')
+        .get(`/api/trips/comment?requestId=${requestId2}&page=1`)
         .set('Authorization', authTokenManager)
         .end((err, res) => {
           if (err) done(err);
@@ -741,7 +743,7 @@ describe('Return trip request', () => {
 
     it('Will read any comment as a manager', (done) => {
       chai.request(server)
-        .get('/api/trips/comment?requestId=1&page=1')
+        .get(`/api/trips/comment?requestId=${requestId2}&page=1`)
         .set('Authorization', authTokenNoCommentYet)
         .end((err, res) => {
           if (err) done(err);
@@ -752,7 +754,7 @@ describe('Return trip request', () => {
     });
     it('Will read all comments on a single request', (done) => {
       chai.request(server)
-        .get('/api/trips/comment?requestId=1&page=1')
+        .get(`/api/trips/comment?requestId=${requestId2}&page=1`)
         .set('Authorization', authToken)
         .end((err, res) => {
           if (err) done(err);
@@ -765,7 +767,7 @@ describe('Return trip request', () => {
     });
     it('Will read all comments on a single request without sending page number', (done) => {
       chai.request(server)
-        .get('/api/trips/comment?requestId=1')
+        .get(`/api/trips/comment?requestId=${requestId2}`)
         .set('Authorization', authToken)
         .end((err, res) => {
           if (err) done(err);
@@ -801,7 +803,7 @@ describe('Return trip request', () => {
     });
     it('Will try to read comment on a request which doesn\'t have any comment yet', (done) => {
       chai.request(server)
-        .get('/api/trips/comment?requestId=2&page=1')
+        .get(`/api/trips/comment?requestId=${requestId}&page=1`)
         .set('Authorization', authTokenManager)
         .end((err, res) => {
           if (err) done(err);
