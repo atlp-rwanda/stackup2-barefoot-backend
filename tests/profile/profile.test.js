@@ -6,7 +6,7 @@ import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
 import UserService from '../../src/services/user.service';
 
-const { requester3Account } = mockData;
+const { requester3Account, userTestAccount, userTestMandela } = mockData;
 
 let authTokenOfVerifiedUser;
 let authTokenOfUnVerifiedUser;
@@ -17,45 +17,12 @@ chai.use(chaiHttp);
 chai.should();
 
 describe('Profile tests', () => {
-  it(`Login with valid data especially email which are in the db, should return an
-   object with a property of message and token`, (done) => {
+  it('Login a verified user', (done) => {
     chai
       .request(server)
       .post('/api/auth/login')
       .set('Accept', 'Application/json')
-      .send(mockData.realLoginDataFromDbVerifiedUser)
-      .end((err, res) => {
-        if (err) done(err);
-        expect(res).to.have.status(statusCodes.ok);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('message').to.equal(customMessages.loginSuccess);
-        expect(res.body).to.have.property('token');
-        done();
-      });
-  });
-  it(`Login with valid data especially email which are in the db, should return an
-   object with a property of message and token`, (done) => {
-    chai
-      .request(server)
-      .post('/api/auth/login')
-      .set('Accept', 'Application/json')
-      .send(mockData.realLoginDataFromDbVerifiedUserwithUsername)
-      .end((err, res) => {
-        if (err) done(err);
-        expect(res).to.have.status(statusCodes.ok);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('message').to.equal(customMessages.loginSuccess);
-        expect(res.body).to.have.property('token');
-        done();
-      });
-  });
-
-  it('Login with valid data from db containing verified user', (done) => {
-    chai
-      .request(server)
-      .post('/api/auth/login')
-      .set('Accept', 'Application/json')
-      .send(mockData.realLoginDataFromDbVerifiedUser)
+      .send({ email: userTestAccount.email, password: userTestAccount.password })
       .end((err, res) => {
         if (err) done(err);
         authTokenOfVerifiedUser = res.body.token;
@@ -67,12 +34,12 @@ describe('Profile tests', () => {
       });
   });
 
-  it('Login with valid data from db containing unverified user', (done) => {
+  it('Login an unverified user', (done) => {
     chai
       .request(server)
       .post('/api/auth/login')
       .set('Accept', 'Application/json')
-      .send(mockData.realLoginDataFromDbUnVerifiedUser)
+      .send({ email: userTestMandela.email, password: userTestMandela.password })
       .end((err, res) => {
         if (err) done(err);
         authTokenOfUnVerifiedUser = res.body.token;
@@ -80,18 +47,6 @@ describe('Profile tests', () => {
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('message').to.equal(customMessages.loginSuccess);
         expect(res.body).to.have.property('token');
-        done();
-      });
-  });
-  it('Should verify user account', (done) => {
-    chai.request(server)
-      .get(`/api/auth/verify?token=${authTokenOfVerifiedUser}`)
-      .end((err, res) => {
-        if (err) done(err);
-        const { message } = res.body;
-        expect(res.status).to.equal(statusCodes.ok);
-        expect(message).to.be.a('string');
-        expect(message).to.equal(customMessages.verifyMessage);
         done();
       });
   });
@@ -116,7 +71,7 @@ describe('Profile tests', () => {
     chai
       .request(server)
       .get('/api/profile')
-      .set('authorization', `${authTokenOfUnVerifiedUser}`)
+      .set('authorization', `Bearer ${authTokenOfUnVerifiedUser}`)
       .end((err, res) => {
         if (err) done(err);
         expect(res).to.have.status(statusCodes.unAuthorized);
@@ -211,7 +166,6 @@ describe('Profile tests', () => {
       .attach('myImg', `${__dirname}/assets/img/welcometothenewworld.txt`)
       .end((err, res) => {
         if (err) done(err);
-        console.log('This is the unsupported mediatype msg', res.body);
         expect(res).to.have.status(statusCodes.unsupportedMediaType);
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('error').to.equal(customMessages.invalidPictureExt);
@@ -284,7 +238,10 @@ describe('Profile tests', () => {
       .request(server)
       .patch('/api/profile/password')
       .set('authorization', `Bearer ${authTokenOfVerifiedUser}`)
-      .send(mockData.changeUserPasswordWithValidData)
+      .send({
+        password: mockData.changeUserPasswordWithValidData.password,
+        oldPassword: userTestAccount.password,
+      })
       .end((err, res) => {
         if (err) done(err);
         expect(res).to.have.status(statusCodes.ok);

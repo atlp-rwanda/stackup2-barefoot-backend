@@ -8,6 +8,9 @@ import mockData from '../data/mockData';
 import redisClient from '../../src/database/redis.config';
 import BackgroundTasks from '../../src/utils/backgroundTasks.utils';
 import scheduler from '../../src/taskScheduler';
+import models from '../../src/database/models';
+import { DROP_USER } from '../data/insert-sample-data-in_db';
+import roles from '../../src/utils/userRoles.utils';
 
 let generatedToken;
 const loginToken = {
@@ -25,12 +28,20 @@ const {
   invalidAddress,
   signupDataNotVerified,
   testingTokens,
+  managerTestAccount,
+  loginSuperUser,
+  userTestAccount,
+  userTestMusk,
+  userTestMandela,
 } = mockData;
 
 const { expiredTokenCleanUp } = BackgroundTasks;
+const { sequelize } = models;
 
 chai.use(chaiHttp);
 chai.should();
+
+let superUserToken = '';
 
 describe('User sign up', () => {
   it('Should return 400 if firstname is invalid', (done) => {
@@ -362,26 +373,95 @@ describe('Verify the account tests', () => {
     chai.request(server)
       .get(`/api/auth/verify?token=${generatedToken}`)
       .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an('object');
-        expect(res.body).to.have.property('message');
+        if (err) done(err);
+        const { message } = res.body;
+        expect(res.status).to.equal(statusCodes.ok);
+        expect(message);
+        expect(message).to.equal(customMessages.verifyMessage);
+        sequelize.query(DROP_USER);
         done();
       });
   });
-});
-
-describe('User logout', () => {
-  it('Verify user should return 200', (done) => {
+  it('Verifying a user who does not exist should return 404', (done) => {
+    chai.request(server)
+      .get(`/api/auth/verify?token=${generatedToken}`)
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.notFound);
+        expect(error);
+        expect(error).to.equal(customMessages.notExistUser);
+        done();
+      });
+  });
+  it('User sign up should return 201', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(userTestMusk)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message, token } = res.body;
+        generatedToken = token;
+        expect(res.status).to.equal(statusCodes.created);
+        expect(message);
+        expect(message).to.equal(customMessages.userSignupSuccess);
+        expect(token);
+        done();
+      });
+  });
+  it('Should verify the email with token', (done) => {
     chai.request(server)
       .get(`/api/auth/verify?token=${generatedToken}`)
       .end((err, res) => {
         if (err) done(err);
         const { message } = res.body;
         expect(res.status).to.equal(statusCodes.ok);
+        expect(message);
         expect(message).to.equal(customMessages.verifyMessage);
         done();
       });
   });
+  it('Verifying an already verified user should return 409', (done) => {
+    chai.request(server)
+      .get(`/api/auth/verify?token=${generatedToken}`)
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.conflict);
+        expect(error);
+        expect(error).to.equal(customMessages.accountAlreadyVerified);
+        done();
+      });
+  });
+  it('Verifying a user with an expired token should return 400', (done) => {
+    chai.request(server)
+      .get(`/api/auth/verify?token=${testingTokens.expiredToken}`)
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.tokenInvalid);
+        done();
+      });
+  });
+  it('Verifying the user email without the token should return 400', (done) => {
+    chai.request(server)
+      .get('/api/auth/verify?token=')
+
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error).to.be.a('string');
+        expect(error).to.equal(customMessages.tokenMissing);
+        done();
+      });
+  });
+});
+
+describe('User logout', () => {
   it('First time logout should return 200', (done) => {
     chai
       .request(server)
@@ -434,6 +514,7 @@ describe('User logout', () => {
       });
   });
 });
+
 describe('Cron jobs for background tasks', () => {
   it('Should start the scheduler', async () => {
     scheduler.start();
@@ -443,6 +524,114 @@ describe('Cron jobs for background tasks', () => {
   });
   it('Should remove expired tokens if any', async () => {
     const result = await expiredTokenCleanUp();
+  });
+});
+
+describe('Create manager account', () => {
+  it('User sign up should return 201', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(managerTestAccount)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message, token } = res.body;
+        generatedToken = token;
+        expect(res.status).to.equal(statusCodes.created);
+        expect(message);
+        expect(message).to.equal(customMessages.userSignupSuccess);
+        expect(token);
+        done();
+      });
+  });
+  it('Should verify the email with token', (done) => {
+    chai.request(server)
+      .get(`/api/auth/verify?token=${generatedToken}`)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message } = res.body;
+        expect(res.status).to.equal(statusCodes.ok);
+        expect(message);
+        expect(message).to.equal(customMessages.verifyMessage);
+        done();
+      });
+  });
+  it('User sign up should return 201', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(userTestAccount)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message, token } = res.body;
+        generatedToken = token;
+        expect(res.status).to.equal(statusCodes.created);
+        expect(message);
+        expect(message).to.equal(customMessages.userSignupSuccess);
+        expect(token);
+        done();
+      });
+  });
+  it('Should verify the email with token', (done) => {
+    chai.request(server)
+      .get(`/api/auth/verify?token=${generatedToken}`)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message } = res.body;
+        expect(res.status).to.equal(statusCodes.ok);
+        expect(message);
+        expect(message).to.equal(customMessages.verifyMessage);
+        done();
+      });
+  });
+  it('Signin as super user should return 200', done => {
+    chai
+      .request(server)
+      .post('/api/auth/login')
+      .set('Accept', 'Application/json')
+      .send(loginSuperUser)
+      .end((err, res) => {
+        if (err) done(err);
+        const { token } = res.body;
+        superUserToken = `Bearer ${token}`;
+        expect(res).to.have.status(statusCodes.ok);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('message').to.equal(customMessages.loginSuccess);
+        done();
+      });
+  });
+  it('Super User assigning role of manager to a regular user should return 200', done => {
+    chai
+      .request(server)
+      .patch('/api/roles/assign-role')
+      .set('Accept', 'Application/json')
+      .set('authorization', superUserToken)
+      .send({
+        email: managerTestAccount.email,
+        role: roles.MANAGER,
+      })
+      .end((err, res) => {
+        if (err) done(err);
+        expect(res).to.have.status(statusCodes.ok);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('message').to.equal(customMessages.roleAssigned);
+        done();
+      });
+  });
+  it('User sign up should return 201', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send(userTestMandela)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message, token } = res.body;
+        expect(res.status).to.equal(statusCodes.created);
+        expect(message);
+        expect(message).to.equal(customMessages.userSignupSuccess);
+        expect(token);
+        done();
+      });
   });
 });
 

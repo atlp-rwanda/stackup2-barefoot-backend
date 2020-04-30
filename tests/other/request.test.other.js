@@ -24,10 +24,12 @@ const {
   invalidMultiCitiesTripRequest,
   multiCitiesNotSameArrayLength,
   multiCitiesFirstOriginEqualToDestination,
+  travelUpdated,
+  requesterSearchTripRequests,
 } = mockData;
-const { 
+const {
   duplicateTripRequest,
-  tripRequestCreated, 
+  tripRequestCreated,
   verifyMessage,
   arrayLengthError,
   travelFromEqualError,
@@ -73,8 +75,8 @@ describe('Manager approves and reject trip request', () => {
   it('Should verify requester account', (done) => {
     chai.request(server)
       .get(`/api/auth/verify?token=${authToken.split(' ').pop()}`)
-      .end((err, res) => { 
-        if (err) done(err); 
+      .end((err, res) => {
+        if (err) done(err);
         const { message } = res.body;
         expect(res.status).to.equal(ok);
         expect(message).to.be.a('string');
@@ -126,7 +128,7 @@ describe('Manager approves and reject trip request', () => {
         done();
       });
   });
-  
+
   it('User approving request is not a manager, should return 401', (done) => {
     chai
       .request(server)
@@ -283,6 +285,21 @@ describe('Manager approves and reject trip request', () => {
         done();
       });
   });
+  it('Requesting the most traveled destinations, should return 200', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/most-traveled-destinations')
+      .set('Authorization', requesterToken)
+      .end((err, res) => {
+        if (err) done(err);
+        const { message, data } = res.body;
+        expect(res.status).to.equal(statusCodes.ok);
+        expect(message).to.equal(customMessages.placesRetrieved);
+        expect(data);
+        expect(data).to.be.an('array');
+        done();
+      });
+  });
   it('Manager approving request that has already been approved should return 409', (done) => {
     chai
       .request(server)
@@ -377,7 +394,7 @@ describe('Manager assigns trip request to another manager', () => {
         const { message, data } = res.body;
         expect(res.status).to.equal(created);
         expect(message);
-        expect(data); 
+        expect(data);
         expect(data).to.be.an('object');
         expect(message).to.be.a('string');
         expect(message).to.equal(tripRequestCreated);
@@ -603,6 +620,55 @@ describe('Manager assigns trip request to another manager', () => {
   });
 });
 
+describe('Other tests on requests', () => {
+  it('Updating a trip request which is not open should return 400', (done) => {
+    const requestId = tripId;
+    chai
+      .request(server)
+      .patch(`/api/trips/${requestId}`)
+      .set('Authorization', requesterToken)
+      .send(travelUpdated)
+      .end((err, res) => {
+        if (err) done(err);
+        const { error } = res.body;
+        expect(res.status).to.equal(statusCodes.badRequest);
+        expect(error);
+        expect(error).to.equal(customMessages.notOpenRequest);
+        done();
+      });
+  });
+  it('Search trip requests should return 200', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', manager1Token)
+      .query(requesterSearchTripRequests)
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        expect(res.status).to.equal(statusCodes.ok);
+        expect(data);
+        expect(data).to.be.an('array');
+        done();
+      });
+  });
+  it('Search trip requests by travel reason should return 200', (done) => {
+    chai
+      .request(server)
+      .get('/api/trips/search')
+      .set('Authorization', manager1Token)
+      .query({ ...requesterSearchTripRequests, field: 'travelReason', search: 'business meeting' })
+      .end((err, res) => {
+        if (err) done(err);
+        const { data } = res.body;
+        expect(res.status).to.equal(statusCodes.ok);
+        expect(data);
+        expect(data).to.be.an('array');
+        done();
+      });
+  });
+});
+
 describe('Multi City Trip Request', () => {
   it('should create a multi cities trip request', (done) => {
     chai
@@ -621,7 +687,6 @@ describe('Multi City Trip Request', () => {
         done();
       });
   });
-
   it('should not create a multi cities trip request if requests greater than 2', (done) => {
     chai
       .request(server)
@@ -636,7 +701,6 @@ describe('Multi City Trip Request', () => {
         done();
       });
   });
-
   it('Request first destination should be the same as the second origin', (done) => {
     chai
       .request(server)
