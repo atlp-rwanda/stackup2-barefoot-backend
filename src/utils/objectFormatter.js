@@ -3,7 +3,7 @@ import generateUniqueUsername from './usernameGenerator.utils';
  * @param {object} data
  * @param {string} provider
  * @returns {object} response
- * @description Returns an object to create an instanace in db
+ * @description Returns an object to create an instance in db
  */
 const fbObjectFormatter = (data, provider) => {
   const newUser = {};
@@ -24,7 +24,7 @@ const fbObjectFormatter = (data, provider) => {
  * @param {string} provider
  * @param {string} id
  * @returns {object} response
- * @description Returns an object to create an instanace in db
+ * @description Returns an object to create an instance in db
  */
 const googleObjectFormatter = (data, provider, id) => {
   const { given_name: givenName, family_name: familyName, email } = data;

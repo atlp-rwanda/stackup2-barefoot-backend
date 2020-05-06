@@ -6,6 +6,7 @@ import statusCodes from '../utils/statusCodes';
 import AccommodationRoomService from '../services/accommodationRoom.service';
 import uploadImg from '../utils/profile.utils';
 import { offsetAndLimit } from '../utils/comment.utils';
+import BookAccommodationService from '../services/bookAccommodationService.service';
 
 const {
     successResponse,
@@ -16,10 +17,6 @@ const {
     badRequest,
     created, ok, notFound
 } = statusCodes;
-
-const {
-    handleBookAccommodation,
-} = AccommodationService;
 
 
 /**
@@ -72,7 +69,7 @@ export default class AccommodationController {
     static async bookAccommodation(req, res) {
         try {
             const bookingInfo = req.body;
-            const bookingDetail = await handleBookAccommodation(bookingInfo);
+            const bookingDetail = await BookAccommodationService.saveAll(bookingInfo);
             successResponse(res, created, customMsg.bookedAccommodation, undefined, bookingDetail);
         } catch (error) {
             errorResponse(res, badRequest, customMsg.duplicateAccommodationBookings);

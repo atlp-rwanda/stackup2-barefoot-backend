@@ -4,13 +4,12 @@ import server from '../../src/index';
 import customMessages from '../../src/utils/customMessages';
 import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
-import UserService from '../../src/services/authentication.service';
+import UserService from '../../src/services/user.service';
 
 const {
   manager1Account,
   manager2Account,
   unexistantUserId,
-  tripRequestSample1,
   tripRequestSample2,
   requester3Account,
   loginSuperUser,
@@ -22,8 +21,6 @@ const {
   invalidMultiCitiesTripRequest,
   multiCitiesNotSameArrayLength,
   multiCitiesFirstOriginEqualToDestination,
-  oneWayTripRequester1,
-  duplicateUpdate
 } = mockData;
 const { 
   duplicateTripRequest,
@@ -33,10 +30,8 @@ const {
   travelFromEqualError,
   travelDateError,
   travelFromNETravelTo,
-  requestUpdated
 } = customMessages;
 const { created, ok, badRequest } = statusCodes;
-const { findUserByEmailOrUsername } = UserService;
 
 chai.use(chaiHttp);
 chai.should();
@@ -249,7 +244,7 @@ describe('Manager approves and reject trip request', () => {
       });
   });
   it('Should find a new user (manager 1) by email', (done) => {
-    findUserByEmailOrUsername(manager1Account.email)
+    UserService.getOneBy({ email: manager1Account.email })
       .then(data => {
         const { id } = data.dataValues;
         managerId = id;
@@ -385,7 +380,7 @@ describe('Manager assigns trip request to another manager', () => {
       });
   });
   it('Should find a new user by email', (done) => {
-    findUserByEmailOrUsername(manager2Account.email)
+    UserService.getOneBy({ email: manager2Account.email })
       .then(data => {
         const { id } = data.dataValues;
         userId = id;
@@ -745,4 +740,3 @@ describe('Multi City Trip Request', () => {
       });
   });
 });
-

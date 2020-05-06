@@ -328,7 +328,7 @@ export default {
   updateProfileWithAlreadyExistsUsername: {
     firstName: 'Emma',
     lastName: 'descholar',
-    username: 'UDivine',
+    username: 'initialuser',
     gender: 'Male',
     birthDate: '2000-01-01',
     preferredCurrency: 'USD',

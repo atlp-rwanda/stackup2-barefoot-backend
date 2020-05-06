@@ -4,10 +4,9 @@ import server from '../../src/index';
 import customMessages from '../../src/utils/customMessages';
 import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
-import UserService from '../../src/services/authentication.service';
+import UserService from '../../src/services/user.service';
 
 const { requester3Account } = mockData;
-const { findUserByEmailOrUsername } = UserService;
 
 let authTokenOfVerifiedUser;
 let authTokenOfUnVerifiedUser;
@@ -346,7 +345,7 @@ describe('Update Profile Tests - Line Manager', () => {
       });
   });
   it('Should find a user by email', (done) => {
-    findUserByEmailOrUsername(requester3Account.email)
+    UserService.getOneBy({ email: requester3Account.email })
       .then(data => {
         const { id } = data.dataValues;
         managerId = id;

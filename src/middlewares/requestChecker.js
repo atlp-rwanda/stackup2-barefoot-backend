@@ -1,13 +1,13 @@
 import _ from 'lodash';
-import requestService from '../services/request.service';
+import RequestService from '../services/request.service';
+import TripService from '../services/trip.service';
 import responseHandler from '../utils/responseHandlers';
 import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
 import requestStatus from '../utils/tripRequestsStatus.util';
 import userRoles from '../utils/userRoles.utils';
-import UserService from '../services/authentication.service';
+import UserService from '../services/user.service';
 
-const { getOneRequestFromDb, getOneRequestFromDb1, findTripRequestById } = requestService;
 const { errorResponse } = responseHandler;
 const {
   notExistRequest,
@@ -44,7 +44,7 @@ const checkData = async (newData, existingData) => (
  * get request id from request parameter, checks if the request exist or not
  */
 const requestFromDb2 = async (body, id) => {
-  const result1 = await getOneRequestFromDb1(id);
+  const result1 = await TripService.getOneBy({ id });
   const { dataValues } = result1;
   return {
     travelTo: checkData(body, dataValues.travelTo),
@@ -64,7 +64,7 @@ const requestFromDb2 = async (body, id) => {
  */
 const isRequestValid = async (req, res, next) => {
   const { requestId } = req.params;
-  const result = await getOneRequestFromDb(requestId);
+  const result = await RequestService.getOneBy({ id: requestId });
   
   if (Object.keys(req.body).length === 0) {
     return errorResponse(res, badRequest, emptyUpdate);
@@ -121,7 +121,7 @@ const isRequestOpenIsRequestYours = async (req, res, next) => {
    */
 const checkTripRequest = async (req, res, next) => {
   const { tripRequestId } = req.params;
-  const tripRequest = await findTripRequestById(tripRequestId);
+  const tripRequest = await RequestService.getOneBy({ id: tripRequestId });
   if (tripRequest) {
     const { dataValues } = tripRequest;
     const { status } = dataValues;
@@ -148,7 +148,7 @@ const isNewUserAManager = async (req, res, next) => {
   if (req.tripRequestCurrentStatus === REJECTED) {
     return errorResponse(res, forbidden, cannotAssignRejected);
   }
-  const user = await UserService.getUserById(userId);
+  const user = await UserService.getOneBy({ id: userId });
   if (!user) return errorResponse(res, notFound, notExistUser);
   const { role } = user;
   if (role !== MANAGER) return errorResponse(res, forbidden, cannotAssignToNonManager);
@@ -166,7 +166,7 @@ const isNewUserAManager = async (req, res, next) => {
 const checkRequesterManager = async (req, res, next) => {
   const { userId, handledBy } = req.tripRequestData;
   const managerId = req.sessionUser.id;
-  const user = await UserService.getUserById(userId);
+  const user = await UserService.getOneBy({ id: userId });
   const { lineManager } = user;
   if (managerId !== lineManager && managerId !== handledBy) {
     return errorResponse(res, unAuthorized, requesterNotMyDirectReport);

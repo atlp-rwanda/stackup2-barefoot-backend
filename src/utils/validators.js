@@ -1,6 +1,7 @@
 import Joi from '@hapi/joi';
 import customMessages from './customMessages';
-import { validationMethods } from './validations';
+import { validationMethods } from './validations-previous';
+import TripService from '../services/trip.service';
 import RequestService from '../services/request.service';
 
 const {
@@ -29,7 +30,7 @@ const {
   invalidBookAccommodationDepartureDate
 } = customMessages;
 
- const { findDate, findUser } = RequestService;
+//  const { findDate, findUser } = RequestService;
  const maxDate = new Date().setHours(0, 0, 0, 0) + 15811200000;
  const minDate = new Date().setHours(0, 0, 0, 0) - 86400000;
  const joiTType = Joi.string()
@@ -337,7 +338,8 @@ static async validationMTripRequest(tripRequestData) {
      * @returns {Object} return error
      */
     static findUserDate = async (travelDate, id) => {
-      if (await findDate(travelDate) && await findUser(id)) {
+      if (await TripService.getOneBy({ travelDate })
+       && await RequestService.getOneBy({ userId: id })) {
         return true; 
         }
         return false;

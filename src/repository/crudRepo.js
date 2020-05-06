@@ -33,7 +33,7 @@ class CrudRepository {
      */
     constructor() {
         this.model = {};
-        this.associateTable = {};
+        this.associateTable = [];
     }
 
      /**
@@ -58,17 +58,19 @@ class CrudRepository {
      */
   getAndCountAllIncludeAssociation = async (whereCondition, offset, limit) => {
       const isWhereConditionValid = validateWhereCondition(whereCondition);
+      const inclusion = this.associateTable.map(table => ({ model: table }));
+      
         const result = isWhereConditionValid ? await this.model.findAndCountAll({
             where: whereCondition,
             offset,
             limit,
             order: [['createdAt', 'DESC']],
-            include: { model: this.associateTable }
+            include: inclusion
         }) : await this.model.findAndCountAll({
             offset,
             limit,
             order: [['createdAt', 'DESC']],
-            include: { model: this.associateTable }
+            include: inclusion
         });
         return result;
     }
