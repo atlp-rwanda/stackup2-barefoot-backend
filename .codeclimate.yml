@@ -36,8 +36,8 @@ checks:
     enabled: true
   identical-code:
     enabled: true
-exclude_patterns: 
-    - "src/database/migrations"
+exclude_patterns:
+    - "src/database/migrations/"
     - "src/database/models"
     - "src/database/seeders"
     - "tests/"

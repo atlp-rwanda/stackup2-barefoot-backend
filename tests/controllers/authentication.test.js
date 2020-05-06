@@ -5,7 +5,6 @@ import server from '../../src/index';
 import customMessages from '../../src/utils/customMessages';
 import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
-import AuthenticationService from '../../src/services/authentication.service';
 import redisClient from '../../src/database/redis.config';
 import BackgroundTasks from '../../src/utils/backgroundTasks.utils';
 import scheduler from '../../src/taskScheduler';
@@ -370,13 +369,7 @@ describe('Verify the account tests', () => {
       });
   });
 });
-describe('Testing functions from authentication service class', () => {
-  it('Function findUserByEmailOrUsername() expect to return a user', async () => {
-    const { findUserByEmailOrUsername } = AuthenticationService;
-    const returnedUser = await findUserByEmailOrUsername(mockData.findUserByEmailOfUsername);
-    expect(returnedUser).to.be.an('object');
-  });
-});
+
 describe('User logout', () => {
   it('Verify user should return 200', (done) => {
     chai.request(server)

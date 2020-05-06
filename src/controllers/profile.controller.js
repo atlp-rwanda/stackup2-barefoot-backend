@@ -1,15 +1,13 @@
 import _ from 'lodash';
-import ProfileService from '../services/profile.service';
 import responseHandlers from '../utils/responseHandlers';
 import messages from '../utils/customMessages';
 import statusCodes from '../utils/statusCodes';
 import utils from '../utils/authentication.utils';
-import AuthenticationService from '../services/authentication.service';
+import UserService from '../services/user.service';
 import uploadImg from '../utils/profile.utils';
 
 const { successResponse, errorResponse } = responseHandlers;
 const { passwordHasher, isPasswordTrue } = utils;
-const { findUserByEmailOrUsername } = AuthenticationService;
 /**
  * @description class ProfileController handles all profile controllers methods
  */
@@ -27,7 +25,7 @@ export default class ProfileController {
     } else {
       usernameTosearchInDb = req.sessionUser.username;
     }
-    const profileDataFromDb = await findUserByEmailOrUsername(usernameTosearchInDb);
+    const profileDataFromDb = await UserService.getOneBy({ username: usernameTosearchInDb });
     if (profileDataFromDb) {
       const { dataValues } = profileDataFromDb;
       const data = _.omit(dataValues, 'password');
@@ -48,15 +46,15 @@ export default class ProfileController {
 
     if (newProfileDataFromUi.username) {
       const { username } = newProfileDataFromUi;
-      const checkUsername = await findUserByEmailOrUsername(username);
+      const checkUsername = await UserService.getOneBy({ username });
       if (checkUsername) {
         return errorResponse(res, statusCodes.conflict, messages.usernameExistOrEmpty);
       }
     }
 
     const dataToInsertInDb = _.omit(newProfileDataFromUi, 'password');
-    const newUpdatedUser = await ProfileService
-      .updateProfile(dataToInsertInDb, req.sessionUser.email);
+    const newUpdatedUser = await UserService
+      .updateBy(dataToInsertInDb, { email: req.sessionUser.email });
     const data = _.omit(newUpdatedUser.dataValues, 'password');
     return successResponse(res, statusCodes.ok, messages.profileUpdateSuccess, undefined, data);
   }
@@ -71,10 +69,11 @@ export default class ProfileController {
     const { password, oldPassword } = req.body;
     const { email } = req.sessionUser;
     if (oldPassword) {
-      const updaterUser = await findUserByEmailOrUsername(email);
+      const updaterUser = await UserService.getOneBy({ email });
       if (await isPasswordTrue(oldPassword, updaterUser.dataValues.password)) {
         const newPassword = await passwordHasher(password);
-        const reslt = await ProfileService.changePassword(newPassword, req.sessionUser.email);
+        const reslt = await UserService
+          .updateBy({ password: newPassword }, { email: req.sessionUser.email });
         successResponse(res, statusCodes.ok, messages.passwordChangeSuccess, undefined, reslt);
       } else {
         errorResponse(res, statusCodes.unAuthorized, messages.incorrectOldPassword);

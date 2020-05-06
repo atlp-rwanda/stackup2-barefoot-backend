@@ -6,12 +6,14 @@ import statusCodes from '../utils/statusCodes';
 import customMessages from '../utils/customMessages';
 import objectFormatter from '../utils/objectFormatter';
 import passportResponse from '../utils/passportResponse';
-import UserService from '../services/authentication.service';
+import UserService from '../services/user.service';
 import sendMail from '../utils/email.util';
 import { resetMessage, changedMessage } from '../utils/emailMessages';
-import sendEmail from '../services/sendEmail.service';
+import sendEmail from '../utils/sendEmail.util';
 import redisClient from '../database/redis.config';
+import userRole from '../utils/userRoles.utils';
 
+const { REQUESTER } = userRole;
 const {
   passwordHasher,
   generateToken,
@@ -19,13 +21,7 @@ const {
   decodeToken
 } = utils;
 const { successResponse, errorResponse, updatedResponse } = responseHandlers;
-const {
-  handleSignUp,
-  findUserByEmailOrUsername,
-  findUserEmailIfExist,
-  updateUserPassword,
-  updateIsVerified
-} = UserService;
+
 const {
   fbObjectFormatter,
   googleObjectFormatter
@@ -44,19 +40,31 @@ export default class AuthenticationController {
    * @returns {object} response json object
    * @description User sign up controller
    */
-  static async signUp(req, res) {
+  static signUp = async (req, res) => {
     const payload = await getFormData(req.body);
     const { email, username } = payload;
-    const checkEmail = await findUserEmailIfExist(email.toLowerCase());
-    const checkUsername = await findUserByEmailOrUsername(username);
+    const checkEmail = await UserService.getOneBy({ email: email.toLowerCase() });
+    const checkUsername = await UserService.getOneBy({ username });
     if (checkEmail || checkUsername) {
       return errorResponse(res, statusCodes.conflict, customMessages.alreadyExistEmailOrUsername);
     }
     const password = await passwordHasher(payload.password);
     const dataWithoutPassword = _.omit(payload, 'password');
     const userData = { ...dataWithoutPassword, password };
-    const saveUser = await handleSignUp(userData);
-    const savedUserObject = _.omit(saveUser, 'password');
+
+
+    const role = REQUESTER;
+    const isVerified = false;
+    const provider = 'Barefootnomad';
+    const newData = {
+      ...userData,
+      provider,
+      role,
+      isVerified,
+    };
+
+    const { dataValues } = await UserService.saveAll(newData);
+    const savedUserObject = _.omit(dataValues, 'password');
     const token = await generateToken(savedUserObject);
     await sendEmail.sendSignUpVerificationLink(req.body.email, `${process.env.APP_URL}/api/auth/verify?token=${token}`, req.body.firstName);
     return successResponse(res, statusCodes.created, customMessages.userSignupSuccess, token);
@@ -85,7 +93,7 @@ export default class AuthenticationController {
     const {
       intro, instruction, text
     } = resetMessage;
-      const users = await findUserByEmailOrUsername(email.toLowerCase());
+      const users = await UserService.getOneBy({ email: email.toLowerCase() });
       if (users) {
         const user = users.dataValues;
         const token = await generateToken(user);
@@ -110,10 +118,10 @@ export default class AuthenticationController {
     } = changedMessage;
 
     const userDetails = await decodeToken(token);
-    const users = await findUserByEmailOrUsername(userDetails.email);
+    const users = await UserService.getOneBy({ email: userDetails.email });
     const user = users.dataValues;
     const hashed = await passwordHasher(password);
-    await updateUserPassword(hashed, user.id);
+    await UserService.updateBy({ password: hashed }, { id: user.id });
     await sendMail(user.email, user.firstName, intro, instruction, text, '#');
     return updatedResponse(res, statusCodes.ok, customMessages.changed);
   }
@@ -122,7 +130,7 @@ export default class AuthenticationController {
     const { token } = req.query;
     const decoded = jwtDecode(token);
     const { email } = decoded;
-    await updateIsVerified(email);
+    await UserService.updateBy({ isVerified: true }, { email });
     return successResponse(res, statusCodes.ok, customMessages.verifyMessage);
   }
 

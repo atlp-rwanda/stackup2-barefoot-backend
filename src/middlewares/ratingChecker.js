@@ -3,6 +3,7 @@ import customMessages from '../utils/customMessages';
 import responseHandler from '../utils/responseHandlers';
 import RequestService from '../services/request.service';
 import AccommodationService from '../services/accommodation.service';
+import BookAccommodationService from '../services/bookAccommodationService.service';
 
 const { errorResponse } = responseHandler;
 const { badRequest } = statusCodes;
@@ -12,7 +13,7 @@ const {
     notBookingOwner,
     beforeTripDate, 
 } = customMessages;
-const { findTripRequestById } = RequestService;
+// const { findTripRequestById } = RequestService;
 const { 
   getBookedAccommodationByRequestId, 
 } = AccommodationService;
@@ -26,7 +27,7 @@ const {
  */
 const isTripRequestValidIsYours = async (req, res, next) => {
   const tokenDecoded = req.sessionUser;
-  const request = await findTripRequestById(req.body.requestId);
+  const request = await RequestService.getOneBy({ id: req.body.requestId });
   if (!request) {
       return errorResponse(res, badRequest, requestNotExists);
   }
@@ -47,7 +48,8 @@ const isTripRequestValidIsYours = async (req, res, next) => {
  * get request id from request body, checks if the request exist or not
  */
 const didRequestBookAccommodation = async (req, res, next) => {
-    const booking = await getBookedAccommodationByRequestId(req.body.requestId);
+    // const booking = await getBookedAccommodationByRequestId(req.body.requestId);
+    const booking = await BookAccommodationService.getOneBy({ tripRequestId: req.body.requestId });
     if (!booking) {
           return errorResponse(res, badRequest, notAssociated);
     }

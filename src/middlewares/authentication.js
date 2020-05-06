@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 import customMessages from '../utils/customMessages';
 import statusCodes from '../utils/statusCodes';
-import UserService from '../services/authentication.service';
+import UserService from '../services/user.service';
 import responseHandlers from '../utils/responseHandlers';
 import redisClient from '../database/redis.config';
 import userRoles from '../utils/userRoles.utils';
@@ -45,7 +45,7 @@ export default class Authentication {
     token = token.split(' ').pop();
     try {
       const decodedToken = verify(token, process.env.JWT_KEY);
-      const user = await UserService.findUserByEmailOrUsername(decodedToken.email);
+      const user = await UserService.getOneBy({ email: decodedToken.email });
       return redisClient.smembers('token', (err, userToken) => {
         if (userToken.includes(token) || !user) {
           return errorResponse(res, unAuthorized, tokenVerifyFailed);
@@ -105,7 +105,7 @@ export default class Authentication {
   static async validateLineManager(req, res, next) {
     const { lineManager } = req.body;
     if (lineManager) {
-      const user = await UserService.getUserById(lineManager);
+      const user = await UserService.getOneBy({ id: lineManager });
       if (!user) {
         return responseHandlers.errorResponse(res, notFound, lineManagerNotFound);
       }

@@ -1,7 +1,7 @@
 import responseHandlers from '../utils/responseHandlers';
 import customMessages from '../utils/customMessages';
 import statusCodes from '../utils/statusCodes';
-import UserService from '../services/authentication.service';
+import UserService from '../services/user.service';
 import utils from '../utils/authentication.utils';
 
 const { errorResponse } = responseHandlers;
@@ -53,8 +53,7 @@ export const loginDataExistOnByOne = (req, res, next) => {
 export const verifyCredentials = async (req, res, next) => {
   const { email, password, username } = req.body;
   try {
-    const login = username === undefined ? email : username;
-    const gottenUser = await UserService.findUserByEmailOrUsername(login);
+    const gottenUser = await UserService.getOneBy(username ? { username } : { email });
     const { dataValues } = gottenUser;
     const passwordFromDb = dataValues.password;
     req.foundUser = dataValues;
