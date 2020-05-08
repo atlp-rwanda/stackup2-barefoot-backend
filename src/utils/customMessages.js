@@ -162,7 +162,17 @@ const messages = {
   pageNotFound: 'This page does not have content',
   updateFailed: 'Update Failed, please try again!',
   cantDltAccommWithRooms: 'You are not allowed to delete this accommodation because it has some rooms, delete all of its rooms first, and then delete it!',
-  itemNotExist: 'Update failed because the item you want to update does not exist'
+  itemNotExist: 'Update failed because the item you want to update does not exist',
+  successRating: 'You have successfully rated the accommodation',
+  failedRating: 'The accommodation has been rated on this request',
+  invalidRates: 'The rates must not be empty and has to be a number in the range of 1-5',
+  notAssociated: 'The provided request did not book an acommodation',
+  notBookingOwner: 'You are not the owner of this request',
+  beforeTripDate: 'You can only rate an accommodation you have been to',
+  notExistAccommodation: 'That accommodation does not exists',
+  notBooked: 'This accommodation is not booked',
+  notRated: 'This accommodation is not rated',
+  allRates: 'Here are all rates related to that accommodation',
 };
 
 export default messages;

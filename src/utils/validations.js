@@ -9,31 +9,26 @@ import AccommodationService from '../services/accommodation.service';
 import tripRequestsService from '../services/request.service';
 
 const { errorResponse } = responseHandlers;
-
 const { badRequest } = statusCodes;
-
 const {
   invalidTravelType,
   invalidReturnDate,
   accommodationNotExist,
   tripRequestNotExist,
 } = customMessages;
-
 const { decodeToken } = utils;
-
 const {
   validateOneWayTripRequest,
   validateReturnDate,
   validateTripRequestsSearch,
   validateTripRequestsSearchField,
   validateBookAccommodation,
-  validateRequestId
 } = Validators;
 
 const {
   getTripRequestById,
 } = tripRequestsService;
-
+const { validateId, } = Validators;
 /**
 * @param {string} pattern
 * @param {string} messages
@@ -278,7 +273,7 @@ const handleRequestStatusUpdate = async (req, res, next) => {
   const errorMessage = [];
   let errors = '';
   try {
-    await validateRequestId(req.params.tripRequestId);
+    await validateId(req.params.tripRequestId, customMessages.invalidTripRequestId);
   } catch (err) {
     errorMessage.push(err);
   }

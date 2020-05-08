@@ -1,3 +1,4 @@
+import express from 'express';
 import Authentication from '../../middlewares/authentication';
 import controllers from '../../controllers';
 import {
@@ -7,31 +8,42 @@ import {
     validateUpdateRoom,
     validateDeleteAccommodation
 } from '../../middlewares/accommodationValidations';
-
+import accommodationMiddleware from '../../middlewares/ratingChecker';
 import {
     checkAccommodationBookingInfo,
 } from '../../utils/validations';
+
+import {
+    validateRatingInfo,
+} from '../../utils/otherValidations';
 
 const {
     AccommodationController,
 } = controllers;
 
 const {
+    updateAccommodation,
+    updateAccommodationRoom,
+    deleteAccommodation,
+    deleteAccommodationRoom,
+    rateAccommodation,
+} = AccommodationController;
+const {
     bookAccommodation,
     addNewAccommodation,
     addNewAccommodationRoom,
     getAccommodations,
-    updateAccommodation,
-    updateAccommodationRoom,
-    deleteAccommodation,
-    deleteAccommodationRoom
-} = AccommodationController;
-
+} = AccommodationController;    
 const {
     isUserLoggedInAndVerified
 } = Authentication;
 
-const router = require('express').Router();
+const {
+    didRequestBookAccommodation,
+    isTripRequestValidIsYours,
+    rateTheAccommodation, 
+} = accommodationMiddleware;
+const router = express.Router();
 
 router.post('/book', [isUserLoggedInAndVerified, checkAccommodationBookingInfo], bookAccommodation);
 router.post('/', isUserLoggedInAndVerified, validateAccommodation, addNewAccommodation);
@@ -41,5 +53,14 @@ router.patch('/:id', isUserLoggedInAndVerified, validateAccommodationId, validat
 router.patch('/rooms/:id', isUserLoggedInAndVerified, validateUpdateRoom, updateAccommodationRoom);
 router.delete('/:id', isUserLoggedInAndVerified, validateAccommodationId, validateDeleteAccommodation, deleteAccommodation);
 router.delete('/rooms/:id', isUserLoggedInAndVerified, deleteAccommodationRoom);
+router.post(
+    '/rates', 
+    isUserLoggedInAndVerified, 
+    validateRatingInfo, 
+    isTripRequestValidIsYours, 
+    didRequestBookAccommodation, 
+    rateTheAccommodation,
+    rateAccommodation
+);
 
 export default router;

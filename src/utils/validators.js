@@ -235,17 +235,37 @@ export default class Validators {
   }
 
   /**
-  * @param {number} tripRequestId Trip request ID
+  * @param {number} id Trip request ID
+  * @param {string} message Appropriate error message
   * @returns {Object} response message
   * @description validates the trip request ID in URL
   */
-  static async validateRequestId(tripRequestId) {
+  static async validateId(id, message) {
     const { createValidationErrors } = Validators;
     const schema = Joi.number().integer().required()
-      .messages(createValidationErrors('number', customMessages.invalidTripRequestId));
-    return schema.validateAsync(tripRequestId, {
+      .messages(createValidationErrors('number', message));
+    return schema.validateAsync(id, {
       abortEarly: false,
       allowUnknown: true
     });
   }
+
+  /**
+  * @param {number} rates rates for an accommodation
+  * @returns {Object} response message
+  * @description validates the trip request ID in URL
+  */
+ static async validateRates(rates) {
+  const { createValidationErrors } = Validators;
+  const schema = Joi.number()
+                    .integer()
+                    .required()
+                    .min(1)
+                    .max(5)
+    .messages(createValidationErrors('number', customMessages.invalidRates));
+  return schema.validateAsync(rates, {
+    abortEarly: false,
+    allowUnknown: true
+  });
+}
 }
