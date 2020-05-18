@@ -23,8 +23,6 @@ const messages = {
   verifyMessage: 'You have now verified your account successfully',
   socialMediaAuthSucess: 'User authenticated successfully',
   loginPasswordAndEmailEmpty: 'Please enter your email and your password',
-  oneWayTripRequestFailed: 'Trip request request failed',
-  oneWayTripRequestCreated: 'Trip request successfuly submitted and waiting for approval',
   serverError: 'Sorry, something went wrong on our end, please try again later',
   tokenAbsent: 'Access denied, you must login to use this resource',
   tokenVerifyFailed: 'Sorry, we were unable to verify your identity, you must login to use this resource',
@@ -81,6 +79,7 @@ const messages = {
   viewCmtNotMineReq: 'You cannot view comments on request which is not yours',
   requestsRetrieved: 'Requests have been retrieved successfully',
   noRequestsYet: 'You do not have any request, you can create some',
+  noRequestsFound: 'No more requests found',
   noRequestsFoundOnThisPage: 'There is no requests found on this page',
   invalidTripRequestsSearchTerm: 'Please specify a valid search term, it must not be empty',
   invalidTripRequestsSearchField: 'Please specify a valid field to perform a search on, it must be one of id, status, travelTo, travelFrom, travelDate, returnDate, travelType or travelReason',
@@ -173,6 +172,14 @@ const messages = {
   notBooked: 'This accommodation is not booked',
   notRated: 'This accommodation is not rated',
   allRates: 'Here are all rates related to that accommodation',
+  tripRequestFailed: 'trip request request failed',
+  tripRequestCreated: 'trip request successfuly submitted and waiting for approval',
+  dataLengthErr: 'should not have less than 2 or more than 3 destinations',
+  travelFromEqualError: 'Request first or second destination should be the same as the second or third origin',
+  travelDateError: 'Request first or second date should not be greater than second or third',
+  arrayLengthError: 'Request travelFrom, travelTo and travelDate, should all hold the same amount of data',
+  firstOriginError: 'First origin should not equal to any destination',
+  travelFromNETravelTo: 'travelFrom location should not equal to travelTo location on the same request row'
 };
 
 export default messages;

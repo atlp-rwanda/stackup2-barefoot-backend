@@ -29,7 +29,7 @@ export default class CommentController {
         const { id } = req.sessionUser;
         const { requestId } = req.params;
         const { comment } = req.body;
-        const savedComment = await saveNewComment({ userId: id, requestId, comment });
+        const savedComment = await CommentService.saveAll({ userId: id, requestId, comment });
         successResponse(res, created, commentAdded, null, savedComment);
     }
 
@@ -42,8 +42,9 @@ export default class CommentController {
     static updateComments = async (req, res) => {
         const { commentId } = req.params;
         const { requestId, comment } = req.body;
-        const commentData = { id: commentId, requestId, comment };
-        const updatedCommentToReturn = await updateComment(commentData);
+        const commentData = { requestId, comment };
+        const updatedCommentToReturn = await 
+            CommentService.updateBy(commentData, { id: commentId });
         successResponse(res, ok, commentUpdatedSuccess, null, updatedCommentToReturn[1]);
     }
 
@@ -79,7 +80,7 @@ export default class CommentController {
      */
     static deleteComment = async (req, res) => {
         const { commentId } = req.params;
-        await deleteComment(commentId);
+        await CommentService.temporaryDelete({ id: commentId });
         successResponse(res, ok, commentDeleted, null, null);
     }
 }
