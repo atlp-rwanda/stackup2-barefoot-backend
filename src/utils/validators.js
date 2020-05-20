@@ -27,7 +27,9 @@ const {
   viewStatsNoRequesterId,
   invalidBookAccommodationAccommodationId,
   invalidBookAccommodationArrivalDate,
-  invalidBookAccommodationDepartureDate
+  invalidBookAccommodationDepartureDate,
+  invalidTripRequestId,
+  invalidUserId,
 } = customMessages;
 
  const maxDate = new Date().setHours(0, 0, 0, 0) + 15811200000;
@@ -221,8 +223,7 @@ static async validationOTripRequest(tripRequestData) {
   static async validateRequesterInfo(requester) {
     const { createValidationErrors } = Validators;
     const schema = Joi.object({
-      requesterId: Joi.number().required()
-        .messages(createValidationErrors('number', viewStatsNoRequesterId)),
+      requesterId: Joi.number().required().messages(createValidationErrors('number', viewStatsNoRequesterId)),
     });
     return schema.validateAsync(requester, {
       abortEarly: false,
@@ -239,15 +240,10 @@ static async validationOTripRequest(tripRequestData) {
     const minrDate = new Date();
     const validDate = Joi.date().required().iso().greater(minrDate);
     const schema = Joi.object({
-      tripRequestId: Joi.number().required()
-        .messages(createValidationErrors('number', invalidBookAccommodationTripRequestId)),
-      accommodationId: Joi.number().required()
-        .messages(createValidationErrors('number', invalidBookAccommodationAccommodationId)),
-      arrivalDate: validDate
-        .messages(createValidationErrors('date', invalidBookAccommodationArrivalDate)),
-      departureDate: validDate
-        .greater(Joi.ref('arrivalDate'))
-        .messages(createValidationErrors('date', invalidBookAccommodationDepartureDate)),
+      tripRequestId: Joi.number().required().messages(createValidationErrors('number', invalidBookAccommodationTripRequestId)),
+      accommodationId: Joi.number().required().messages(createValidationErrors('number', invalidBookAccommodationAccommodationId)),
+      arrivalDate: validDate.messages(createValidationErrors('date', invalidBookAccommodationArrivalDate)),
+      departureDate: validDate.greater(Joi.ref('arrivalDate')).messages(createValidationErrors('date', invalidBookAccommodationDepartureDate)),
     });
     return schema.validateAsync(bookingDetails, {
       abortEarly: false,
@@ -263,8 +259,7 @@ static async validationOTripRequest(tripRequestData) {
   */
   static async validateId(id, message) {
     const { createValidationErrors } = Validators;
-    const schema = Joi.number().integer().required()
-      .messages(createValidationErrors('number', message));
+    const schema = Joi.number().integer().required().messages(createValidationErrors('number', message));
     return schema.validateAsync(id, {
       abortEarly: false,
       allowUnknown: true
@@ -278,11 +273,8 @@ static async validationOTripRequest(tripRequestData) {
   */
  static async validateRates(rates) {
   const { createValidationErrors } = Validators;
-  const schema = Joi.number()
-                    .integer()
-                    .required()
-                    .min(1)
-                    .max(5)
+  const schema = Joi.number().integer().required().min(1) 
+    .max(5)
     .messages(createValidationErrors('number', customMessages.invalidRates));
   return schema.validateAsync(rates, {
     abortEarly: false,
@@ -298,16 +290,12 @@ static async validationMTripRequest(tripRequestData) {
   const { 
     createValidationErrors, arrayValidationErrors } = Validators;
   const schema = Joi.object({
-    travelTo: joiArray1.min(2).max(3).required()
-    .messages(arrayValidationErrors('array', 'travelFrom or travelTo should be an array; ', `travelFrom or travelTo ${dataLengthErr}; `, `travelFrom or travelTo ${dataLengthErr}; `)),
-    travelFrom: joiArray1.min(2).max(3).required()
-    .messages({ 'array.base': 'travelFrom or travelTo should be an array; ', 'array.max': `travelFrom or travelTo ${dataLengthErr};`, 'array.min': `travelFrom or travelTo ${dataLengthErr};` }),
+    travelTo: joiArray1.min(2).max(3).required().messages(arrayValidationErrors('array', 'travelFrom or travelTo should be an array; ', `travelFrom or travelTo ${dataLengthErr}; `, `travelFrom or travelTo ${dataLengthErr}; `)),
+    travelFrom: joiArray1.min(2).max(3).required().messages({ 'array.base': 'travelFrom or travelTo should be an array; ', 'array.max': `travelFrom or travelTo ${dataLengthErr};`, 'array.min': `travelFrom or travelTo ${dataLengthErr};` }),
     travelReason: joiReason,
     travelType: joiTType,
-    travelDate: joiTDate1.min(2).max(3).required()
-    .messages(arrayValidationErrors('array', 'travelDate should be an array; ', 'travelDate should not have less than 2 or more than 3 destinations;', 'travelDate should not have less than 2 or more than 3 destinations;')),
-    accommodation: Joi.bool().required()
-    .messages(createValidationErrors('boolean', `${invalidTravelAccomodation}; `)),
+    travelDate: joiTDate1.min(2).max(3).required().messages(arrayValidationErrors('array', 'travelDate should be an array; ', 'travelDate should not have less than 2 or more than 3 destinations;', 'travelDate should not have less than 2 or more than 3 destinations;')),
+    accommodation: Joi.bool().required().messages(createValidationErrors('boolean', `${invalidTravelAccomodation}; `)),
 });
   return schema.validateAsync(tripRequestData, { abortEarly: false });
   }
@@ -337,9 +325,25 @@ static async validationMTripRequest(tripRequestData) {
      */
     static findUserDate = async (travelDate, id) => {
       if (await TripService.getOneBy({ travelDate })
-       && await RequestService.getOneBy({ userId: id })) {
-        return true; 
-        }
+       && await RequestService.getOneBy({ userId: id })) { return true; }
         return false;
     }
+
+  /**
+  * @param {number} accommodationInfo contains accommodationId to validate
+  * @returns {Object} validation output/error
+  * @description validates the accommodation ID
+  */
+  static validateAccommodationId(accommodationInfo) {
+    const { createValidationErrors } = Validators;
+    const validInteger = Joi.number().integer().required();
+    const schema = Joi.object({
+      accommodationId: validInteger
+        .messages(createValidationErrors('number', invalidBookAccommodationAccommodationId)),
+    });
+    return schema.validateAsync(accommodationInfo, {
+      abortEarly: false,
+      allowUnknown: true,
+    });
+  }
 }

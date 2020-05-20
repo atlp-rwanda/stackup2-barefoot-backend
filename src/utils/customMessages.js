@@ -198,6 +198,7 @@ const messages = {
   emailTitleRequestUpdate: 'Trip request updated',
   accommodationBooked: 'Book accommodation',
   bookingInfo: 'Accommodation booking details',
+  reactedToAccommodation: 'Your reaction has been successfuly submitted',
 };
 
 export default messages;

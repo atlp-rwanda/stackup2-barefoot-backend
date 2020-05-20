@@ -13,9 +13,6 @@ const {
     notBookingOwner,
     beforeTripDate, 
 } = customMessages;
-const { 
-  getBookedAccommodationByRequestId, 
-} = AccommodationService;
 /**
  * @param {Request} req Node/Express Request object
  * @param {Response} res Node/Express Response object

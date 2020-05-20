@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import AccommodationService from '../services/accommodation.service';
 import responseHandlers from '../utils/responseHandlers';
 import customMsg from '../utils/customMessages';
 import statusCodes from '../utils/statusCodes';
+import AccommodationService from '../services/accommodation.service';
 import AccommodationRoomService from '../services/accommodationRoom.service';
 import uploadImg from '../utils/profile.utils';
 import { offsetAndLimit } from '../utils/comment.utils';
@@ -10,6 +10,7 @@ import RatingService from '../services/rating.service';
 import BookAccommodationService from '../services/bookAccommodationService.service';
 import handleEmailNotifications from '../utils/handleEmailNotifications.util';
 import { bookAccommodationMessage, accommodationTripManager } from '../utils/emailMessages';
+import UserAccommodationReactionUtils from '../utils/userAccommodationReaction.utils';
 
 const {
     successResponse,
@@ -21,8 +22,23 @@ const {
     created, ok, notFound
 } = statusCodes;
 const {
-successRating,
-failedRating,
+    successRating,
+    failedRating,
+    accommodationsRetrieved,
+} = customMsg;
+
+const {
+    handleLikeAccommodation,
+    handleDislikeAccommodation,
+} = AccommodationService;
+
+const {
+    getAccommodationLikes,
+    getAccommodationDislikes,
+} = AccommodationService;
+
+const {
+    reactedToAccommodation,
 } = customMsg;
     const {
     bookedAccommodation,
@@ -36,6 +52,9 @@ const {
     getBookingById
 } = AccommodationService;
 
+const {
+    extractAccommodationIdAndUserId,
+} = UserAccommodationReactionUtils;  
 
 /**
  * 
@@ -97,7 +116,6 @@ export default class AccommodationController {
         }
     }
 
-
     /**
      * @param {object} req
      * @param {object} res
@@ -138,11 +156,19 @@ export default class AccommodationController {
         const { offset, limit } = offsetAndLimit(page);
         const foundAccomms = await AccommodationService
             .getAndCountAllIncludeAssociation({ accommodationAddress: city }, offset, limit);
-
         if (foundAccomms.count !== 0) {
             const { rows } = foundAccomms;
             if (rows.length !== 0) {
-                successResponse(res, ok, customMsg.accommodationsRetrieved, undefined, rows);
+                let accommodations = rows.map(row => row.dataValues);
+                accommodations = await Promise.all(accommodations.map(async (accommodation) => {
+                    const accommodationId = accommodation.id;
+                    accommodation.userReactions = {
+                        likes: await getAccommodationLikes(accommodationId),
+                        dislikes: await getAccommodationDislikes(accommodationId),
+                    };
+                    return accommodation;
+                }));
+                return successResponse(res, ok, accommodationsRetrieved, undefined, accommodations);
             } else {
                 errorResponse(res, notFound, customMsg.pageNotFound);
             }
@@ -231,5 +257,30 @@ export default class AccommodationController {
         const { accommodationId } = req.params;
         const accommodation = await getBookingById(accommodationId);
         return successResponse(res, ok, bookingInfo, null, accommodation);
+    }
+
+    /**
+     * @param {Request} req Node/express requesT
+     * @param {Response} res Node/express response
+     * @returns {Object} details of user reaction
+     * @description Use this method to like an accommodation facility
+     */
+    static async likeAccommodation(req, res) {
+        const { userId, accommodationId } = extractAccommodationIdAndUserId(req);
+        await handleLikeAccommodation(accommodationId, userId);
+        return successResponse(res, created, reactedToAccommodation, undefined);
+    }
+
+    /**
+     * @param {Request} req Node/express requesT
+     * @param {Response} res Node/express response
+     * @returns {Object} details of user reaction
+     * @description Use this method to dislike an accommodation facility
+     */
+    static async dislikeAccommodation(req, res) {
+        const extratedInfo = extractAccommodationIdAndUserId(req);
+        const { accommodationId, userId } = extratedInfo;
+        await handleDislikeAccommodation(accommodationId, userId);
+        return successResponse(res, created, reactedToAccommodation, undefined);
     }
 } 

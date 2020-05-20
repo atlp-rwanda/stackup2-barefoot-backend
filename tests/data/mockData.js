@@ -672,4 +672,16 @@ export default {
     arrivalDate: new Date(Date.now() + 432000000),
     departureDate: new Date(Date.now() + 518400000),
   },
+  requester4Account: {
+    firstName: 'Requester',
+    lastName: 'Account',
+    username: 'requester4',
+    email: 'requester4@example.com',
+    password: '@Requester123',
+    gender: 'Male',
+    address: 'Butare',
+    isVerified: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
 };

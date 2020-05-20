@@ -73,5 +73,19 @@ export default {
   bookAccommodation: {
     arrivalDate: new Date(Date.now() + 432000000),
     departureDate: new Date(Date.now() + 518400000),
-  }
+  },
+  accommodationValidData2: {
+    accommodationName: 'romano guesthouse 2',
+    accommodationAddress: 'kigali',
+    currency: 'usd',
+    cost: 100
+  },
+  accommodationValidData3: {
+    accommodationName: 'romano guesthouse 3',
+    accommodationAddress: 'kigali',
+    currency: 'usd',
+    cost: 100
+  },
+  nonExistentAccommodationId: Date.now(),
+  invalidAccommodationId: 'invalidId',
 };
