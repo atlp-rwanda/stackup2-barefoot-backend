@@ -179,7 +179,8 @@ const messages = {
   travelDateError: 'Request first or second date should not be greater than second or third',
   arrayLengthError: 'Request travelFrom, travelTo and travelDate, should all hold the same amount of data',
   firstOriginError: 'First origin should not equal to any destination',
-  travelFromNETravelTo: 'travelFrom location should not equal to travelTo location on the same request row'
+  travelFromNETravelTo: 'travelFrom location should not equal to travelTo location on the same request row',
+  accountAlreadyVerified: 'You have already verified your account, please login',
 };
 
 export default messages;

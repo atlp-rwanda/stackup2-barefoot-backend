@@ -17,3 +17,5 @@ VALUES(5,'Tokyo','Seoul','2020-07-18',NOW(),NOW())`;
 export const SELECT_REQUEST = `
 SELECT * FROM requests WHERE status = 'accepted';`;
 export const DELETE_REQUESTS = 'DELETE FROM requests';
+export const DROP_USER = `
+DELETE FROM users WHERE email='john@doe.com';`;
