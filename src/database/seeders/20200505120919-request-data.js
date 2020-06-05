@@ -1,4 +1,3 @@
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('requests', [{
@@ -10,7 +9,8 @@ module.exports = {
     handledBy: 1,
     createdAt: new Date(),
     updatedAt: new Date()
-      }], {});
+    }
+    ], {});
 
       const requests = await queryInterface.sequelize.query('SELECT id from requests;');
       const requestRows = requests[0];

@@ -4,7 +4,10 @@ import server from '../../src/index';
 import customMessages from '../../src/utils/customMessages';
 import statusCodes from '../../src/utils/statusCodes';
 import mockData from '../data/mockData';
+import UserService from '../../src/services/user.service';
 
+
+const { findUserByEmail } = UserService;
 const { 
     ratesRequester, 
     bookAccommodation, 
@@ -40,16 +43,21 @@ let requestId;
 let requestId2;
 let requestId3;
 let authAdmin;
+let managerId;
 
 chai.use(chaiHttp);
 chai.should();
 
 describe('Rating an accommodation', () => {
-      it('Should create a rates user', (done) => {
-          chai
-            .request(server)
-            .post('/api/auth/signup')
-            .send(ratesRequester)
+  before('Get manager ID', async () => {
+    const manager = await findUserByEmail('jonsnow@gmail.com');
+    managerId = manager.dataValues.id;
+  });
+  it('Should create a rates user', (done) => {
+    chai
+      .request(server)
+      .post('/api/auth/signup')
+      .send({ ...ratesRequester, lineManager: managerId })
             .end((err, res) => {
               if (err) done(err);
               const { message, token } = res.body;
@@ -65,7 +73,7 @@ describe('Rating an accommodation', () => {
         chai
           .request(server)
           .post('/api/auth/signup')
-          .send(notRatesRequester)
+          .send({ ...notRatesRequester, lineManager: managerId })
           .end((err, res) => {
             if (err) done(err);
             const { message, token } = res.body;

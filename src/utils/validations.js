@@ -11,12 +11,28 @@ import {
   validatePassword, displayErrorMessages, validateRole, validationMethods, verifyToken
 } from './validations-previous';
 
-const { errorResponse } = responseHandlers;
-
-const { badRequest } = statusCodes;
 const { 
   validationOTripRequest, 
-  validationMTripRequest,
+  validationMTripRequest
+} = Validators;
+
+const {
+  invalidTravelType,
+  invalidReturnDate,
+  accommodationNotExist,
+  tripRequestNotExist,
+  invalidStatus,
+  invlidTypeId
+} = customMsg;
+
+
+const { errorResponse, successResponse } = responseHandlers;
+const { badRequest, ok } = statusCodes;
+const {
+  emptyInAppNotification,
+} = customMsg;
+const {
+  validateOneWayTripRequest,
   validateReturnDate,
   validateTripRequestsSearch,
   validateTripRequestsSearchField,
@@ -168,6 +184,7 @@ const returnTripHandler = async (tripRequestInfo, req, res, next) => {
       } = validBookingInfo;
       const accommodationExists = !!await AccommodationService.getOneBy({ id: accommodationId });
       const tripRequestExists = !!await RequestService.getOneBy({ id: tripRequestId });
+      const result = await RequestService.getOneBy({ id: tripRequestId });
       if (!accommodationExists) {
         return errorResponse(res, badRequest, customMsg.accommodationNotExist);
       }

@@ -4,10 +4,10 @@ dotenv.config();
 
 export default {
     accommodationValidData: {
-        accommodationName: 'romano guesthouse',
-        accommodationAddress: 'kigali',
-        currency: 'usd',
-        cost: 100
+        accommodationName: 'BarefootNomad Motel',
+        accommodationAddress: 'Nyabihu',
+        currency: 'rwf',
+        cost: 100000
     },
     accommodationInValidCurrency: {
         accommodationName: 'guesthouse123',

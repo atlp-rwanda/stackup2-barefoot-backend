@@ -89,6 +89,27 @@ class CrudRepository {
   }
 
   /**
+   * @param {string} value
+   * @param {boolean} status
+   * @returns {object} returns an updated user
+   */
+  updateIsVerifiedOrUpdateNotification = async (value, status) => {
+    let update;
+    if (isNaN(value) && value.includes('@')) {
+      update = await this.model.update(
+        { isVerified: true },
+        { where: { email: value } }
+      );
+    } else {
+      update = await this.model.update(
+        { emailNotification: !status },
+        { where: { id: value } }
+      );
+    }
+    return update;
+  }
+
+  /**
    * @param {object} dataToUpdate
    * @param {object} whereCondition
    * @returns {object} updatedData

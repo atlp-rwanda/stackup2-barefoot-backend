@@ -27,13 +27,15 @@ const {
     deleteAccommodation,
     deleteAccommodationRoom,
     rateAccommodation,
+    getBookedAccommodation
 } = AccommodationController;
+
 const {
     bookAccommodation,
     addNewAccommodation,
     addNewAccommodationRoom,
-    getAccommodations,
-} = AccommodationController;    
+    getAccommodations
+} = AccommodationController;
 const {
     isUserLoggedInAndVerified
 } = Authentication;
@@ -62,5 +64,6 @@ router.post(
     rateTheAccommodation,
     rateAccommodation
 );
+router.get('/:accommodationId', getBookedAccommodation);
 
 export default router;

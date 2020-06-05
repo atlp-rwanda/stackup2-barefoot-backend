@@ -47,7 +47,6 @@ const isTripRequestValidIsYours = async (req, res, next) => {
  * get request id from request body, checks if the request exist or not
  */
 const didRequestBookAccommodation = async (req, res, next) => {
-    
     const booking = await BookAccommodationService.getOneBy({ tripRequestId: req.body.requestId });
     if (!booking) {
           return errorResponse(res, badRequest, notAssociated);

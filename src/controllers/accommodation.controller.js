@@ -8,6 +8,8 @@ import uploadImg from '../utils/profile.utils';
 import { offsetAndLimit } from '../utils/comment.utils';
 import RatingService from '../services/rating.service';
 import BookAccommodationService from '../services/bookAccommodationService.service';
+import handleEmailNotifications from '../utils/handleEmailNotifications.util';
+import { bookAccommodationMessage, accommodationTripManager } from '../utils/emailMessages';
 
 const {
     successResponse,
@@ -22,6 +24,17 @@ const {
 successRating,
 failedRating,
 } = customMsg;
+    const {
+    bookedAccommodation,
+    duplicateAccommodationBookings,
+    bookingInfo,
+} = customMsg;
+
+
+const {
+    handleBookAccommodation,
+    getBookingById
+} = AccommodationService;
 
 
 /**
@@ -73,9 +86,12 @@ export default class AccommodationController {
      */
     static async bookAccommodation(req, res) {
         try {
-            const bookingInfo = req.body;
-            const bookingDetail = await BookAccommodationService.saveAll(bookingInfo);
-            successResponse(res, created, customMsg.bookedAccommodation, undefined, bookingDetail);
+            const bookingData = req.body;
+            const currentUser = req.sessionUser;
+            const bookingDetail = await handleBookAccommodation(bookingData);
+            const link = `${process.env.APP_URL}/api/accommodations/${bookingDetail.id}`;
+            await handleEmailNotifications(currentUser, bookAccommodationMessage, link, 'Book accommodation');
+            return successResponse(res, created, bookedAccommodation, undefined, bookingDetail);
         } catch (error) {
             errorResponse(res, badRequest, customMsg.duplicateAccommodationBookings);
         }
@@ -179,7 +195,7 @@ export default class AccommodationController {
         deletion(req, AccommodationRoomService, res, customMsg.roomDeleted);
     }
 
-            /**
+    /**
      * @param {Request} req Node/express requesT
      * @param {Response} res Node/express response
      * @returns {Object} Custom response with accommodation facility details
@@ -190,18 +206,30 @@ export default class AccommodationController {
             const ratingInfo = { ...req.body };
             const ratingDetail = await RatingService.saveAll(ratingInfo);
             return successResponse(
-                res, 
-                created, 
-                successRating, 
-                undefined, 
+                res,
+                created,
+                successRating,
+                undefined,
                 ratingDetail
-            );    
+            );
         } catch (error) {
             return errorResponse(
-                res, 
-                badRequest, 
+                res,
+                badRequest,
                 failedRating
             );
         }
     }
-}
+
+    /**
+     * @param {Request} req Node/express requesT
+     * @param {Response} res Node/express response
+     * @returns {Object} Custom response with accommodation facility details
+     * @description Use this method to get booked accommodation
+     */
+    static async getBookedAccommodation(req, res) {
+        const { accommodationId } = req.params;
+        const accommodation = await getBookingById(accommodationId);
+        return successResponse(res, ok, bookingInfo, null, accommodation);
+    }
+} 

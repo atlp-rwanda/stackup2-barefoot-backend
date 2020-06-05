@@ -211,7 +211,6 @@ describe('Profile tests', () => {
       .attach('myImg', `${__dirname}/assets/img/welcometothenewworld.txt`)
       .end((err, res) => {
         if (err) done(err);
-        console.log('This is the unsupported mediatype msg', res.body);
         expect(res).to.have.status(statusCodes.unsupportedMediaType);
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('error').to.equal(customMessages.invalidPictureExt);
