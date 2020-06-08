@@ -8,6 +8,7 @@ import customMessages from '../../src/utils/customMessages';
 import accommodationMockData from '../data/accommodationMockData';
 import userRoles from '../../src/utils/userRoles.utils';
 import UserService from '../../src/services/user.service';
+import mockData from '../data/mockData';
 
 const {
     created,
@@ -24,6 +25,7 @@ const {
     TRAVEL_ADMIN,
     ACCOMMODATION_SUPPLIER
 } = userRoles;
+
 const {
     accommodationCreated,
     accommodationRoomCreated,
@@ -47,8 +49,14 @@ const {
     bookedAccommodation,
     duplicateAccommodationBookings,
     itemNotExist,
-    cantDltAccommWithRooms
+    cantDltAccommWithRooms,
+    verifyMessage,
+    userAccommodationReactionNotExist,
+    reactedToAccommodation,
+    invalidBookAccommodationAccommodationId,
+    userSignupSuccess,
 } = customMessages;
+
 const {
     bookAccommodation,
     accommodationRoomValidData,
@@ -62,20 +70,33 @@ const {
     updateAccommodationValidData,
     updateAccommodationRoomValidData,
     updateAccommodationRoomValidDataNoRoomName,
-    accommodationInValidCurrency
+    accommodationInValidCurrency,
+    accommodationValidData2,
+    accommodationValidData3,
+    invalidAccommodationId,
+    nonExistentAccommodationId,
 } = accommodationMockData;
-import mockData from '../data/mockData';
 
 let accommodationId;
 let tripId;
 
 chai.use(chaiHttp);
+
 let authTokenTravelAdmin, authTokenSupplier, authTokenRequester, superUserToken, requestId2 = '';
+
 const requesterTripRequests = [];
 const {
     oneWayTripRequestForAccommodationBooking
 } = mockData;
 let newManagerId;
+
+const {
+    requester4Account,
+} = mockData;
+
+const accommodations = [];
+
+let authTokenRequester2 = {};
 
 describe('Accommodation tests', () => {
     before('Get manager ID', async () => {
@@ -763,5 +784,221 @@ describe('Accommodation tests', () => {
                 expect(res.body).to.have.property('message').to.be.a('string').to.equal(accommodationDeleted);
                 done();
             });
+    });
+});
+
+
+describe('Like/Dislike Accommodations', () => {
+    it('Should create an accommodation facility 1', (done) => {
+        chai
+            .request(server)
+            .post('/api/accommodations')
+            .set('Authorization', authTokenTravelAdmin)
+            .send(accommodationValidData2)
+            .end((err, res) => {
+                if (err) done(err);
+                expect(res).to.have.status(created);
+                expect(res.body).to.be.an('object');
+                expect(res.body).to.have.property('message').to.equal(accommodationCreated);
+                expect(res.body).to.have.property('data').to.be.an('object');
+                accommodations.push(res.body.data);
+                done();
+            });
+    });
+    it('Should create an accommodation facility 2', (done) => {
+        chai
+            .request(server)
+            .post('/api/accommodations')
+            .set('Authorization', authTokenTravelAdmin)
+            .send(accommodationValidData3)
+            .end((err, res) => {
+                if (err) done(err);
+                expect(res).to.have.status(created);
+                expect(res.body).to.be.an('object');
+                expect(res.body).to.have.property('message').to.equal(accommodationCreated);
+                expect(res.body).to.have.property('data').to.be.an('object');
+                accommodations.push(res.body.data);
+                done();
+            });
+    });
+    it('Should create a requester account', (done) => {
+        chai
+        .request(server)
+        .post('/api/auth/signup')
+        .send(requester4Account)
+        .end((err, res) => {
+            if (err) done(err);
+            const { message, token } = res.body;
+            expect(message);
+            expect(message).to.equal(userSignupSuccess);
+            expect(token);
+            authTokenRequester2 = `Bearer ${token}`;
+            done();
+        });
+    });
+    it('Should verify requester account', (done) => {
+        chai.request(server)
+        .get(`/api/auth/verify?token=${authTokenRequester2.split(' ').pop()}`)
+        .end((err, res) => {
+            if (err) done(err);
+            expect(res.status).to.equal(ok);
+            const { message } = res.body;
+            expect(message).to.be.a('string');
+            expect(message).to.equal(verifyMessage);
+            done();
+        });
+    });
+    it('Should login a requester', (done) => {
+        chai
+        .request(server)
+        .post('/api/auth/login')
+        .set('Accept', 'Application/json')
+        .send({
+            email: requester4Account.email,
+            password: requester4Account.password,
+        })
+        .end((err, res) => {
+            if (err) done(err);
+            expect(res.status).to.equal(ok);
+            const { token } = res.body;
+            expect(token);
+            authTokenRequester2 = `Bearer ${token}`;
+            done();
+        });
+    });
+    it('should not like an accommodation facility due to its absence', (done) => {
+        chai
+        .request(server)
+        .post(`/api/accommodations/${nonExistentAccommodationId}/like`)
+        .set('Authorization', authTokenRequester2)
+        .end((err, res) => {
+            if (err) done(err);
+            const { error } = res.body;
+            expect(res.status).to.equal(badRequest);
+            expect(error);
+            expect(error).to.be.a('string');
+            expect(error).to.equal(accommodationNotExist);
+            done();
+        });
+    });
+    it('should not like an accommodation facility due to invalid accommodationId', (done) => {
+        chai
+        .request(server)
+        .post(`/api/accommodations/${invalidAccommodationId}/like`)
+        .set('Authorization', authTokenRequester2)
+        .end((err, res) => {
+            if (err) done(err);
+            const { error } = res.body;
+            expect(res.status).to.equal(badRequest);
+            expect(error);
+            expect(error).to.be.a('string');
+            expect(error).to.equal(invalidBookAccommodationAccommodationId);
+            done();
+        });
+    });
+    it('should not dislike an accommodation facility due to its absence', (done) => {
+        chai
+        .request(server)
+        .post(`/api/accommodations/${nonExistentAccommodationId}/dislike`)
+        .set('Authorization', authTokenRequester2)
+        .end((err, res) => {
+            if (err) done(err);
+            const { error } = res.body;
+            expect(res.status).to.equal(badRequest);
+            expect(error);
+            expect(error).to.be.a('string');
+            expect(error).to.equal(accommodationNotExist);
+            done();
+        });
+    });
+    it('should like(new) an accommodation facility', (done) => {
+        chai
+        .request(server)
+        .post(`/api/accommodations/${accommodations[0].id}/like`)
+        .set('Authorization', authTokenRequester2)
+        .end((err, res) => {
+            if (err) done(err);
+            const { message } = res.body;
+            expect(res.status).to.equal(created);
+            expect(message);
+            expect(message).to.be.a('string');
+            expect(message).to.equal(reactedToAccommodation);
+            done();
+        });
+    });
+    it('should like(update) an accommodation facility', (done) => {
+        chai
+        .request(server)
+        .post(`/api/accommodations/${accommodations[0].id}/like`)
+        .set('Authorization', authTokenRequester2)
+        .end((err, res) => {
+            if (err) done(err);
+            const { message } = res.body;
+            expect(res.status).to.equal(created);
+            expect(message);
+            expect(message).to.be.a('string');
+            expect(message).to.equal(reactedToAccommodation);
+            done();
+        });
+    });
+    it('should unlike an accommodation facility', (done) => {
+        chai
+        .request(server)
+        .post(`/api/accommodations/${accommodations[0].id}/like`)
+        .set('Authorization', authTokenRequester2)
+        .end((err, res) => {
+            if (err) done(err);
+            const { message } = res.body;
+            expect(res.status).to.equal(created);
+            expect(message);
+            expect(message).to.be.a('string');
+            expect(message).to.equal(reactedToAccommodation);
+            done();
+        });
+    });
+    it('should dislike an accommodation facility(1)', (done) => {
+        chai
+        .request(server)
+        .post(`/api/accommodations/${accommodations[0].id}/dislike`)
+        .set('Authorization', authTokenRequester2)
+        .end((err, res) => {
+            if (err) done(err);
+            const { message } = res.body;
+            expect(res.status).to.equal(created);
+            expect(message);
+            expect(message).to.be.a('string');
+            expect(message).to.equal(reactedToAccommodation);
+            done();
+        });
+    });
+    it('should un-dislike an accommodation facility', (done) => {
+        chai
+        .request(server)
+        .post(`/api/accommodations/${accommodations[0].id}/dislike`)
+        .set('Authorization', authTokenRequester2)
+        .end((err, res) => {
+            if (err) done(err);
+            const { message } = res.body;
+            expect(res.status).to.equal(created);
+            expect(message);
+            expect(message).to.be.a('string');
+            expect(message).to.equal(reactedToAccommodation);
+            done();
+        });
+    });
+    it('should dislike an accommodation facility(2)', (done) => {
+        chai
+        .request(server)
+        .post(`/api/accommodations/${accommodations[1].id}/dislike`)
+        .set('Authorization', authTokenRequester2)
+        .end((err, res) => {
+            if (err) done(err);
+            const { message } = res.body;
+            expect(res.status).to.equal(created);
+            expect(message);
+            expect(message).to.be.a('string');
+            expect(message).to.equal(reactedToAccommodation);
+            done();
+        });
     });
 });

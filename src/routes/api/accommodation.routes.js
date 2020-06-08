@@ -1,4 +1,3 @@
-import express from 'express';
 import Authentication from '../../middlewares/authentication';
 import controllers from '../../controllers';
 import {
@@ -12,6 +11,7 @@ import accommodationMiddleware from '../../middlewares/ratingChecker';
 import {
     checkAccommodationBookingInfo,
 } from '../../utils/validations';
+import UserAccommodationReaction from '../../middlewares/userAccommodationReaction';
 
 import {
     validateRatingInfo,
@@ -27,7 +27,9 @@ const {
     deleteAccommodation,
     deleteAccommodationRoom,
     rateAccommodation,
-    getBookedAccommodation
+    getBookedAccommodation,
+    likeAccommodation,
+    dislikeAccommodation,
 } = AccommodationController;
 
 const {
@@ -39,13 +41,16 @@ const {
 const {
     isUserLoggedInAndVerified
 } = Authentication;
-
 const {
     didRequestBookAccommodation,
     isTripRequestValidIsYours,
     rateTheAccommodation, 
 } = accommodationMiddleware;
-const router = express.Router();
+const {
+    checkAccommodationInfo,
+} = UserAccommodationReaction;
+
+const router = require('express').Router();
 
 router.post('/book', [isUserLoggedInAndVerified, checkAccommodationBookingInfo], bookAccommodation);
 router.post('/', isUserLoggedInAndVerified, validateAccommodation, addNewAccommodation);
@@ -65,5 +70,13 @@ router.post(
     rateAccommodation
 );
 router.get('/:accommodationId', getBookedAccommodation);
+router.post('/:id/like', [
+    isUserLoggedInAndVerified,
+    checkAccommodationInfo,
+], likeAccommodation);
+router.post('/:id/dislike', [
+    isUserLoggedInAndVerified,
+    checkAccommodationInfo,
+], dislikeAccommodation);
 
 export default router;
